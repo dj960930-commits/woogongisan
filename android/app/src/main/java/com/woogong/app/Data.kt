@@ -20,14 +20,17 @@ object Data {
  } catch(e:Exception){true}
  fun sync(c:Context) {
   val base=SignalEndpoint.normalize(url(c))
-  fun get(name:String):String {
+  fun fetch(name:String,optional:Boolean=false):String? {
    val connection=URL("$base/$name.json").openConnection() as HttpURLConnection
    try {
     connection.connectTimeout=15000;connection.readTimeout=20000;connection.useCaches=false
+    if(optional&&connection.responseCode==404)return null
     require(connection.responseCode==200){"연결 오류 ${connection.responseCode}"}
     return connection.inputStream.bufferedReader().use{it.readText()}
    } finally {connection.disconnect()}
   }
+  val bundle=if(URL(base).host.lowercase().endsWith(".github.io"))null else fetch("bundle",true)?.let{SignalBundle.read(it)}
+  fun get(name:String):String = if(bundle!=null)bundle.getJSONObject("$name.json").toString() else fetch(name)!!
   // Parse and validate the complete pair before atomically replacing cache.
   val state=get("status");val snap=get("snapshot");val obj=JSONObject(snap)
   val manifest=JSONObject(get("model"));val health=JSONObject(state)

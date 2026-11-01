@@ -14,7 +14,7 @@ def main():
  import firebase_admin
  from firebase_admin import credentials,messaging
  firebase_admin.initialize_app(credentials.Certificate(json.loads(raw)))
- out=ROOT/'runtime';out.mkdir(exist_ok=True);file=out/'delivery.json'
+ out=Path(os.environ.get('WOOGONG_OUTBOX_DIR',str(ROOT/'runtime')));out.mkdir(parents=True,exist_ok=True);file=out/'delivery.json'
  done=json.loads(file.read_text(encoding='utf-8')) if file.exists() else {};failures=0
  for token in tokens:
   key=data.get('model_fingerprint',data['version'])+':'+data['market_date']+':'+hashlib.sha256(token.encode()).hexdigest()

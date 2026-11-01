@@ -44,7 +44,7 @@ internal object MorningAlerts {
   prefs.edit().putString("morning_last_day",key).putString("morning_last_at",now.toString()).apply()
  }
  fun enqueueModel(c:Context){
-  WorkManager.getInstance(c).enqueueUniqueWork("close-model-refresh",ExistingWorkPolicy.REPLACE,OneTimeWorkRequestBuilder<ModelSyncWorker>().setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST).build())
+  WorkManager.getInstance(c).enqueueUniqueWork("close-model-refresh",ExistingWorkPolicy.REPLACE,OneTimeWorkRequestBuilder<ModelSyncWorker>().setBackoffCriteria(BackoffPolicy.LINEAR,30,java.util.concurrent.TimeUnit.SECONDS).setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST).build())
  }
 }
 class MorningAlarmReceiver:BroadcastReceiver(){
@@ -65,7 +65,8 @@ internal object ModelRefresh {
   if(Data.url(c).isBlank())return true
   return try{
    Data.sync(c);WoogongWidget.updateAll(c)
-   Data.prefs(c).edit().putString("model_check_at",Instant.now().toString()).apply();true
+   Data.prefs(c).edit().putString("model_check_at",Instant.now().toString()).apply()
+   !Data.stale(Data.load(c,"snapshot"),Data.load(c,"status"))
   }catch(_:Exception){
    Data.prefs(c).edit().putString("sync_error","갱신 실패 · 이전 기준일을 확인하세요").apply();WoogongWidget.updateAll(c);false
   }

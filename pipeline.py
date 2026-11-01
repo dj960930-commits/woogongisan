@@ -7,7 +7,7 @@ import pandas_market_calendars as calendars
 import httpx
 from engine import evaluate,ASSETS
 from models.registry import load_model
-ROOT=Path(__file__).parent;SITE=ROOT/'site'
+ROOT=Path(__file__).parent;SITE=Path(os.environ.get('WOOGONG_SITE_DIR',str(ROOT/'site')))
 def write(path,value):
  tmp=path.with_suffix('.tmp');tmp.write_text(json.dumps(value,ensure_ascii=False,allow_nan=False),encoding='utf-8');tmp.replace(path)
 def session(now):
