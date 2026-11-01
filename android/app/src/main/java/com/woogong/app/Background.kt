@@ -17,11 +17,13 @@ class WoogongApp:Application(){
  override fun onConfigurationChanged(config:android.content.res.Configuration){super.onConfigurationChanged(config);WoogongWidget.updateAll(this)}
  override fun onCreate(){super.onCreate()
   getSystemService(NotificationManager::class.java).createNotificationChannel(NotificationChannel("close","장 마감 결과",NotificationManager.IMPORTANCE_DEFAULT))
-  WorkManager.getInstance(this).enqueueUniquePeriodicWork("fallback-sync",ExistingPeriodicWorkPolicy.KEEP,PeriodicWorkRequestBuilder<SyncWorker>(30,TimeUnit.MINUTES).setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build())
+  MorningAlerts.schedule(this)
+  WorkManager.getInstance(this).enqueueUniquePeriodicWork("fallback-sync",ExistingPeriodicWorkPolicy.UPDATE,PeriodicWorkRequestBuilder<SyncWorker>(15,TimeUnit.MINUTES).setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build())
  }
 }
 class SyncWorker(c:Context,p:WorkerParameters):Worker(c,p){
  override fun doWork():Result {
+  val modelReady=ModelRefresh.run(applicationContext)
   var tradingFailed=false
   if(MeritzAccount.connected(applicationContext)){
    try{MeritzAccount.sync(applicationContext)}catch(_:Exception){tradingFailed=true}
@@ -33,7 +35,7 @@ class SyncWorker(c:Context,p:WorkerParameters):Worker(c,p){
   if(Data.url(applicationContext).isBlank()){
    return try{PortfolioStore.recordDaily(applicationContext);if(tradingFailed)Result.retry() else Result.success()}catch(_:Exception){Result.retry()}
   }
-  return try{Data.sync(applicationContext);WoogongWidget.updateAll(applicationContext);if(tradingFailed)Result.retry() else Result.success()}catch(e:Exception){Data.prefs(applicationContext).edit().putString("sync_error","갱신 실패 · 이전 기준일을 확인하세요").apply();WoogongWidget.updateAll(applicationContext);Result.retry()}
+  return if(!modelReady||tradingFailed)Result.retry() else Result.success()
  }
 }
 class PushService:FirebaseMessagingService(){
@@ -41,6 +43,6 @@ class PushService:FirebaseMessagingService(){
  override fun onMessageReceived(message:RemoteMessage){
   // FCM is an optional wake-up. Worker and manual refresh use the same validated,
   // persistent model/date deduplication path, so push + polling cannot alert twice.
-  WorkManager.getInstance(this).enqueue(OneTimeWorkRequestBuilder<SyncWorker>().setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST).build())
+  MorningAlerts.enqueueModel(this)
  }
 }

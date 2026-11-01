@@ -39,7 +39,7 @@ import org.json.JSONObject
 
 class MainActivity:ComponentActivity(){
  private var resumeTick by mutableIntStateOf(0)
- override fun onResume(){super.onResume();resumeTick++}
+ override fun onResume(){super.onResume();resumeTick++;MorningAlerts.schedule(this)}
  private val permission=registerForActivityResult(ActivityResultContracts.RequestPermission()){}
  override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState)
   enableEdgeToEdge()

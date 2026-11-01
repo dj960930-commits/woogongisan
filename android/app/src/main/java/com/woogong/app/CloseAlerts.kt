@@ -27,12 +27,12 @@ internal object CloseAlertPolicy {
 internal object CloseAlerts {
  private val lock=Any()
  fun enabled(c:Context)=Data.prefs(c).getBoolean("close_alerts_enabled",true)
- fun enable(c:Context,value:Boolean){Data.prefs(c).edit().putBoolean("close_alerts_enabled",value).apply()}
+ fun enable(c:Context,value:Boolean){Data.prefs(c).edit().putBoolean("close_alerts_enabled",value).apply();MorningAlerts.schedule(c)}
  fun allowed(c:Context):Boolean {
   if(android.os.Build.VERSION.SDK_INT>=33&&ContextCompat.checkSelfPermission(c,Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)return false
   return NotificationManagerCompat.from(c).areNotificationsEnabled()&&c.getSystemService(NotificationManager::class.java).getNotificationChannel("close")?.importance!=NotificationManager.IMPORTANCE_NONE
  }
- private fun post(c:Context,id:Int,title:String,body:String):Boolean {
+ internal fun post(c:Context,id:Int,title:String,body:String):Boolean {
   if(android.os.Build.VERSION.SDK_INT>=33&&ContextCompat.checkSelfPermission(c,Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)return false
   val intent=PendingIntent.getActivity(c,0,Intent(c,MainActivity::class.java),PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
   val notification=NotificationCompat.Builder(c,"close").setSmallIcon(R.drawable.ic_notification).setContentTitle(title)

@@ -38,17 +38,19 @@ object Data {
   weights.keys().forEach{val w=weights.getDouble(it);require(w.isFinite()&&w>=-1e-10);sum+=w}
   require(kotlin.math.abs(sum-1)<1e-8);JSONObject(state)
   if(health.optString("state")=="ready")require(obj.getString("market_date")==health.getString("market_date"))
-  val edit=prefs(c).edit().putString("snapshot",snap).putString("status",state).putString("sync_error","")
-  for(name in listOf("backtest","extended_backtest")){
-   edit.remove(name)
-   try{val back=get(name);if(sameModel(obj,JSONObject(back)))edit.putString(name,back)}catch(_:Exception){}
-  }
+  val edit=prefs(c).edit().putString("snapshot",snap).putString("status",state).putString("sync_error","").putString("model_check_at",Instant.now().toString())
   edit.apply()
+  // Notify from the validated core pair before optional history downloads or account work.
+  try{CloseAlerts.onSynced(c,obj,health)}catch(_:Exception){}
+  val historyEdit=prefs(c).edit()
+  for(name in listOf("backtest","extended_backtest")){
+   historyEdit.remove(name)
+   try{val back=get(name);if(sameModel(obj,JSONObject(back)))historyEdit.putString(name,back)}catch(_:Exception){}
+  }
+  historyEdit.apply()
   try{PortfolioStore.recordDaily(c,obj,health);prefs(c).edit().remove("portfolio_error").apply()}
   catch(_:Exception){prefs(c).edit().putString("portfolio_error","자산 기록을 저장하지 못했습니다. 내 자산에서 잔고를 확인하세요.").apply()}
-  // A successful fresh model read produces a local notification even without FCM.
-  // Notification failures must not turn a successful data sync into a stale model.
-  try{CloseAlerts.onSynced(c,obj,health)}catch(_:Exception){}
+
  }
  fun allocation(s:JSONObject):String {
   val w=s.getJSONObject("target")
