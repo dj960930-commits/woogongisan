@@ -64,6 +64,9 @@ jobs:
           else
             python pipeline.py --live
           fi
+      - name: Package one publication generation
+        if: steps.close.outputs.proceed == 'true'
+        run: python tools/build_signal_bundle.py
       - name: Save derived results
         if: steps.close.outputs.proceed == 'true'
         run: |

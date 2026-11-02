@@ -36,7 +36,7 @@ object Data {
     return connection.inputStream.bufferedReader().use{it.readText()}
    } finally {connection.disconnect()}
   }
-  val bundle=if(URL(base).host.lowercase().endsWith(".github.io"))null else fetch("bundle",true)?.let{SignalBundle.read(it)}
+  val bundle=fetch("bundle",true)?.let{SignalBundle.read(it)}
   fun get(name:String):String = if(bundle!=null)bundle.getJSONObject("$name.json").toString() else fetch(name)!!
   // Parse and validate the complete pair before atomically replacing cache.
   val state=get("status");val snap=get("snapshot");val obj=JSONObject(snap)
