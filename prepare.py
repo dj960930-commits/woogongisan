@@ -27,6 +27,18 @@ def main():
     assets.mkdir(parents=True, exist_ok=True)
     for name in ['snapshot','status','backtest','model']:
         shutil.copy2(site/f'{name}.json', assets/f'{name}.json')
+    # Release seeds are independently dated; never advance the frozen research CSVs.
+    seed = ROOT/'data/offline'
+    if (seed/'snapshot.json').exists():
+        offline = json.loads((seed/'snapshot.json').read_text(encoding='utf-8'))
+        if offline.get('model_fingerprint') == model.fingerprint:
+            for name in ['snapshot','status','extended_backtest']:
+                source = seed/f'{name}.json'
+                if source.exists():
+                    value = json.loads(source.read_text(encoding='utf-8'))
+                    if value.get('model_fingerprint') != model.fingerprint:
+                        raise ValueError('Offline seed model mismatch')
+                    shutil.copy2(source, assets/source.name)
     print(model.version, 'historical site and Android assets prepared')
 
 if __name__=='__main__':main()

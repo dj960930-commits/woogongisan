@@ -29,3 +29,16 @@ def test_rejects_other_model_and_excludes_unrelated_history(tmp_path):
     assert 'backtest.json' not in build(tmp_path)['documents']
     (tmp_path/'model.json').write_text('{"model_id":"other"}')
     with pytest.raises(ValueError):build(tmp_path)
+
+
+def test_archive_keeps_prior_publication_on_same_day_revision(tmp_path):
+    from tools.build_signal_bundle import archive
+    documents(tmp_path)
+    path=tmp_path/'snapshot.json'
+    s=json.loads(path.read_text());s.update(mode='live',version='test');path.write_text(json.dumps(s))
+    a=build(tmp_path);archive(tmp_path,a)
+    original=(tmp_path/'history'/(a['market_date']+'-'+a['generation']+'.json')).read_bytes()
+    s['target']={'CASH':1};path.write_text(json.dumps(s))
+    archive(tmp_path,build(tmp_path))
+    assert len(json.loads((tmp_path/'history/index.json').read_text()))==2
+    assert (tmp_path/'history'/(a['market_date']+'-'+a['generation']+'.json')).read_bytes()==original

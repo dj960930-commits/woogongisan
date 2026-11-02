@@ -9,7 +9,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 FILES = ['V2_READINESS_REVIEW.md', 'V2_CANDIDATE.md', 'README.md', 'FREE_SCHEDULER_SETUP.md', 'ASSETS_GUIDE.md', 'TRADING_GUIDE.md', 'FINAL_REVIEW.md', 'GITHUB_SETUP.md', 'requirements.txt', 'engine.py',
-         'pipeline.py', 'market_data.py', 'comparison.py', 'notify.py', 'model_server.py', 'render.yaml', 'DEPLOY_MODEL_SERVER.md', 'prepare.py', 'model.py', 'setup_android.ps1', 'setup_android.py', 'bootstrap_android_tools.py', 'build_android.ps1',
+         'pipeline.py', 'price_outlook.py', 'market_data.py', 'comparison.py', 'notify.py', 'model_server.py', 'render.yaml', 'DEPLOY_MODEL_SERVER.md', 'prepare.py', 'model.py', 'setup_android.ps1', 'setup_android.py', 'bootstrap_android_tools.py', 'build_android.ps1',
          'trading_server.py', 'start_trading.ps1', 'check_meritz.ps1', 'active_model.json', 'strategy_parameters.json',
          '.gitignore', '.gitattributes']
 DIRS = ['models', 'data', 'site', 'android', 'tests', '.github', 'tools', 'trading', 'workers']

@@ -26,9 +26,27 @@ def build(site):
                 market_date=snapshot['market_date'], documents=docs)
 
 
+def archive(site,bundle):
+    snapshot=bundle['documents']['snapshot.json']
+    if snapshot.get('mode')!='live' or bundle['documents']['status.json'].get('state')!='ready':return
+    directory=site/'history';directory.mkdir(exist_ok=True)
+    name=bundle['market_date']+'-'+bundle['generation']+'.json'
+    path=directory/name
+    if not path.exists():
+        path.write_text(json.dumps(snapshot,ensure_ascii=False,allow_nan=False),encoding='utf-8')
+    entries=[]
+    for file in sorted(directory.glob('*.json')):
+        if file.name=='index.json':continue
+        value=json.loads(file.read_text(encoding='utf-8'))
+        entries.append(dict(market_date=value['market_date'],model_id=value['model_id'],
+            version=value['version'],file=file.name,generated_at=value.get('generated_at')))
+    (directory/'index.json').write_text(json.dumps(entries,ensure_ascii=False),encoding='utf-8')
+
+
 if __name__ == '__main__':
     site = ROOT / 'site'
     bundle = build(site)
+    archive(site,bundle)
     temporary = site / 'bundle.tmp'
     temporary.write_text(json.dumps(bundle, ensure_ascii=False, allow_nan=False), encoding='utf-8')
     temporary.replace(site / 'bundle.json')

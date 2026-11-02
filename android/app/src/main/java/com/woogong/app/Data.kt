@@ -49,6 +49,13 @@ object Data {
   require(kotlin.math.abs(sum-1)<1e-8);JSONObject(state)
   if(health.optString("state")=="ready")require(obj.getString("market_date")==health.getString("market_date"))
   val edit=prefs(c).edit().putString("snapshot",snap).putString("status",state).putString("sync_error","").putString("model_check_at",Instant.now().toString())
+  // Persist each received live publication; model/date revisions remain separate.
+  if(obj.optString("mode")=="live"&&health.optString("state")=="ready"){
+   val digest=java.security.MessageDigest.getInstance("SHA-256").digest(snap.toByteArray()).joinToString(""){"%02x".format(it)}
+   val directory=java.io.File(c.filesDir,"model-history").apply{mkdirs()}
+   val file=java.io.File(directory,"$digest.json")
+   if(!file.exists())file.writeText(snap)
+  }
   edit.apply()
   // Notify from the validated core pair before optional history downloads or account work.
   try{CloseAlerts.onSynced(c,obj,health)}catch(_:Exception){}

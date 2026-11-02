@@ -109,6 +109,11 @@ def main():
    data['performance']=build_comparison(nav,json.loads((ROOT/'runtime/benchmark-prices.json').read_text(encoding='utf-8')))
   except (ValueError,KeyError,OSError):
    data['performance']={'available':False,'message':'비교 자료 갱신 대기'}
+  from price_outlook import build as price_outlook
+  try:
+   data['price_outlook']=price_outlook(p,raw) if all(k in raw for k in ('TQQQ','BRK.B','GLD')) else {'available':False}
+  except (ValueError,KeyError,IndexError):
+   data['price_outlook']={'available':False,'message':'가격 시나리오 자료 확인 중'}
   write(SITE/'extended_backtest.json',extension);write(SITE/'snapshot.json',data);write(SITE/'model.json',model.metadata())
   write(SITE/'status.json',{**model.metadata(),'state':'ready','market_date':data['market_date'],'message':'원본 가격기준 대조 · 확정 종가 계산 완료','data_contract_id':'audited-mixed-close-v1','data_sources':data['data_sources'],'updated_at':now.isoformat()})
  except Exception as exc:

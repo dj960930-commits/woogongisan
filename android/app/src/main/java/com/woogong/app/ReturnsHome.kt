@@ -69,5 +69,6 @@ object ReturnsSummary {
   Text(Data.allocation(s),fontSize=23.sp,fontWeight=FontWeight.Bold)
   Text("${s.optString("market_date")} 미국 종가 · ${if(stale)"갱신 대기" else "갱신 완료"}",fontSize=11.sp,color=if(stale)Gold else scheme.onSurfaceVariant)
  }
+ PriceOutlook(s)
  LoanTiming(s.optJSONObject("loan_timing"),!stale,s.optString("market_date"),s.optString("valid_until"))
 }
