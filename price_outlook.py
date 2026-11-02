@@ -1,4 +1,5 @@
 """Historical return scenarios; not a validated price-prediction trading model."""
+from datetime import datetime,timezone
 import numpy as np
 import pandas as pd
 import pandas_market_calendars as calendars
@@ -44,6 +45,6 @@ def build(prices,raw):
                     unchanged_mae_return=float(np.mean(baseline)) if baseline else None,
                     historical_coverage=float(np.mean(covered)) if covered else None)))
         assets.append(dict(symbol=symbol,close=anchor,windows=windows))
-    return dict(version=VERSION,as_of=str(end.date()),currency='USD',assets=assets,
+    return dict(version=VERSION,issued_at=datetime.now(timezone.utc).isoformat(),as_of=str(end.date()),currency='USD',assets=assets,
         method='최근 최대 5년의 5·21·63거래일 누적 수익률 분포를 현재 종가에 적용. 하단·중앙·상단은 과거 10·50·90백분위.',
         limitation='과거 분포 시나리오이며 미래 적중확률 80%를 보장하지 않습니다. 배당·세금·비용·새로운 시장 충격은 반영하지 않습니다. 매매 신호와 별도입니다.')
