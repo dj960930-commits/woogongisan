@@ -20,10 +20,11 @@ object Data {
  } catch(e:Exception){true}
  fun sync(c:Context) {
   val base=SignalEndpoint.normalize(url(c))
+  val requestTime=System.currentTimeMillis()
   fun fetch(name:String,optional:Boolean=false):String? {
-   val connection=URL("$base/$name.json").openConnection() as HttpURLConnection
+   val connection=URL("$base/$name.json?check=$requestTime").openConnection() as HttpURLConnection
    try {
-    connection.connectTimeout=15000;connection.readTimeout=20000;connection.useCaches=false
+    connection.connectTimeout=15000;connection.readTimeout=20000;connection.useCaches=false;connection.setRequestProperty("Cache-Control","no-cache")
     if(optional&&connection.responseCode==404)return null
     require(connection.responseCode==200){"연결 오류 ${connection.responseCode}"}
     return connection.inputStream.bufferedReader().use{it.readText()}

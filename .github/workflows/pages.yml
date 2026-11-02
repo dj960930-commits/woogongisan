@@ -29,6 +29,7 @@ jobs:
           node-version: '22'
       - run: node tests/portfolio_web.mjs
       - run: node tests/performance_web.mjs
+      - run: node tests/free_scheduler.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

@@ -1,10 +1,18 @@
 name: Woogong close calculation
 on:
   workflow_dispatch:
+    inputs:
+      external_close_date:
+        description: 'External scheduler: completed US session (YYYY-MM-DD)'
+        required: false
+        type: string
+        default: ''
   schedule:
     # DST/standard/early close all handled by the NYSE calendar in Python.
     # Include early-close windows; GitHub scheduling may be delayed.
     - cron: '7,22,37,52 17-23 * * 1-5'
+env:
+  REQUESTED_CLOSE: ${{ inputs.external_close_date || '' }}
 permissions:
   contents: write
   pages: write
@@ -20,30 +28,44 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: pip
       - run: pip install -r requirements.txt
+      - name: Check completed session and prior publication
+        id: close
+        run: python tools/close_gate.py
       - uses: actions/cache/restore@v4
+        if: steps.close.outputs.proceed == 'true'
         with:
           path: runtime
           key: deliveries-${{ github.run_id }}
           restore-keys: deliveries-
       - run: python -m pytest tests -q
+        if: steps.close.outputs.proceed == 'true'
       - uses: actions/setup-node@v4
+        if: steps.close.outputs.proceed == 'true'
         with:
           node-version: '22'
       - run: node tests/portfolio_web.mjs
+        if: steps.close.outputs.proceed == 'true'
       - run: node tests/performance_web.mjs
+        if: steps.close.outputs.proceed == 'true'
+      - run: node tests/free_scheduler.mjs
+        if: steps.close.outputs.proceed == 'true'
       - name: Calculate complete close only
+        if: steps.close.outputs.proceed == 'true'
         run: |
-          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ] && [ -z "$REQUESTED_CLOSE" ]; then
             python pipeline.py --live --force-refresh
           else
             python pipeline.py --live
           fi
       - name: Save derived results
+        if: steps.close.outputs.proceed == 'true'
         run: |
           git config user.name woogong-data
           git config user.email woogong-data@users.noreply.github.com
@@ -51,20 +73,25 @@ jobs:
           git diff --cached --quiet || git commit -m "Update Woogong derived close snapshot"
           git push
       - uses: actions/configure-pages@v5
+        if: steps.close.outputs.proceed == 'true'
       - uses: actions/upload-pages-artifact@v4
+        if: steps.close.outputs.proceed == 'true'
         with:
           path: site
       - uses: actions/deploy-pages@v4
+        if: steps.close.outputs.proceed == 'true'
         id: deployment
       - name: Send to configured personal devices after deployment
+        if: steps.close.outputs.proceed == 'true'
         run: python notify.py
         env:
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
           FCM_TOKENS: ${{ secrets.FCM_TOKENS }}
       - uses: actions/cache/save@v4
-        if: always()
+        if: always() && steps.close.outputs.proceed == 'true'
         with:
           path: runtime
           key: deliveries-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Verify published calculation state
+        if: steps.close.outputs.proceed == 'true'
         run: python -c "import json; s=json.load(open('site/status.json')); assert s['state']=='ready', 'Market calculation is unavailable; published stale/error labels are preserved'"
