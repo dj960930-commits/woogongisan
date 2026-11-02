@@ -12,7 +12,13 @@ object Data {
   val cached=prefs(c).getString(name,null)
   return JSONObject(cached?:c.assets.open("$name.json").bufferedReader().use{it.readText()})
  }
- fun url(c:Context)=prefs(c).getString("url",BuildConfig.SIGNAL_BASE_URL)!!.trimEnd('/')
+ fun url(c:Context):String {
+  val stored=prefs(c).getString("url",BuildConfig.SIGNAL_BASE_URL)!!.trimEnd('/')
+  if(stored in setOf("https://eastgenie0909-cell.github.io/woogongisan","https://github.com/eastgenie0909-cell/woogongisan")){
+   prefs(c).edit().putString("url",BuildConfig.SIGNAL_BASE_URL).apply();return BuildConfig.SIGNAL_BASE_URL
+  }
+  return stored
+ }
  private fun identity(a:JSONObject)=ModelIdentity(a.optInt("schema_version"),a.optString("model_id"),a.optString("model_fingerprint"))
  fun sameModel(a:JSONObject,b:JSONObject):Boolean = identity(a).matches(identity(b))
  fun stale(s:JSONObject,status:JSONObject):Boolean = try {
@@ -48,8 +54,7 @@ object Data {
   try{CloseAlerts.onSynced(c,obj,health)}catch(_:Exception){}
   val historyEdit=prefs(c).edit()
   for(name in listOf("backtest","extended_backtest")){
-   historyEdit.remove(name)
-   try{val back=get(name);if(sameModel(obj,JSONObject(back)))historyEdit.putString(name,back)}catch(_:Exception){}
+   try{val back=get(name);if(sameModel(obj,JSONObject(back)))historyEdit.putString(name,back) else historyEdit.remove(name)}catch(_:Exception){}
   }
   historyEdit.apply()
   try{PortfolioStore.recordDaily(c,obj,health);prefs(c).edit().remove("portfolio_error").apply()}

@@ -50,6 +50,16 @@ class MainActivity:ComponentActivity(){
  @Composable fun App(){
   var tab by remember{mutableIntStateOf(0)};var snap by remember{mutableStateOf(Data.load(this,"snapshot"))};var status by remember{mutableStateOf(Data.load(this,"status"))}
   var back by remember{mutableStateOf(Data.load(this,"backtest"))};var busy by remember{mutableStateOf(false)};var error by remember{mutableStateOf("")};val scope=rememberCoroutineScope()
+  DisposableEffect(Unit){
+   val prefs=Data.prefs(this@MainActivity)
+   val listener=android.content.SharedPreferences.OnSharedPreferenceChangeListener{_,key->
+    if(key in setOf("snapshot","status","backtest","sync_error")){
+     snap=Data.load(this@MainActivity,"snapshot");status=Data.load(this@MainActivity,"status");back=Data.load(this@MainActivity,"backtest")
+    }
+   }
+   prefs.registerOnSharedPreferenceChangeListener(listener)
+   onDispose{prefs.unregisterOnSharedPreferenceChangeListener(listener)}
+  }
   fun refresh(){scope.launch{busy=true;error="";try{withContext(Dispatchers.IO){Data.sync(this@MainActivity)};snap=Data.load(this@MainActivity,"snapshot");status=Data.load(this@MainActivity,"status");back=Data.load(this@MainActivity,"backtest");WoogongWidget.updateAll(this@MainActivity)}catch(e:Exception){error=e.message?:"갱신 실패"}finally{busy=false}}}
   LaunchedEffect(Unit){if(Data.url(this@MainActivity).isNotBlank())refresh()}
   val clockTick by produceState(0L){while(true){delay(1000);value=value+1}}
@@ -76,7 +86,7 @@ class MainActivity:ComponentActivity(){
        FilterChip(selected=assetView==1,onClick={assetView=1},label={Text("수동 기록")})
        FilterChip(selected=assetView==2,onClick={assetView=2},label={Text("운용 센터")})
       }
-      when(assetView){0->MeritzScreen();1->PortfolioScreen(snap,status,resumeTick);else->TradingScreen()}
+      when(assetView){0->MeritzScreen(snap,status);1->PortfolioScreen(snap,status,resumeTick);else->TradingScreen()}
      }
      2->{
       Text("왜 이 목표인가요?",style=MaterialTheme.typography.headlineSmall,fontWeight=FontWeight.Bold)

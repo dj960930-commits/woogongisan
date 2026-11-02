@@ -16,7 +16,7 @@ internal fun timingFresh(available:Boolean,supported:Boolean,until:String,now:In
  val now by produceState(Instant.now()){while(true){delay(1000);value=Instant.now()}}
  val fresh=timingFresh(available,t?.optBoolean("supported")==true,validUntil,now)
  Panel{
-  Text("풀매수 타이밍 · 연구 신호",fontWeight=FontWeight.Bold,color=Mint)
+  Text("공격 전환 · 연구 신호",fontWeight=FontWeight.Bold,color=Mint)
   Text(if(fresh)t!!.optString("label") else "판정 보류 · 최신 검증 신호 필요",fontSize=19.sp,fontWeight=FontWeight.Bold)
   Text("기준 $date",fontSize=11.sp)
   TextButton(onClick={expanded=!expanded}){Text(if(expanded)"신호 설명 접기" else "신호 조건·차입 유의사항")}

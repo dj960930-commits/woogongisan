@@ -16,8 +16,8 @@ android {
         applicationId = "com.woogong.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 16
-        versionName = "0.6.6"
+        versionCode = 20000
+        versionName = "2.0-rc1"
         buildConfigField("String", "SIGNAL_BASE_URL", "\"https://dj960930-commits.github.io/woogongisan\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["usesCleartextTraffic"] = "false"

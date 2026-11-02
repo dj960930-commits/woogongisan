@@ -15,12 +15,18 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.time.Instant
 
-@Composable internal fun MeritzScreen(){
+@Composable internal fun MeritzScreen(snap:JSONObject,status:JSONObject){
  val c=LocalContext.current;val scope=rememberCoroutineScope()
  var data by remember{mutableStateOf(MeritzAccount.cached(c))};var settings by remember{mutableStateOf(!MeritzAccount.connected(c))}
  var appKey by remember{mutableStateOf("")};var secret by remember{mutableStateOf("")};var busy by remember{mutableStateOf(false)};var message by remember{mutableStateOf("")}
  fun refresh(){if(busy)return;scope.launch{busy=true;message="";try{data=withContext(Dispatchers.IO){MeritzAccount.sync(c)}}catch(e:Exception){message=e.message?:"메리츠 조회 실패"}finally{busy=false}}}
  LaunchedEffect(Unit){if(MeritzAccount.connected(c))refresh()}
+ DisposableEffect(Unit){
+  val prefs=Data.prefs(c)
+  val listener=android.content.SharedPreferences.OnSharedPreferenceChangeListener{_,key->if(key=="meritz_account_v1"||key=="meritz_sync_failed")data=MeritzAccount.cached(c)}
+  prefs.registerOnSharedPreferenceChangeListener(listener)
+  onDispose{prefs.unregisterOnSharedPreferenceChangeListener(listener)}
+ }
  Text("내 메리츠 자산",fontSize=25.sp,fontWeight=FontWeight.Bold)
  Text("메리츠 Open API에서 잔고와 평가액을 자동으로 가져옵니다.",fontSize=12.sp)
  if(message.isNotEmpty())Panel{Text(message,color=MaterialTheme.colorScheme.error)}
@@ -56,6 +62,7 @@ import java.time.Instant
     HorizontalDivider()
    }
   }
+  MeritzPlan(a,snap,status,stale)
   Panel{
    Text("일별 자산",fontWeight=FontWeight.Bold);val history=data!!.getJSONArray("history")
    Text("하루 한 건씩 자동 기록합니다. 증감에는 입출금이 포함되며 투자 수익률과 다릅니다.",fontSize=11.sp)

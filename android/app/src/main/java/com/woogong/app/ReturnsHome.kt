@@ -60,7 +60,7 @@ object ReturnsSummary {
     }
     HorizontalDivider(color=scheme.outlineVariant)
     Text("동일 기간 시작 0% · USD · 세전",fontSize=11.sp,color=scheme.onSurfaceVariant)
-    Text("모델 시뮬레이션 · 다음 종가·편도 0.1% 비용 반영\n비교 종목: 배당·분할 반영 수정종가, 매수 후 보유",fontSize=10.sp,color=scheme.onSurfaceVariant,lineHeight=16.sp)
+    Text("운영 추적 · 다음 종가·편도 0.1%·현금금리 0\n동결 연구(다음 시가·현금수익 반영)와 계산 조건이 다릅니다.\n비교 종목: 배당·분할 반영 수정종가, 매수 후 보유",fontSize=10.sp,color=scheme.onSurfaceVariant,lineHeight=16.sp)
    }
   }
  }
