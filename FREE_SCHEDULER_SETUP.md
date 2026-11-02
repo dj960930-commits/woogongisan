@@ -6,7 +6,7 @@ Cloudflare Workers Free의 Cron이 GitHub Actions `daily.yml`을 호출한다. �
 
 1. `python tools/build_free_scheduler.py`로 단일 배포 코드 `release/free-scheduler-worker.mjs`를 생성한다.
 2. Cloudflare Worker `woogongisan-close-scheduler`에 코드를 배포한다.
-3. GitHub fine-grained PAT을 **eastgenie0909-cell/woogongisan 한 개**, **Actions read/write** 권한으로 직접 발급한다. 토큰을 코드·저장소·채팅에 넣지 않는다.
+3. GitHub fine-grained PAT을 **dj960930-commits/woogongisan 한 개**, **Actions read/write** 권한으로 직접 발급한다. 토큰을 코드·저장소·채팅에 넣지 않는다.
 4. Cloudflare Worker의 암호화 Secret `GITHUB_TOKEN`에 직접 저장한다. 기존 PC Git 인증 토큰을 복사하지 않는다.
 5. Cron Trigger `*/5 17-23 * * 1-5` (UTC)를 추가한다. 토큰 만료 전에 교체한다.
 

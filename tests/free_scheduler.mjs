@@ -23,7 +23,7 @@ function fake({published=status,runs=[],runsStatus=200,dispatchStatus=204}={}){
  const fetcher=async(url,options)=>{
   calls.push({url,options});assert.ok(!url.includes(token));
   if(url.includes('/status.json?close=')){assert.equal(options.headers.Authorization,undefined);return Response.json(published);}
-  assert.ok(url.startsWith('https://api.github.com/repos/eastgenie0909-cell/woogongisan/'));
+  assert.ok(url.startsWith('https://api.github.com/repos/dj960930-commits/woogongisan/'));
   assert.equal(options.headers.Authorization,'Bearer '+token);
   assert.equal(options.redirect,'error');
   if(url.includes('/runs?'))return Response.json({workflow_runs:runs},{status:runsStatus});

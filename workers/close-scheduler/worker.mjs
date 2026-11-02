@@ -1,7 +1,7 @@
 import {sessions, coverageEnd} from './calendar.mjs';
 
-const ROOT='https://api.github.com/repos/eastgenie0909-cell/woogongisan';
-const STATUS='https://eastgenie0909-cell.github.io/woogongisan/status.json';
+const ROOT='https://api.github.com/repos/dj960930-commits/woogongisan';
+const STATUS='https://dj960930-commits.github.io/woogongisan/status.json';
 const ACTIVE=new Set(['queued','in_progress','waiting','pending','requested']);
 
 export function dueSession(now, rows=sessions){

@@ -1,7 +1,7 @@
 # 우공이산 GitHub 연결
 
-- 저장소: https://github.com/eastgenie0909-cell/woogongisan
-- 신호/화면 주소: https://eastgenie0909-cell.github.io/woogongisan/
+- 저장소: https://github.com/dj960930-commits/woogongisan
+- 신호/화면 주소: https://dj960930-commits.github.io/woogongisan/
 - GitHub 설정 → Pages → Build and deployment → Source: GitHub Actions
 - 첫 배포: `Publish Woogongisan` Actions. `main` 코드 변경 시 테스트 후 정적 화면을 게시한다.
 - 종가 갱신: `Woogong close calculation` Actions. NYSE 일정·완료 종가를 확인해 새 결과를 계산하고 게시한다.
@@ -39,7 +39,7 @@ TIINGO_TOKEN 등록은 필요하지 않으며 더 이상 이 파이프라인에�
 ## 앱 연결
 
 0.5.2부터 위 주소를 기본 결과 서버로 사용한다. 기존 버전은 설정 → GitHub Pages 연결에
-`https://eastgenie0909-cell.github.io/woogongisan`을 저장하고 최신 결과를 확인한다.
+`https://dj960930-commits.github.io/woogongisan`을 저장하고 최신 결과를 확인한다.
 모델 결과 주소이므로 메리츠 인증키나 개인 자산을 전송하지 않는다.
 0.6.0 Android의 **내 자산 → 메리츠 계좌**는 메리츠에 직접 연결한다. 키는 그 화면에 입력하며
 기기에 암호화 저장한다. Pages 연결 설정에 메리츠 키를 넣지 않는다.
