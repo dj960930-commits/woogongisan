@@ -31,6 +31,32 @@ def test_wrong_adjustment_basis_is_rejected():
         feed.append_verified(old,incoming,old.index[-1],'QQQ')
 
 
+def test_known_missing_distribution_restores_frozen_basis_without_waiving_checks():
+    days=feed.calendars.get_calendar('NYSE').schedule(start_date='2026-06-01',end_date='2026-11-04').index
+    raw=pd.Series(np.linspace(10,12,len(days)),index=days)
+    ex=pd.Timestamp('2026-10-01');factor=1-.017/raw.loc[raw.index<ex].iloc[-1]
+    corrected=raw.copy();corrected.loc[corrected.index<ex]*=factor
+    old=corrected.loc[:'2026-10-20']
+    obj={'chart':{'result':[{'meta':{'symbol':'BITO','currency':'USD','exchangeTimezoneName':'America/New_York'},
+        'timestamp':[int((d.tz_localize('America/New_York')+pd.Timedelta(hours=9,minutes=30)).timestamp()) for d in days],
+        'indicators':{'quote':[{'close':raw.tolist()}],'adjclose':[{'adjclose':raw.tolist()}]}}]}}
+    expected=days[-1]
+    repaired,proof=feed.restore_known_distribution(obj,raw,old,expected,'BITO')
+    combined,report=feed.append_verified(old,repaired,expected,'BITO')
+    pd.testing.assert_series_equal(combined.loc[old.index],old)
+    assert proof['official_distribution']==.017381 and report['handoff_max_daily_return_gap']<1e-10
+    # Metadata-only omission with correct prices must not double-adjust.
+    same,proof=feed.restore_known_distribution(obj,corrected,old,expected,'BITO')
+    assert proof is None
+    pd.testing.assert_series_equal(same,corrected)
+    wrong=raw.copy();wrong.iloc[-20]*=1.01
+    with pytest.raises(ValueError):feed.restore_known_distribution(obj,wrong,old,expected,'BITO')
+    obj['chart']['result'][0]['events']={'dividends':{'known':{'date':int((ex.tz_localize('America/New_York')+pd.Timedelta(hours=9,minutes=30)).timestamp()),'amount':.017}}}
+    unchanged,proof=feed.restore_known_distribution(obj,raw,old,expected,'BITO')
+    assert proof is None
+    with pytest.raises(ValueError):feed.append_verified(old,unchanged,expected,'BITO')
+
+
 def test_old_revision_is_reported_but_never_overwrites_frozen_prefix():
     old=series();incoming=old.copy();incoming.iloc[5]*=1.01
     combined,report=feed.append_verified(old,incoming,old.index[-1],'BRK.B')

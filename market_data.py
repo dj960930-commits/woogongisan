@@ -92,6 +92,36 @@ def append_verified(old, incoming, expected, symbol):
         'appended_sessions': len(extension), 'frozen_prefix_unchanged': combined.loc[old.index].equals(old)}
 
 
+def restore_known_distribution(obj, incoming, old, expected, symbol):
+    """Repair a confirmed missing Yahoo event, then retain the strict handoff test.
+
+    ProShares BITO 2026-10-01 distribution is $0.017381. The frozen Yahoo
+    adjclose uses its three-decimal event representation ($0.017). This repair
+    is accepted only if ALL existing handoff checks pass afterwards.
+    """
+    if symbol!='BITO' or BASIS[symbol]!='adjclose':return incoming,None
+    ex_date=pd.Timestamp('2026-10-01')
+    events=obj['chart']['result'][0].get('events',{}).get('dividends',{})
+    dates={pd.Timestamp(v['date'],unit='s',tz='UTC').tz_convert('America/New_York').tz_localize(None).normalize() for v in events.values()}
+    if ex_date in dates or expected<ex_date:return incoming,None
+    # A correct feed with omitted event metadata needs no correction.
+    try:
+        append_verified(old,incoming,expected,symbol)
+        return incoming,None
+    except ValueError as error:
+        if str(error)!=f'{symbol}: price basis/handoff mismatch':raise
+    closes,_=parse_chart(obj,symbol,expected,'close')
+    previous=closes.loc[closes.index<ex_date]
+    if previous.empty or ex_date not in closes.index:raise ValueError('BITO: correction coverage missing')
+    factor=1-round(.017381,3)/float(previous.iloc[-1])
+    repaired=incoming.copy();repaired.loc[repaired.index<ex_date]*=factor
+    append_verified(old,repaired,expected,symbol)  # Never waive the tolerance.
+    return repaired,dict(ex_date='2026-10-01',official_distribution=.017381,
+        source_precision_distribution=.017,adjustment_factor=factor,
+        source='https://www.proshares.com/our-etfs/find-proshares-etfs',
+        reason='provider omitted known dividend; frozen handoff revalidated')
+
+
 def parse_btc(obj, expected):
     result = {}
     for row in obj['data']['ohlc']:
@@ -131,7 +161,9 @@ def fetch(expected, root=None, client=None):
             if symbol in ('TQQQ', 'BRK.B'):
                 adjusted, _ = parse_chart(payload, symbol, expected, 'adjclose')
                 benchmarks[symbol] = {str(d.date()): float(v) for d, v in adjusted.items()}
+            series,correction=restore_known_distribution(payload,series,frozen[symbol],expected,symbol)
             combined, report = append_verified(frozen[symbol], series, expected, symbol)
+            if correction:report['restored_distribution']=correction
             prices = prices.reindex(prices.index.union(combined.index))
             prices[symbol] = combined
             reports.append(report)
