@@ -34,7 +34,7 @@ object ReturnsSummary {
  }
 }
 
-@Composable internal fun ReturnsHome(s:JSONObject,stale:Boolean){
+@Composable internal fun ReturnsHome(s:JSONObject,stale:Boolean,onReview:()->Unit={}){
  val c=LocalContext.current
  var period by remember{mutableStateOf(Data.prefs(c).getString("performance_period","1m")?:"1m")}
  val window=Performance.read(s,period);val scheme=MaterialTheme.colorScheme;val colors=PerformanceColors
@@ -60,7 +60,6 @@ object ReturnsSummary {
     }
     HorizontalDivider(color=scheme.outlineVariant)
     Text("동일 기간 시작 0% · USD · 세전",fontSize=11.sp,color=scheme.onSurfaceVariant)
-    Text(s.optJSONObject("performance")?.optString("basis")?.takeIf{it.isNotBlank()}?:"계산 기준을 확인해 주세요.",fontSize=10.sp,color=scheme.onSurfaceVariant,lineHeight=16.sp)
    }
   }
  }
@@ -69,6 +68,7 @@ object ReturnsSummary {
   Text(Data.allocation(s),fontSize=23.sp,fontWeight=FontWeight.Bold)
   Text("${s.optString("market_date")} 미국 종가 · ${if(stale)"갱신 대기" else "갱신 완료"}",fontSize=11.sp,color=if(stale)Gold else scheme.onSurfaceVariant)
  }
+ if(AllocationChange.pending(c)!=null&&!stale)Panel{Text("확인할 배분 변경이 있어요",fontWeight=FontWeight.Bold);TextButton(onClick=onReview){Text("변경 전·후 보기")}}
  PriceOutlook(s)
  LoanTiming(s.optJSONObject("loan_timing"),!stale,s.optString("market_date"),s.optString("valid_until"))
 }

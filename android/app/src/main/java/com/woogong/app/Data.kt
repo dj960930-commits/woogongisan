@@ -25,6 +25,7 @@ object Data {
   !sameModel(s,status) || s.optString("market_date")!=status.optString("market_date") || s.optString("mode")!="live" || status.optString("state")!="ready" || Instant.now().isAfter(Instant.parse(s.getString("valid_until")))
  } catch(e:Exception){true}
  fun sync(c:Context) {
+  val previous=try{load(c,"snapshot")}catch(_:Exception){null}
   val base=SignalEndpoint.normalize(url(c))
   val requestTime=System.currentTimeMillis()
   fun fetch(name:String,optional:Boolean=false):String? {
@@ -58,7 +59,7 @@ object Data {
   }
   edit.apply()
   // Notify from the validated core pair before optional history downloads or account work.
-  try{CloseAlerts.onSynced(c,obj,health)}catch(_:Exception){}
+  try{CloseAlerts.onSynced(c,obj,health,previous)}catch(_:Exception){}
   val historyEdit=prefs(c).edit()
   for(name in listOf("backtest","extended_backtest")){
    try{val back=get(name);if(sameModel(obj,JSONObject(back)))historyEdit.putString(name,back) else historyEdit.remove(name)}catch(_:Exception){}

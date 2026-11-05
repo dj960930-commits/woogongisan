@@ -1,4 +1,4 @@
-import {windowFor,graph,series,percent,periods} from './performance.mjs?v=200';
+import {windowFor,graph,series,percent,periods} from './performance.mjs?v=201';
 let data=null,period='1m';
 const selected=new Map();
 const variants=[['compact','요약 · 3×2','작은 공간에서도 세 수익률을 또렷하게.'],['graph','그래프 · 5×2','세 개의 흐름을 한눈에.'],['detail','상세 · 5×3','그래프와 모델 목표, 상대 성과까지.']];

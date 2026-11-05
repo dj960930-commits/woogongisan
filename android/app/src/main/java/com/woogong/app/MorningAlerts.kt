@@ -14,7 +14,7 @@ internal object MorningAlerts {
  fun schedule(c:Context){
   val manager=c.getSystemService(AlarmManager::class.java);val operation=pending(c)
   if(!CloseAlerts.enabled(c)){manager.cancel(operation);return}
-  val next=MorningPolicy.next(Instant.now(),calendar(c)).toEpochMilli()
+  val event=AlertSchedule.next(Instant.now(),calendar(c));val next=event.at.toEpochMilli()
   try{
    if(Build.VERSION.SDK_INT<31||manager.canScheduleExactAlarms())manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,next,operation)
    else manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,next,operation)
@@ -23,25 +23,32 @@ internal object MorningAlerts {
  }
  fun deliver(c:Context,now:Instant=Instant.now())=synchronized(lock){
   if(!CloseAlerts.enabled(c)||!CloseAlerts.allowed(c))return@synchronized
-  val calendar=calendar(c);val day=MorningPolicy.dueDay(now,calendar)?:return@synchronized
-  val key=day.toString();val prefs=Data.prefs(c)
-  if(prefs.getString("morning_last_day",null)==key)return@synchronized
+  val calendar=calendar(c);val prefs=Data.prefs(c)
+  val delivered=prefs.getStringSet("alert_events_delivered",emptySet())!!.toMutableSet()
+  val events=AlertSchedule.due(now,calendar).filter{it.key !in delivered}
+  for(event in events){
+  val day=event.day
   val s=Data.load(c,"snapshot");val h=Data.load(c,"status");val expected=calendar.expected(now)
   val fresh=MorningPolicy.fresh(s,h,expected,now)
-  val closed=calendar.known(day)&&calendar.session(day)==null
+  if(event.kind=="close_check"){delivered+=event.key;continue}
   val title:String;val body:String
-  if(fresh&&!closed){
+  if(fresh&&event.kind=="close_deadline"){
    CloseAlerts.onSynced(c,s,h)
-   if(prefs.getString("close_alert_last",null)!=CloseAlertPolicy.identity(s,h,now))return@synchronized
+   if(prefs.getString("close_alert_last",null)!=CloseAlertPolicy.identity(s,h,now))continue
   }else{
    when{
-    !calendar.known(day)->{title="우공이산 · 거래일 확인 필요";body="거래 일정 갱신이 필요합니다. 앱에서 최신 결과를 확인하세요."}
-    closed->{title="우공이산 · 미국장 휴장";body=if(fresh)"최신 종가 $expected · 모델 목표 ${Data.allocation(s)}" else "휴장일입니다. 저장된 결과 ${s.optString("market_date")} · 최신 자료 확인 필요"}
-    else->{title="우공이산 · 장 마감 결과 대기";body="미국장 $day 종료 · 서버의 확정 종가 계산을 확인 중입니다. 새 결과가 준비되면 알려드립니다."}
+    event.kind=="calendar_unknown"->{title="우공이산 · 거래 일정 확인";body="거래 일정을 갱신해 주세요."}
+    event.kind=="holiday_eve"->{title="내일 미국장 휴장";body="$day · 새 장 마감 신호는 없습니다."}
+    event.kind=="holiday_today"->{title="오늘 미국장 휴장";body="$day · 최근 배분을 확인해 주세요."}
+    else->{title="장 마감 결과 확인 지연";body="장 종료 후 20분이 지났습니다. 결과를 계속 확인하고 준비되면 바로 알려드릴게요."}
    }
-   if(!CloseAlerts.post(c,3661,title,body))return@synchronized
+   val id=when(event.kind){"holiday_eve"->3663;"holiday_today"->3665;else->3661}
+   if(!CloseAlerts.post(c,id,title,body))continue
   }
-  prefs.edit().putString("morning_last_day",key).putString("morning_last_at",now.toString()).apply()
+  delivered+=event.key
+  prefs.edit().putString("morning_last_day",day.toString()).putString("morning_last_at",now.toString()).apply()
+  }
+  prefs.edit().putStringSet("alert_events_delivered",delivered.sortedBy{it.substringAfter(':')}.takeLast(100).toSet()).apply()
  }
  fun enqueueModel(c:Context){
   WorkManager.getInstance(c).enqueueUniqueWork("close-model-refresh",ExistingWorkPolicy.REPLACE,OneTimeWorkRequestBuilder<ModelSyncWorker>().setBackoffCriteria(BackoffPolicy.LINEAR,30,java.util.concurrent.TimeUnit.SECONDS).setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST).build())
@@ -50,10 +57,8 @@ internal object MorningAlerts {
 class MorningAlarmReceiver:BroadcastReceiver(){
  override fun onReceive(c:Context,intent:Intent){
   MorningAlerts.schedule(c)
-  if(intent.action=="com.woogong.app.CLOSE_CHECK"){
-   try{MorningAlerts.deliver(c)}catch(_:Exception){}
-   MorningAlerts.enqueueModel(c)
-  }
+  try{MorningAlerts.deliver(c)}catch(_:Exception){}
+  MorningAlerts.enqueueModel(c)
  }
 }
 class ModelSyncWorker(c:Context,p:WorkerParameters):Worker(c,p){

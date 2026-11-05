@@ -17,6 +17,7 @@ class WoogongApp:Application(){
  override fun onConfigurationChanged(config:android.content.res.Configuration){super.onConfigurationChanged(config);WoogongWidget.updateAll(this)}
  override fun onCreate(){super.onCreate()
   getSystemService(NotificationManager::class.java).createNotificationChannel(NotificationChannel("close","장 마감 결과",NotificationManager.IMPORTANCE_DEFAULT))
+  getSystemService(NotificationManager::class.java).createNotificationChannel(NotificationChannel("allocation_changes_v1","목표 배분 변경",NotificationManager.IMPORTANCE_HIGH).apply{enableVibration(true);description="자산 배분이 크게 바뀐 날 소리와 상단 알림으로 안내합니다."})
   MorningAlerts.schedule(this)
   WorkManager.getInstance(this).enqueueUniquePeriodicWork("fallback-sync",ExistingPeriodicWorkPolicy.UPDATE,PeriodicWorkRequestBuilder<SyncWorker>(15,TimeUnit.MINUTES).setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build())
  }

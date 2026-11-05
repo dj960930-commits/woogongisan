@@ -23,12 +23,12 @@ import androidx.compose.ui.unit.sp
  LaunchedEffect(resumeTick){allowed=CloseAlerts.allowed(c);exact=MorningAlerts.exactAllowed(c);MorningAlerts.schedule(c)}
  Panel{
   Text("장 마감·휴장일 알림",fontWeight=FontWeight.Bold)
-  Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween){Text("매일 장 마감 확인");Switch(checked=enabled,onCheckedChange={enabled=it;CloseAlerts.enable(c,it)})}
+  Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween){Text("장 마감·휴장 안내");Switch(checked=enabled,onCheckedChange={enabled=it;CloseAlerts.enable(c,it)})}
   Text(if(!enabled)"앱 알림 꺼짐" else if(allowed)"휴대폰 알림 허용됨" else "휴대폰에서 우공이산 알림을 허용해주세요.",color=if(enabled&&allowed)Mint else Gold)
-  Text("미국장 마감 5분 뒤 확인을 시작하고, 새 확정 종가 결과가 게시되면 알립니다. 조기 폐장·서머타임을 반영하며 휴장일에도 최신 결과를 안내합니다. 서버가 아직 계산 중이면 대기 상태를 표시합니다.",fontSize=12.sp)
+  Text("마감 5분 뒤 첫 확인, 20분 뒤 추가 확인을 예약합니다. 배분이 바뀌면 소리·상단 알림과 앱 팝업으로 알려드려요. 휴장 전날과 당일에도 평소 아침 시간에 안내합니다.",fontSize=12.sp)
   Text(if(exact)"장 마감 확인 시간 예약 가능" else "정확한 확인 시간 허용 필요 · 현재는 지연 가능한 예약",color=if(exact)Mint else Gold,fontSize=12.sp)
   if(Build.VERSION.SDK_INT>=31&&!exact)TextButton(onClick={c.startActivity(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,Uri.parse("package:"+c.packageName)))}){Text("알람 및 리마인더 허용하기")}
-  Text("결과 게시까지의 시간과 기기 절전·통신에 따라 결과 알림은 늦어질 수 있습니다. 보조 조회는 약 15분 간격입니다. 현재 배포에는 Firebase 서버 푸시 연결이 없습니다.",fontSize=11.sp)
+  Text("20분 시점에도 결과가 없으면 지연을 알리고, 준비되는 대로 최종 결과를 안내합니다.",fontSize=11.sp)
   fun localTime(raw:String?)=try{Instant.parse(raw).atZone(MorningPolicy.korea).format(DateTimeFormatter.ofPattern("MM-dd HH:mm:ss"))+" (한국시간)"}catch(_:Exception){"기록 없음"}
   val next=Data.prefs(c).getLong("morning_next_at",0)
   if(enabled&&next>0)Text("다음 확인 예약: "+localTime(Instant.ofEpochMilli(next).toString()),fontSize=11.sp)

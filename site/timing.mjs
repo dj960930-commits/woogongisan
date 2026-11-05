@@ -13,6 +13,6 @@ export function refreshTimingCards(root,t,available=false,date='—',now=Date.no
 }
 export function timingCard(t,available=false,date='—'){
  const valid=timingAvailable(t,available);
- return `<section class="card" data-loan-timing style="margin-bottom:20px;border-left:4px solid ${valid&&t.phase==='entry'?'#7964d9':'#b4b8c8'}"><div class="eyebrow">LOAN TIMING / RESEARCH</div><div class="card-head"><h2>풀매수 타이밍</h2><span class="badge">연구 신호</span></div><h3 data-timing-label>${esc(valid?t.label:'판정 보류 · 최신 검증 신호 필요')}</h3><p class="caption" data-timing-date>기준 ${esc(date)}${!valid&&t?.label?' · 과거 상태: '+esc(t.label):''}</p><details><summary>신호 조건·차입 유의사항</summary><p>${esc(t?.entry_rule||'방어 → 공격 전환 첫 종가에 진입 조건을 확인합니다.')}</p><p class="caption">${esc(t?.exit_rule||'첫 공격 종료 시 차입분 매도·상환 검토. 완제 전 재차입 금지.')}</p><p>${esc(t?.scope||'마통 한도 전액 사용을 승인하는 신호가 아닙니다.')}</p><p>${esc(t?.checks||'은행 부채·금리·상환 여력 미확인')}</p><p class="caption">${esc(t?.risk||'차입 실행·주문 증액과 연결되지 않은 연구 표시입니다.')}</p><p class="caption">규칙 ${esc(t?.rule_id||'연결 대기')} · 모델 변경 시 다시 검증</p></details></section>`;
+ return `<section class="card" data-loan-timing><h2>신규 차입 신호</h2><h3 data-timing-label>${esc(valid?t.label:'최신 결과 확인 중')}</h3><p class="caption" data-timing-date>기준 ${esc(date)}</p></section>`;
 }
-
+export function timingDetails(t){return `<h3>신규 차입 신호 조건</h3><p>${esc(t?.entry_rule||'방어에서 공격으로 전환하는 날을 확인합니다.')}</p><p>${esc(t?.exit_rule||'공격 종료 시 차입분 정리를 검토합니다.')}</p><p>${esc(t?.checks||'은행 부채·금리·상환 여력은 직접 확인해야 합니다.')}</p><p>${esc(t?.risk||'자동 차입이나 주문 증액을 실행하지 않습니다.')}</p>`;}
