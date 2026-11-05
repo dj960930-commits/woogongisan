@@ -68,12 +68,12 @@ class MainActivity:ComponentActivity(){
   LaunchedEffect(resumeTick){snap=Data.load(this@MainActivity,"snapshot");status=Data.load(this@MainActivity,"status");back=Data.load(this@MainActivity,"backtest");if(MeritzAccount.connected(this@MainActivity))try{withContext(Dispatchers.IO){MeritzAccount.sync(this@MainActivity)}}catch(_:Exception){}}
   val stale=remember(clockTick,snap,status,error){Data.stale(snap,status)||error.isNotEmpty()||Data.prefs(this@MainActivity).getString("sync_error","")!!.isNotEmpty()}
   AllocationPopup(snap,stale,resumeTick+reviewRequest)
-  val icons=listOf(Icons.Outlined.Home,Icons.Outlined.AccountBalanceWallet,Icons.Outlined.Lightbulb,Icons.Outlined.ShowChart,Icons.Outlined.Settings)
+  val icons=listOf(Icons.Outlined.Home,Icons.Outlined.AccountBalanceWallet,Icons.Outlined.Lightbulb,Icons.Outlined.ShowChart,Icons.Outlined.Settings,Icons.Outlined.Timeline)
   Scaffold(modifier=Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)),containerColor=MaterialTheme.colorScheme.background,
    topBar={Row(Modifier.fillMaxWidth().statusBarsPadding().padding(horizontal=24.dp,vertical=18.dp),horizontalArrangement=Arrangement.SpaceBetween,verticalAlignment=Alignment.CenterVertically){
     Column(Modifier.weight(1f)){Text("우공이산",maxLines=1,overflow=TextOverflow.Ellipsis,fontSize=25.sp,fontWeight=FontWeight.ExtraBold,letterSpacing=(-1).sp);Text("차분하게, 더 멀리",fontSize=11.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)}
     Surface(color=MaterialTheme.colorScheme.primaryContainer,shape=RoundedCornerShape(12.dp)){Text(snap.optString("version").removePrefix("우공 "),Modifier.padding(12.dp,8.dp),fontSize=10.sp,color=MaterialTheme.colorScheme.onPrimaryContainer,fontWeight=FontWeight.Bold)}
-   }},bottomBar={NavigationBar(containerColor=MaterialTheme.colorScheme.surface,tonalElevation=0.dp){listOf(0 to "오늘",1 to "내 자산",3 to "성과",4 to "설정").forEach{(i,label)->NavigationBarItem(selected=tab==i||(i==4&&tab==2),onClick={tab=i},icon={Icon(icons[i],contentDescription=label)},label={Text(label,fontSize=11.sp)},colors=NavigationBarItemDefaults.colors(selectedIconColor=Mint,selectedTextColor=Mint,indicatorColor=MaterialTheme.colorScheme.primaryContainer,unselectedIconColor=MaterialTheme.colorScheme.onSurfaceVariant,unselectedTextColor=MaterialTheme.colorScheme.onSurfaceVariant))}}}){padding->
+   }},bottomBar={NavigationBar(containerColor=MaterialTheme.colorScheme.surface,tonalElevation=0.dp){listOf(0 to "오늘",1 to "내 자산",3 to "성과",5 to "파동",4 to "설정").forEach{(i,label)->NavigationBarItem(selected=tab==i||(i==4&&tab==2),onClick={tab=i},icon={Icon(icons[i],contentDescription=label)},label={Text(label,fontSize=11.sp)},colors=NavigationBarItemDefaults.colors(selectedIconColor=Mint,selectedTextColor=Mint,indicatorColor=MaterialTheme.colorScheme.primaryContainer,unselectedIconColor=MaterialTheme.colorScheme.onSurfaceVariant,unselectedTextColor=MaterialTheme.colorScheme.onSurfaceVariant))}}}){padding->
    Column(Modifier.padding(padding).consumeWindowInsets(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal=20.dp),verticalArrangement=Arrangement.spacedBy(14.dp)){
     if(stale&&tab!=1)Panel{Text(if(snap.optString("mode")!="live")"과거 자료 미리보기" else "새 종가 갱신 대기",color=Gold,fontWeight=FontWeight.Bold);Text("${snap.optString("market_date")} 저장 자료 · 최신 결과를 확인해 주세요.")}
     if(error.isNotEmpty())Text(error,color=MaterialTheme.colorScheme.error)
@@ -93,6 +93,7 @@ class MainActivity:ComponentActivity(){
      }
      2->{ModelDetails(snap){tab=4}}
      3->{PerformanceScreen(snap,back)}
+     5->{WaveScreen()}
      4->{
       var connectionExpanded by remember{mutableStateOf(false)}
       Panel{Text("모델 설명과 주의사항",fontWeight=FontWeight.Bold);TextButton(onClick={tab=2}){Text("규칙·계산 기준 보기")};TextButton(onClick={connectionExpanded=!connectionExpanded}){Text(if(connectionExpanded)"연결 설정 접기" else "모델 연결 설정")}}
