@@ -53,7 +53,8 @@ internal object CloseAlerts {
    val change=JSONObject().put("key",key).put("date",snapshot.getString("market_date"))
     .put("before",reference!!.getJSONObject("target")).put("after",snapshot.getJSONObject("target"))
    prefs.edit().putString("allocation_pending",change.toString()).apply()
-   if(prefs.getString("allocation_alert_last",null)!=key&&post(c,3666,"배분 변경 · 확인이 필요해요",AllocationChange.display(change.getJSONObject("before"))+" → "+AllocationChange.display(change.getJSONObject("after")),true)){
+   val body=AllocationChange.display(change.getJSONObject("before"))+" → "+AllocationChange.display(change.getJSONObject("after"))
+   if(prefs.getString("allocation_alert_last",null)!=key&&(post(c,3666,"배분 변경 · 확인이 필요해요",body,true)||post(c,3661,"오늘의 배분 변경",body))){
     prefs.edit().putString("allocation_alert_last",key).putString("allocation_reference",AllocationChange.reference(snapshot).toString())
      .putString("close_alert_last",identity).putString("close_alert_last_at",Instant.now().toString()).apply()
    }
