@@ -280,14 +280,7 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
     Panel {
         Text("지금 보는 그림", fontWeight = FontWeight.Bold)
         if (scenario == null) {
-            if (pivot == null) {
-                Text("뚜렷하게 확인된 고점이나 저점이 아직 없어요. 다음 전환점을 먼저 볼 자리입니다.")
-            } else {
-                val swing = if (pivot.kind == "L") "저점" else "고점"
-                val move = if (pivot.kind == "L") "반등" else "하락"
-                val close = price(bars[pivot.index].close)
-                Text("$close $swing 이후 $move 구간입니다. 다음 파동의 방향은 새 고점과 저점이 잡힌 뒤 다시 볼 자리예요.")
-            }
+            WaveRangeReadout(bars, points)
         } else {
             val up = scenario.getString("direction") == "up"
             val direction = if (up) "상승" else "하락"
@@ -328,4 +321,43 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
                 fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
+}
+
+@Composable private fun WaveRangeReadout(bars:List<Bar>, points:List<Pivot>) {
+    val close = bars.last().close
+    val latest = points.lastOrNull()?.let { bars[it.index].close }
+    val prior = points.getOrNull(points.lastIndex - 1)?.let { bars[it.index].close }
+    val recent = bars.subList((bars.lastIndex - 20).coerceAtLeast(0), bars.lastIndex)
+    val pivotRange = if (latest != null && prior != null && latest != prior) {
+        minOf(latest, prior)..maxOf(latest, prior)
+    } else {
+        null
+    }
+    val lower = pivotRange?.start ?: recent.minOf { it.close }
+    val upper = pivotRange?.endInclusive ?: recent.maxOf { it.close }
+    val lowLabel = price(lower)
+    val highLabel = price(upper)
+    val closeLabel = price(close)
+
+    Text(when {
+        close > upper -> "종가 $closeLabel. 윗선 $highLabel 위까지 올라왔어요."
+        close < lower -> "종가 $closeLabel. 아랫선 $lowLabel 아래까지 내려왔어요."
+        close == upper && close == lower -> "종가 $closeLabel. 기준 가격과 같아요."
+        close == upper -> "종가 $closeLabel. 윗선에 닿았어요."
+        close == lower -> "종가 $closeLabel. 아랫선에 닿았어요."
+        else -> "종가 $closeLabel. $lowLabel ~ $highLabel 사이에 있어요."
+    })
+    if (latest != null && latest > 0.0) {
+        val move = Performance.percent(close / latest - 1)
+        Text("마지막 전환점 ${price(latest)} 대비 $move", fontSize = 12.sp)
+    }
+    val basis = if (pivotRange != null) "최근 두 전환점의 종가" else "직전 ${recent.size}개 봉의 종가 범위"
+    Text("다음에 볼 가격 · $basis 기준", fontWeight = FontWeight.SemiBold, fontSize = 12.sp)
+    Text(if (close > upper) {
+        "종가가 $highLabel 위를 지키면 돌파 유지, 그 아래로 돌아오면 돌파 실패 가능성을 봐요."
+    } else if (close < lower) {
+        "종가가 $lowLabel 아래에 머물면 이탈 유지, 그 위로 돌아오면 범위 회복을 봐요."
+    } else {
+        "종가가 $highLabel 위로 마감하면 상방 돌파, $lowLabel 아래로 마감하면 하방 이탈을 봐요."
+    }, fontSize = 12.sp)
 }
