@@ -175,11 +175,12 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
         WaveChart(bars, first, points, scenario)
         Text("실제 봉 ${bars[first].date} ~ ${last.date}", fontSize = 11.sp)
         Text("회색 · 이전 파동   골드 · 현재 움직임   점선 · 예상 경로", fontSize = 11.sp)
+        if (scenario != null) Text("점선은 가격 경로예요. 가로 간격은 보기 쉽게 배치했어요.", fontSize = 11.sp)
         if (interval == "4h" && symbol != "BTC/USD") {
             Text("정규장 마지막 봉은 짧을 수 있습니다. 봉을 눌러 길이를 확인하세요.", fontSize = 11.sp)
         }
     }
-    WaveExplanation(bars, points, series.getDouble("threshold"), scenario)
+    WaveExplanation(bars, points, scenario)
 }
 
 @Composable private fun WaveChart(bars:List<Bar>, first:Int, pivots:List<Pivot>, scenario:JSONObject?) {
@@ -274,39 +275,57 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
         if (selected.minutes > 0) " · ${timeLabel.format(selected.end)} KST · ${selected.minutes}분" else "", fontSize = 11.sp)
 }
 
-@Composable private fun WaveExplanation(bars:List<Bar>, points:List<Pivot>, threshold:Double, scenario:JSONObject?) {
+@Composable private fun WaveExplanation(bars:List<Bar>, points:List<Pivot>, scenario:JSONObject?) {
     val pivot = points.lastOrNull()
     Panel {
-        Text("이전·현재 파동", fontWeight = FontWeight.Bold)
-        if (pivot == null) {
-            Text("이 봉에서 확인된 전환점이 아직 없습니다.")
-        } else {
-            val prior = points.getOrNull(points.lastIndex - 1)
-            if (prior != null) Text("이전 · ${bars[prior.index].date} ${price(bars[prior.index].close)} → " +
-                "${bars[pivot.index].date} ${price(bars[pivot.index].close)}")
-            Text("현재 · 마지막 전환점 이후 ${if (pivot.kind == "L") "반등" else "하락"} 구간")
-            val detected = bars[pivot.index]
-            val confirmed = bars[pivot.confirmation]
-            fun label(bar: Bar) = if (bar.minutes > 0) timeLabel.format(bar.end) + " KST" else bar.date
-            Text("전환점 ${label(detected)} · 확인 ${label(confirmed)}", fontSize = 12.sp)
-        }
-    }
-    Panel {
-        Text("예상 파동과 근거", fontWeight = FontWeight.Bold)
+        Text("지금 보는 그림", fontWeight = FontWeight.Bold)
         if (scenario == null) {
-            Text("관찰 대기 · 최근 세 전환점에서 유효한 연장 조건을 찾지 못했습니다.")
+            if (pivot == null) {
+                Text("뚜렷하게 확인된 고점이나 저점이 아직 없어요. 다음 전환점을 먼저 볼 자리입니다.")
+            } else {
+                val swing = if (pivot.kind == "L") "저점" else "고점"
+                val move = if (pivot.kind == "L") "반등" else "하락"
+                val close = price(bars[pivot.index].close)
+                Text("$close $swing 이후 $move 구간입니다. 다음 파동의 방향은 새 고점과 저점이 잡힌 뒤 다시 볼 자리예요.")
+            }
         } else {
             val up = scenario.getString("direction") == "up"
             val direction = if (up) "상승" else "하락"
-            val action = if (up) "돌파" else "이탈"
-            Text("$direction 연장 후보 · ${if (scenario.optBoolean("triggered")) "종가 기준 확인선 통과" else "확인선 대기"}")
-            Text("P0→P1 첫 파동 · P1→P2 되돌림 · P2 이후 다음 파동 후보", fontSize = 12.sp)
-            Text("확인선 ${price(scenario.getDouble("trigger"))} $action 시 · 연장 기준 ${price(scenario.getDouble("target"))}")
-            Text("해석이 깨지는 가격 ${price(scenario.getDouble("invalidation"))}")
-            Text("첫 움직임을 %.0f%% 되돌린 뒤 같은 방향으로 전환했습니다. 연장 기준은 첫 파동 길이의 1.618배입니다."
-                .format(scenario.getDouble("retracement") * 100), fontSize = 12.sp)
+            val trigger = price(scenario.getDouble("trigger"))
+            val target = price(scenario.getDouble("target"))
+            val invalidation = price(scenario.getDouble("invalidation"))
+            val triggerSide = if (up) "위" else "아래"
+            val breach = if (up) "저가가 $invalidation 이하로 내려오면" else "고가가 $invalidation 이상으로 올라가면"
+            val triggered = scenario.getBoolean("triggered")
+
+            Text(if (triggered) {
+                "종가가 $trigger ${triggerSide}에 있어요. 지금은 $direction 흐름이 한 번 더 이어지는 그림을 먼저 봅니다."
+            } else {
+                "$direction 쪽으로 한 번 더 뻗을 수 있는 자리예요. 먼저 $trigger ${triggerSide}에서 봉이 마감되는지 봅니다."
+            })
+            Text(if (triggered) "다음으로 볼 가격 · $target" else "확인 조건을 채우면 볼 가격 · $target",
+                fontWeight = FontWeight.SemiBold)
+            Text("$breach 이 그림은 접고, 새 고점과 저점부터 다시 봅니다.", fontSize = 12.sp)
         }
-        Text("종가가 극점에서 %.1f%% 반대로 움직이면 전환점을 확인합니다. 점선은 조건부 가격 경로이며, 가로 간격은 보기 쉽게 배치했습니다."
-            .format(threshold * 100), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+    if (pivot != null) {
+        Panel {
+            Text("차트에서 짚은 자리", fontWeight = FontWeight.Bold)
+            if (scenario != null) {
+                val anchors = scenario.getJSONArray("anchors")
+                val start = price(bars[anchors.getInt(0)].close)
+                val turn = price(bars[anchors.getInt(1)].close)
+                val pullback = price(bars[anchors.getInt(2)].close)
+                val retracement = "%.0f%%".format(scenario.getDouble("retracement") * 100)
+                Text("P0 $start → P1 $turn, 여기까지가 첫 움직임이에요. P2 ${pullback}까지 첫 움직임의 ${retracement}만큼 되돌렸습니다.", fontSize = 12.sp)
+                Text("점선 끝은 P2에서 첫 움직임의 1.618배를 같은 방향으로 적용한 가격입니다.", fontSize = 12.sp)
+            } else {
+                val prior = points.getOrNull(points.lastIndex - 1)
+                if (prior != null) Text("이전 파동 · ${price(bars[prior.index].close)} → ${price(bars[pivot.index].close)}", fontSize = 12.sp)
+            }
+            fun label(bar: Bar) = if (bar.minutes > 0) timeLabel.format(bar.end) + " KST" else bar.date
+            Text("마지막 전환점 ${label(bars[pivot.index])} · 확인 ${label(bars[pivot.confirmation])}",
+                fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
     }
 }
