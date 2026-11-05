@@ -1,0 +1,89 @@
+{
+  "version": "2.0",
+  "model_id": "woogong-v2",
+  "code_commit": "c21895e7fae52836bc7a8a860952cff704ea1f97",
+  "model_fingerprint": "85f8f984dd51349a26e5dde39525a991877588ad51c06ddfa0c3a127fefab60d",
+  "selection": "fixed defense-entry EMA5/21, no monthly gate; existing risk and cash priority preserved; not proof of global optimum",
+  "app": {
+    "versionCode": 20002,
+    "offline_date": "2026-10-30",
+    "package": "com.woogong.app",
+    "signing": "personal development certificate retained",
+    "certificate_sha256": "1b20a8df795f190b3955c33017f9be9217c98df54dbd8e762606c688310d57dc",
+    "android_tests": {
+      "tests": 72,
+      "failures": 0,
+      "errors": 0
+    }
+  },
+  "tests": {
+    "python": 122,
+    "web": "portfolio13+100 scenarios, performance9+basis escaping, scheduler contract checks",
+    "target_rows": 4198,
+    "source_archive_standalone_replay": true
+  },
+  "workflows": [
+    {
+      "name": "Pages",
+      "id": 41956551001,
+      "conclusion": "success",
+      "url": "https://github.com/dj960930-commits/woogongisan/actions/runs/41956551001"
+    },
+    {
+      "name": "Close calculation",
+      "id": 41956611260,
+      "conclusion": "success",
+      "url": "https://github.com/dj960930-commits/woogongisan/actions/runs/41956611260"
+    },
+    {
+      "name": "Android",
+      "id": 41956613476,
+      "conclusion": "success",
+      "url": "https://github.com/dj960930-commits/woogongisan/actions/runs/41956613476"
+    }
+  ],
+  "public": {
+    "verified_at": "2026-11-05T02:41:58.000023+00:00",
+    "base": "https://dj960930-commits.github.io/woogongisan",
+    "generation": "f8756af871d55011955a223b735d3dfe",
+    "fingerprint": "85f8f984dd51349a26e5dde39525a991877588ad51c06ddfa0c3a127fefab60d",
+    "market_date": "2026-11-04",
+    "status": "ready",
+    "checks": [
+      "single coherent v2 bundle and individual documents",
+      "live target BRK100 and comparison available",
+      "execution assumption stated",
+      "frozen vs operational end dates distinct",
+      "install link and long-history research available"
+    ],
+    "limitations": [
+      "actual phone receipt and Meritz official-app balance comparison not observed",
+      "Firebase immediate push remains unconfigured",
+      "actual trading disabled"
+    ]
+  },
+  "download": {
+    "verified_at": "2026-11-05T02:45:28.106837+00:00",
+    "release": "https://github.com/dj960930-commits/woogongisan/releases/tag/v2.0",
+    "assets": [
+      {
+        "name": "woogong-2.0-trading-debug.apk",
+        "sha256": "026e152baa6dd0dba29f79c81a812419e5f99312c06fc14d587fd301c14cacc1",
+        "size": 21875188,
+        "url": "https://github.com/dj960930-commits/woogongisan/releases/download/v2.0/woogong-2.0-trading-debug.apk"
+      },
+      {
+        "name": "woogong-2.0-source.zip",
+        "sha256": "573cc70defb9fe6d8d9eb4921dda38564967df60d72bb588e5e1fbf971752a2b",
+        "size": 1930040,
+        "url": "https://github.com/dj960930-commits/woogongisan/releases/download/v2.0/woogong-2.0-source.zip"
+      }
+    ]
+  },
+  "limitations": [
+    "Actual device receipt, launcher rendering and Meritz official-app balance comparison not observed",
+    "Firebase immediate push remains unconfigured; existing device polling retained",
+    "Cloudflare code unchanged; scheduler contract tested, fresh remote Cron trigger not observed",
+    "Historical research viewed during design; improvement concentrated in2026; actual trading disabled"
+  ]
+}
