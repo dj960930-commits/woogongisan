@@ -1,31 +1,22 @@
 package com.woogong.app
 
 import android.Manifest
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.firebase.FirebaseApp
@@ -68,23 +59,22 @@ class MainActivity:ComponentActivity(){
   LaunchedEffect(resumeTick){snap=Data.load(this@MainActivity,"snapshot");status=Data.load(this@MainActivity,"status");back=Data.load(this@MainActivity,"backtest");if(MeritzAccount.connected(this@MainActivity))try{withContext(Dispatchers.IO){MeritzAccount.sync(this@MainActivity)}}catch(_:Exception){}}
   val stale=remember(clockTick,snap,status,error){Data.stale(snap,status)||error.isNotEmpty()||Data.prefs(this@MainActivity).getString("sync_error","")!!.isNotEmpty()}
   AllocationPopup(snap,stale,resumeTick+reviewRequest)
-  val icons=listOf(Icons.Outlined.Home,Icons.Outlined.AccountBalanceWallet,Icons.Outlined.Lightbulb,Icons.Outlined.ShowChart,Icons.Outlined.Settings,Icons.Outlined.Timeline)
-  Scaffold(modifier=Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)),containerColor=MaterialTheme.colorScheme.background,
-   topBar={Row(Modifier.fillMaxWidth().statusBarsPadding().padding(horizontal=24.dp,vertical=18.dp),horizontalArrangement=Arrangement.SpaceBetween,verticalAlignment=Alignment.CenterVertically){
-    Column(Modifier.weight(1f)){Text("우공이산",maxLines=1,overflow=TextOverflow.Ellipsis,fontSize=25.sp,fontWeight=FontWeight.ExtraBold,letterSpacing=(-1).sp);Text("차분하게, 더 멀리",fontSize=11.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)}
-    Surface(color=MaterialTheme.colorScheme.primaryContainer,shape=RoundedCornerShape(12.dp)){Text(snap.optString("version").removePrefix("우공 "),Modifier.padding(12.dp,8.dp),fontSize=10.sp,color=MaterialTheme.colorScheme.onPrimaryContainer,fontWeight=FontWeight.Bold)}
-   }},bottomBar={NavigationBar(containerColor=MaterialTheme.colorScheme.surface,tonalElevation=0.dp){listOf(0 to "오늘",1 to "내 자산",3 to "성과",5 to "파동",4 to "설정").forEach{(i,label)->NavigationBarItem(selected=tab==i||(i==4&&tab==2),onClick={tab=i},icon={Icon(icons[i],contentDescription=label)},label={Text(label,fontSize=11.sp)},colors=NavigationBarItemDefaults.colors(selectedIconColor=Mint,selectedTextColor=Mint,indicatorColor=MaterialTheme.colorScheme.primaryContainer,unselectedIconColor=MaterialTheme.colorScheme.onSurfaceVariant,unselectedTextColor=MaterialTheme.colorScheme.onSurfaceVariant))}}}){padding->
-   Column(Modifier.padding(padding).consumeWindowInsets(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal=20.dp),verticalArrangement=Arrangement.spacedBy(14.dp)){
-    if(stale&&tab!=1)Panel{Text(if(snap.optString("mode")!="live")"과거 자료 미리보기" else "새 종가 갱신 대기",color=Gold,fontWeight=FontWeight.Bold);Text("${snap.optString("market_date")} 저장 자료 · 최신 결과를 확인해 주세요.")}
-    if(error.isNotEmpty())Text(error,color=MaterialTheme.colorScheme.error)
+  Scaffold(
+   modifier=Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)),
+   containerColor=MaterialTheme.colorScheme.background,
+   topBar={AppHeader(tab,snap.optString("version").removePrefix("우공이산 ").removePrefix("우공 "),busy,::refresh)},
+   bottomBar={AppTabBar(tab){tab=it}}
+  ){padding->
+   Column(Modifier.padding(padding).consumeWindowInsets(padding).fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal=14.dp),verticalArrangement=Arrangement.spacedBy(9.dp)){
+    if(stale && tab in setOf(2,3))Text("저장 자료 · ${snap.optString("market_date")}",color=Gold,fontSize=12.sp)
+    if(error.isNotEmpty() && tab in setOf(0,4))Text(error,color=MaterialTheme.colorScheme.error)
     when(tab){
      0->{
       ReturnsHome(snap,stale){reviewRequest++}
-      Button(onClick={refresh()},enabled=!busy,modifier=Modifier.fillMaxWidth()){Text(if(busy)"확인 중…" else "최신 결과 확인")}
      }
      1->{
       var assetView by remember{mutableIntStateOf(0)}
-      Row(horizontalArrangement=Arrangement.spacedBy(8.dp)){
+      Row(horizontalArrangement=Arrangement.spacedBy(5.dp)){
        FilterChip(selected=assetView==0,onClick={assetView=0},label={Text("메리츠 계좌")})
        FilterChip(selected=assetView==1,onClick={assetView=1},label={Text("수동 기록")})
        FilterChip(selected=assetView==2,onClick={assetView=2},label={Text("운용 센터")})
@@ -103,13 +93,11 @@ class MainActivity:ComponentActivity(){
       CloseAlertSettings(resumeTick)
       Panel{Text("위젯 컬렉션",fontWeight=FontWeight.Bold);Text("홈 화면을 길게 누르고 위젯 → 우공이산에서 선택하세요.\n요약 3×2 · 그래프 5×2 · 상세 5×3\n위젯의 기간 버튼으로 기간을 바꿀 수 있습니다. 크기가 작아지면 요약형으로 자동 전환되며 시스템 화면 모드도 따라갑니다.");Text("화면 테마 · 시스템 설정 사용",color=MaterialTheme.colorScheme.onSurfaceVariant,fontSize=12.sp)}
      }
-    };Spacer(Modifier.height(18.dp))
+    };Spacer(Modifier.height(10.dp))
    }
   }
  }
 }
-@Composable internal fun Panel(content:@Composable ColumnScope.()->Unit){Card(Modifier.fillMaxWidth(),shape=RoundedCornerShape(24.dp),colors=CardDefaults.cardColors(containerColor=MaterialTheme.colorScheme.surface)){Column(Modifier.padding(20.dp),verticalArrangement=Arrangement.spacedBy(9.dp),content=content)}}
-@Composable private fun Metric(title:String,value:Double){Column{Text(title);Text("%.2f%%".format(value*100),fontWeight=FontWeight.Bold)}}
 @Composable internal fun Lines(data:JSONArray,keys:List<String>){
  val lineColors=listOf(Mint,Gold,MaterialTheme.colorScheme.onSurfaceVariant)
  Canvas(Modifier.fillMaxWidth().height(160.dp).padding(vertical=12.dp)){

@@ -1,0 +1,7 @@
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:insetLeft="1.85%"
+    android:insetRight="1.85%"
+    android:insetTop="5.19%"
+    android:insetBottom="-6.67%">
+    <bitmap android:src="@drawable/woogong_icon_art" android:gravity="fill" android:filter="true" />
+</inset>

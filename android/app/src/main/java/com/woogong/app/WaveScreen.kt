@@ -173,7 +173,7 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
         Text("완료 $date" + if (failed || series.optBoolean("cached")) " · 저장 자료" else "", fontSize = 12.sp)
         WaveChart(bars, first, points, scenario)
         Text("${bars[first].date}  ~  ${last.date}", fontSize = 11.sp)
-        Text("회색 · 이전 파동   초록 · 현재 움직임   점선 · 예상 경로", fontSize = 11.sp)
+        Text("회색 · 이전 파동   골드 · 현재 움직임   점선 · 예상 경로", fontSize = 11.sp)
         if (interval == "4h" && symbol != "BTC/USD") {
             Text("정규장 마지막 봉은 짧을 수 있습니다. 봉을 눌러 길이를 확인하세요.", fontSize = 11.sp)
         }
@@ -182,7 +182,8 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
 }
 
 @Composable private fun WaveChart(bars:List<Bar>, first:Int, pivots:List<Pivot>, scenario:JSONObject?) {
-    val green = MaterialTheme.colorScheme.primary
+    val accent = MaterialTheme.colorScheme.primary
+    val up = MaterialTheme.colorScheme.tertiary
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val red = MaterialTheme.colorScheme.error
     val show = bars.subList(first, bars.size)
@@ -194,7 +195,7 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
     var inspected by remember(bars, first) { mutableIntStateOf(bars.lastIndex) }
     val selected = bars[inspected]
     val fraction = if (target != null) .76f else 1f
-    Canvas(Modifier.fillMaxWidth().height(260.dp).pointerInput(bars, first, fraction) {
+    Canvas(Modifier.fillMaxWidth().height(235.dp).pointerInput(bars, first, fraction) {
         detectTapGestures { offset ->
             val axis = 56.dp.toPx()
             val position = ((offset.x - axis) / ((size.width - axis).coerceAtLeast(1f) * fraction)).coerceIn(0f, 1f)
@@ -219,7 +220,7 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
         val candleWidth = ((right - left) / show.size * .55f).coerceIn(1f, 9.dp.toPx())
         show.forEachIndexed { index, bar ->
             val at = x(index + first)
-            val color = (if (bar.close >= bar.open) green else red).copy(alpha = .53f)
+            val color = (if (bar.close >= bar.open) up else red).copy(alpha = .53f)
             drawLine(color, Offset(at, y(bar.high)), Offset(at, y(bar.low)), 1f)
             val openY = y(bar.open)
             val closeY = y(bar.close)
@@ -229,7 +230,7 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
             drawLine(muted, Offset(x(a.index), y(bars[a.index].close)), Offset(x(b.index), y(bars[b.index].close)), 2.dp.toPx())
         }
         pivots.lastOrNull()?.takeIf { it.index >= first }?.let { point ->
-            drawLine(green, Offset(x(point.index), y(bars[point.index].close)), Offset(right, y(bars.last().close)), 2.dp.toPx())
+            drawLine(accent, Offset(x(point.index), y(bars[point.index].close)), Offset(right, y(bars.last().close)), 2.dp.toPx())
         }
         scenario?.optJSONArray("anchors")?.let { anchors ->
             for (i in 0 until anchors.length()) {
@@ -242,8 +243,8 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
             val end = size.width - 5.dp.toPx()
             val middle = if (scenario?.optBoolean("triggered") == true) bars.last().close else trigger
             val center = right + (end - right) * .38f
-            drawLine(green, Offset(right, y(bars.last().close)), Offset(center, y(middle)), 2.dp.toPx(), pathEffect = dash)
-            drawLine(green, Offset(center, y(middle)), Offset(end, y(target)), 2.dp.toPx(), pathEffect = dash)
+            drawLine(accent, Offset(right, y(bars.last().close)), Offset(center, y(middle)), 2.dp.toPx(), pathEffect = dash)
+            drawLine(accent, Offset(center, y(middle)), Offset(end, y(target)), 2.dp.toPx(), pathEffect = dash)
             drawLine(red.copy(alpha = .7f), Offset(right, y(invalid)), Offset(end, y(invalid)), pathEffect = dash)
         }
         drawLine(muted.copy(alpha = .55f), Offset(x(inspected), 10.dp.toPx()), Offset(x(inspected), bottom))

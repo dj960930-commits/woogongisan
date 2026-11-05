@@ -2,7 +2,6 @@ package com.woogong.app
 
 import android.content.Context
 import androidx.compose.runtime.*
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -37,36 +36,61 @@ object ReturnsSummary {
 @Composable internal fun ReturnsHome(s:JSONObject,stale:Boolean,onReview:()->Unit={}){
  val c=LocalContext.current
  var period by remember{mutableStateOf(Data.prefs(c).getString("performance_period","1m")?:"1m")}
- val window=Performance.read(s,period);val scheme=MaterialTheme.colorScheme;val colors=PerformanceColors
- Card(Modifier.fillMaxWidth(),shape=RoundedCornerShape(28.dp),colors=CardDefaults.cardColors(containerColor=scheme.surface)){
-  Column(Modifier.padding(22.dp),verticalArrangement=Arrangement.spacedBy(16.dp)){
-   Text("MODEL / BENCHMARK",fontSize=10.sp,letterSpacing=2.sp,color=scheme.onSurfaceVariant,fontWeight=FontWeight.SemiBold)
-   Text("우공이산, 시장과 나란히",fontSize=22.sp,fontWeight=FontWeight.Bold,letterSpacing=(-0.6).sp)
-   Surface(color=scheme.background,shape=RoundedCornerShape(14.dp)){
-    Row(Modifier.fillMaxWidth().padding(3.dp)){
-     Performance.periods.forEach{(key,label)->TextButton(modifier=Modifier.weight(1f),shape=RoundedCornerShape(11.dp),colors=ButtonDefaults.textButtonColors(containerColor=if(period==key)scheme.primaryContainer else Color.Transparent),contentPadding=PaddingValues(horizontal=0.dp),onClick={period=key;Data.prefs(c).edit().putString("performance_period",key).apply();WoogongWidget.updateAll(c)}){Text(label,color=if(period==key)scheme.onPrimaryContainer else scheme.onSurfaceVariant,fontSize=12.sp,fontWeight=if(period==key)FontWeight.Bold else FontWeight.Normal)}}
+ val window = Performance.read(s, period)
+ val scheme = MaterialTheme.colorScheme
+ val colors = PerformanceColors
+ Panel {
+  Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
+   verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+   Text("시장 비교", style = MaterialTheme.typography.titleMedium)
+   Text("USD · 세전", style = MaterialTheme.typography.bodySmall, color = scheme.onSurfaceVariant)
+  }
+  if (window != null) {
+   Text(Performance.percent(window.last.model), color = scheme.onSurface,
+    style = MaterialTheme.typography.headlineSmall.copy(fontSize=36.sp,lineHeight=42.sp,
+      letterSpacing=(-1.4).sp,fontFeatureSettings="tnum"))
+  }
+  Surface(color = scheme.surfaceVariant, shape = RoundedCornerShape(10.dp)) {
+   Row(Modifier.fillMaxWidth().padding(2.dp)) {
+    Performance.periods.forEach { (key, label) ->
+     val selected = period == key
+     TextButton(modifier = Modifier.weight(1f), shape = RoundedCornerShape(8.dp),
+      colors = ButtonDefaults.textButtonColors(
+       containerColor = if (selected) scheme.surface else Color.Transparent,
+       contentColor = if (selected) scheme.primary else scheme.onSurfaceVariant),
+      contentPadding = PaddingValues(horizontal = 1.dp),
+      onClick = {
+       period = key
+       Data.prefs(c).edit().putString("performance_period", key).apply()
+       WoogongWidget.updateAll(c)
+      }) {
+      Text(label, fontSize=11.sp, fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium)
+     }
     }
    }
-   if(window==null){Text("비교 자료를 불러오는 중입니다. 최신 결과 확인을 눌러주세요.",fontSize=13.sp,color=scheme.onSurfaceVariant)}
-   else {
-    Column(verticalArrangement=Arrangement.spacedBy(5.dp)){
-     Text("● 우공이산 모델",fontSize=12.sp,color=colors[0],fontWeight=FontWeight.SemiBold)
-     Text(Performance.percent(window.last.model),fontSize=38.sp,fontWeight=FontWeight.Bold,letterSpacing=(-1.5).sp,color=scheme.onSurface)
-     Text("선택 기간의 누적 수익률",fontSize=11.sp,color=scheme.onSurfaceVariant)
+  }
+  if (window == null) {
+   Text("상단 새로고침으로 비교 자료를 확인하세요.", style = MaterialTheme.typography.bodySmall)
+  } else {
+   PerformanceChart(window)
+   HorizontalDivider(thickness = .5.dp, color = scheme.outlineVariant)
+   Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+    val summary = listOf("우공이산" to window.last.model, "TQQQ" to window.last.tqqq, "버크셔 B" to window.last.brkb)
+    summary.forEachIndexed { index, (name, value) ->
+     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
+      Text(name, color = colors[index], fontSize = 11.sp, fontWeight = FontWeight.Medium)
+      Text(Performance.percent(value), fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
+       style = androidx.compose.ui.text.TextStyle(fontFeatureSettings="tnum"))
+     }
     }
-    PerformanceChart(window)
-    listOf("TQQQ" to window.last.tqqq,"버크셔 B" to window.last.brkb).forEachIndexed{i,(name,value)->
-     Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween){Text("● $name",fontSize=13.sp,color=colors[i+1]);Text(Performance.percent(value),fontSize=17.sp,fontWeight=FontWeight.SemiBold,color=colors[i+1])}
-    }
-    HorizontalDivider(color=scheme.outlineVariant)
-    Text("동일 기간 시작 0% · USD · 세전",fontSize=11.sp,color=scheme.onSurfaceVariant)
    }
   }
  }
- Panel{
-  Text("오늘의 모델",fontSize=12.sp,color=scheme.onSurfaceVariant)
-  Text(Data.allocation(s),fontSize=23.sp,fontWeight=FontWeight.Bold)
-  Text("${s.optString("market_date")} 미국 종가 · ${if(stale)"갱신 대기" else "갱신 완료"}",fontSize=11.sp,color=if(stale)Gold else scheme.onSurfaceVariant)
+ Panel {
+  Text("오늘의 배분", style = MaterialTheme.typography.titleMedium)
+  Text(Data.allocation(s),fontSize=20.sp,fontWeight=FontWeight.SemiBold)
+  Text("${s.optString("market_date")} 미국 종가 · ${if(stale)"저장 자료" else "갱신 완료"}",
+   fontSize=11.sp,color=if(stale)Gold else scheme.onSurfaceVariant)
  }
  if(AllocationChange.pending(c)!=null&&!stale)Panel{Text("확인할 배분 변경이 있어요",fontWeight=FontWeight.Bold);TextButton(onClick=onReview){Text("변경 전·후 보기")}}
  PriceOutlook(s)
