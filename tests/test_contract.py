@@ -52,7 +52,9 @@ def test_optional_push_empty_github_secrets_are_unconfigured(tmp_path,monkeypatc
  assert 'not configured' in capsys.readouterr().out
 def test_frozen_backtest_is_not_synthetic():
  b=json.loads((ROOT/'site/backtest.json').read_text(encoding='utf-8'))
- assert b['kind']=='observed_BITO_backtest' and b['cagr']<.6
+ assert b['kind']=='observed_BITO_same_close_reference' and b['execution']=='same_close_reference'
+ assert b['model_id']=='woogong-v2' and b['model_fingerprint']==load_model().fingerprint
+ assert b['validation']['actual_after_hours_fills_verified'] is False
  assert b['synthetic_cagr']>.7 and b['model_id']==load_model().id
 def test_missing_data_preserves_last_snapshot(tmp_path,monkeypatch):
  import pipeline

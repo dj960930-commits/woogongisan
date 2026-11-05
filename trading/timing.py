@@ -4,7 +4,10 @@ RULE = 'loan-transition-A-v1'
 
 
 def timing(current, previous, fingerprint):
-    supported = fingerprint == FINGERPRINT and type(current) is int and type(previous) is int and current in range(5) and previous in range(5)
+    from models.registry import load_model
+    # V2 changes only defense selection; this display-only attack transition
+    # research retains the same state semantics. Unknown models stay rejected.
+    supported = fingerprint in {FINGERPRINT, load_model('woogong-v2').fingerprint} and type(current) is int and type(previous) is int and current in range(5) and previous in range(5)
     phase = ('entry' if current == 0 and previous != 0 else
              'hold' if current == 0 else 'exit' if previous == 0 else 'wait') if supported else 'unavailable'
     labels = {'entry': '진입 조건 충족 · 차입 검토', 'hold': '공격 유지 · 신규 차입 대기',

@@ -13,4 +13,9 @@ def test_unknown_or_changed_model_is_not_entry(previous,current,fingerprint):
 
 def test_indicator_does_not_change_strategy():
     from models.registry import load_model
-    assert load_model().fingerprint==FINGERPRINT
+    assert load_model('woogong-1.3-d').fingerprint==FINGERPRINT
+    selected=load_model('woogong-v2')
+    before=selected.fingerprint
+    result=timing(0,3,before)
+    assert result['phase']=='entry' and result['research_only'] and not result['borrowing_approved']
+    assert load_model('woogong-v2').fingerprint==before

@@ -19,6 +19,8 @@ def fetch(expected):
  return public_fetch(expected,ROOT)
 def latest_backtest(p,targets,model=None,return_daily=False):
  model=model or load_model()
+ if model.profile.get('performance_execution')=='same_close_reference':
+  return close_reference_backtest(p,targets,model,return_daily)
  ix=p.loc['2021-10-20':].index;prices=p.reindex(ix)[['TQQQ','BRK.B','GLD','SOXL','BITO']]
  if prices.isna().any().any():raise ValueError('BITO 확장 백테스트 가격 누락')
  cls=np.column_stack([prices.TQQQ,prices['BRK.B'],prices.GLD,np.ones(len(ix)),prices.SOXL,prices.BITO]);tar=targets.reindex(ix).to_numpy()
@@ -37,6 +39,24 @@ def latest_backtest(p,targets,model=None,return_daily=False):
  result={**model.metadata(),'data_end':str(ix[-1].date()),'kind':'extended_EOD_audited_price_basis','label':'최신 확장 · 원본 혼합 가격기준 · 다음 종가 · 편도0.1% · 현금금리0 · 세전','cagr':cg,'mdd':float(dd.min()),'calmar':cg/-dd.min(),'trades':trades,'curve':[{'date':str(ix[i].date()),'nav':float(v[i]),'drawdown':float(dd[i])} for i in list(range(0,len(ix)-1,5))+[len(ix)-1]]}
  if return_daily:result['_daily_nav']=pd.Series(v,index=ix)
  return result
+
+def close_reference_backtest(p,targets,model,return_daily=False):
+ from models.performance import replay
+ ix=p.loc['2021-10-20':].index
+ cls=np.column_stack([p.loc[ix,'TQQQ'],p.loc[ix,'BRK.B'],p.loc[ix,'GLD'],np.ones(len(ix)),p.loc[ix,'SOXL'],p.loc[ix,'BITO']])
+ cash=p.loc[ix,'cash_return'] if 'cash_return' in p else pd.Series(np.nan,index=ix)
+ rf=cash.fillna(0).to_numpy()
+ v,tr,_,_=replay(targets.reindex(ix).to_numpy(),cls,rf,band=model.band)
+ dd=v/np.maximum.accumulate(np.r_[1.,v])[1:]-1
+ cg=v[-1]**(365.25/(ix[-1]-ix[0]).days)-1
+ basis='모델: 원본 혼합 가격기준·당일 확정 종가 후 동일 종가 체결 가정·편도0.1%·보관 현금수익(미확인일 0) / USD·세전'
+ result={**model.metadata(),'data_end':str(ix[-1].date()),'kind':'extended_EOD_same_close_reference',
+  'execution':'same_close_reference','basis':basis,'cash_zero_fallback_sessions':int(cash.isna().sum()),'label':'최신 확장 · 당일 종가 가격 체결 가정 · 실제 애프터장 체결 보장 아님',
+  'cagr':float(cg),'mdd':float(dd.min()),'calmar':float(cg/-dd.min()) if dd.min()<0 else 0.,'trades':int(tr.sum()),
+  'curve':[{'date':str(ix[i].date()),'nav':float(v[i]),'drawdown':float(dd[i])} for i in list(range(0,len(ix)-1,5))+[len(ix)-1]]}
+ if return_daily:
+  daily=pd.Series(v,index=ix);daily.attrs['basis']=basis;result['_daily_nav']=daily
+ return result
 def snapshot(p,btc,mode,raw=None,model=None):
  model=model or load_model()
  t,ind=evaluate(p,btc,model);last=ind.iloc[-1];day=t.index[-1];target=t.iloc[-1].to_dict();state=int(last.state)
@@ -47,6 +67,10 @@ def snapshot(p,btc,mode,raw=None,model=None):
  {'title':'방어 선택','value':float(last.defense_fast-last.defense_slow),'threshold':0,'description':f'GLD/BRK.B EMA84 {last.defense_fast:.4f}, EMA378 {last.defense_slow:.4f}. '+('금 선택.' if last.defense_fast>last.defense_slow else '버크셔 선택.'),'active':state!=0},
  {'title':'상태 우선순위','value':state,'threshold':None,'description':labels[state]+(' 상태이므로 BRK.B로 제한합니다.' if state==1 else ' 상태를 목표 비중에 반영했습니다.'),'active':True}]
  state_label=labels[state]
+ if 'defense_entry_active' in last:
+  active=bool(last.defense_entry_active)
+  reasons[2]['description']+=' v2는 방어 진입 때 단기 EMA5/21과 장기 우세 약화를 확인합니다. '+('BRK.B 보조 선택 적용 중.' if active else '현재 장기 선택 유지.')
+  if active:state_label+=' · v2 단기 상대강도 버크셔 선택'
  if 'cross_cash' in ind:
   c=model.profile['cross'];d=model.profile['defense']
   if bool(last.cross_cash):state_label='Cross 동반 하락 · 달러 현금 대피'

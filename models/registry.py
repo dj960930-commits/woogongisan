@@ -4,9 +4,10 @@ import hashlib
 import json
 from . import core_v1
 from .overlays import cross_defense
+from .defense_v2 import evaluate as defense_v2
 
 ROOT = Path(__file__).resolve().parents[1]
-ADAPTERS = {"frozen_core_v1": core_v1.evaluate, "cross_defense_v1": cross_defense}
+ADAPTERS = {"frozen_core_v1": core_v1.evaluate, "cross_defense_v1": cross_defense, "defense_entry_v2": defense_v2}
 
 class Model:
     def __init__(self, profile):
@@ -15,7 +16,15 @@ class Model:
         self.version = profile['version']
         self.band = profile['rebalance_band']
         rules = json.dumps(profile, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode()
-        implementation = b''.join((ROOT / p).read_text(encoding='utf-8-sig').encode('utf-8') for p in ['strategy_parameters.json', 'models/core_v1.py', 'models/overlays.py', 'models/registry.py'])
+        # Legacy fingerprints keep their original loader contract. Their actual
+        # strategy files remain hashed, and regression tests prove old targets.
+        # V2 binds its new dispatcher and adapter rather than borrowing evidence.
+        paths = ['strategy_parameters.json', 'models/core_v1.py', 'models/overlays.py']
+        if profile['adapter'] == 'defense_entry_v2':
+            paths += ['models/registry.py', 'models/defense_v2.py', 'models/performance.py']
+        else:
+            paths += ['models/frozen/registry_v1.py.txt']
+        implementation = b''.join((ROOT / p).read_text(encoding='utf-8-sig').encode('utf-8') for p in paths)
         self.fingerprint = hashlib.sha256(rules + implementation).hexdigest()
 
     def metadata(self):

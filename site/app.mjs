@@ -1,4 +1,4 @@
-import {card as performanceCard} from './performance.mjs?v=063';
+import {card as performanceCard} from './performance.mjs?v=200';
 import {SYMBOLS,value,plan,movement,upsert,validate} from './portfolio.mjs';
 import {timingCard,refreshTimingCards} from './timing.mjs';
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
