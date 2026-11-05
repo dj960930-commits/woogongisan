@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -172,7 +173,7 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
         val date = if (interval == "4h") timeLabel.format(last.end) + " KST" else last.date
         Text("완료 $date" + if (failed || series.optBoolean("cached")) " · 저장 자료" else "", fontSize = 12.sp)
         WaveChart(bars, first, points, scenario)
-        Text("${bars[first].date}  ~  ${last.date}", fontSize = 11.sp)
+        Text("실제 봉 ${bars[first].date} ~ ${last.date}", fontSize = 11.sp)
         Text("회색 · 이전 파동   골드 · 현재 움직임   점선 · 예상 경로", fontSize = 11.sp)
         if (interval == "4h" && symbol != "BTC/USD") {
             Text("정규장 마지막 봉은 짧을 수 있습니다. 봉을 눌러 길이를 확인하세요.", fontSize = 11.sp)
@@ -194,23 +195,35 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
     val maximum = maxOf(show.maxOf { it.high }, target ?: 0.0, invalid ?: 0.0, trigger ?: 0.0)
     var inspected by remember(bars, first) { mutableIntStateOf(bars.lastIndex) }
     val selected = bars[inspected]
-    val fraction = if (target != null) .76f else 1f
-    Canvas(Modifier.fillMaxWidth().height(235.dp).pointerInput(bars, first, fraction) {
+    val hasProjection = target != null && invalid != null && trigger != null
+    val historyFraction = if (hasProjection) .60f else 1f
+    Canvas(Modifier.fillMaxWidth().height(235.dp).pointerInput(bars, first, historyFraction) {
         detectTapGestures { offset ->
             val axis = 56.dp.toPx()
-            val position = ((offset.x - axis) / ((size.width - axis).coerceAtLeast(1f) * fraction)).coerceIn(0f, 1f)
+            val historyWidth = (size.width - axis).coerceAtLeast(1f) * historyFraction
+            if (offset.x > axis + historyWidth) return@detectTapGestures
+            val position = ((offset.x - axis) / historyWidth).coerceIn(0f, 1f)
             inspected = first + (position * (bars.lastIndex - first) + .5f).toInt()
         }
     }) {
         val left = 56.dp.toPx()
-        val right = left + (size.width - left) * fraction
+        val right = left + (size.width - left) * historyFraction
+        val top = if (hasProjection) 27.dp.toPx() else 10.dp.toPx()
         val bottom = size.height - 10.dp.toPx()
         val span = (maximum - minimum).coerceAtLeast(.001)
-        fun y(p:Double) = 10.dp.toPx() + (bottom - 10.dp.toPx()) * (1 - (p - minimum) / span).toFloat()
+        fun y(p:Double) = top + (bottom - top) * (1 - (p - minimum) / span).toFloat()
         fun x(index:Int) = left + (right - left) * (index - first) / (bars.lastIndex - first)
         val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
             color = muted.toArgb()
             textSize = 10.sp.toPx()
+        }
+        if (hasProjection) {
+            drawRect(accent.copy(alpha = .07f), topLeft = Offset(right, 0f),
+                size = Size(size.width - right, size.height))
+            drawLine(muted.copy(alpha = .30f), Offset(right, 0f), Offset(right, bottom))
+            val label = "예상 구간"
+            val labelX = right + (size.width - right - paint.measureText(label)) / 2
+            drawContext.canvas.nativeCanvas.drawText(label, labelX, 14.dp.toPx(), paint)
         }
         for (step in 0..4) {
             val value = minimum + span * step / 4
@@ -241,13 +254,21 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
         if (target != null && invalid != null && trigger != null) {
             val dash = PathEffect.dashPathEffect(floatArrayOf(9f, 6f))
             val end = size.width - 5.dp.toPx()
-            val middle = if (scenario?.optBoolean("triggered") == true) bars.last().close else trigger
-            val center = right + (end - right) * .38f
-            drawLine(accent, Offset(right, y(bars.last().close)), Offset(center, y(middle)), 2.dp.toPx(), pathEffect = dash)
-            drawLine(accent, Offset(center, y(middle)), Offset(end, y(target)), 2.dp.toPx(), pathEffect = dash)
+            val start = Offset(right, y(bars.last().close))
+            val goal = Offset(end, y(target))
+            if (scenario?.optBoolean("triggered") == true) {
+                drawLine(accent, start, goal, 2.dp.toPx(), pathEffect = dash)
+            } else {
+                val checkpoint = Offset(right + (end - right) * .38f, y(trigger))
+                drawLine(accent, start, checkpoint, 2.dp.toPx(), pathEffect = dash)
+                drawLine(accent, checkpoint, goal, 2.dp.toPx(), pathEffect = dash)
+            }
+            drawCircle(accent, radius = 3.dp.toPx(), center = goal)
             drawLine(red.copy(alpha = .7f), Offset(right, y(invalid)), Offset(end, y(invalid)), pathEffect = dash)
         }
-        drawLine(muted.copy(alpha = .55f), Offset(x(inspected), 10.dp.toPx()), Offset(x(inspected), bottom))
+        if (!hasProjection || inspected != bars.lastIndex) {
+            drawLine(muted.copy(alpha = .55f), Offset(x(inspected), top), Offset(x(inspected), bottom))
+        }
     }
     Text("${selected.date} · 종가 ${price(selected.close)}" +
         if (selected.minutes > 0) " · ${timeLabel.format(selected.end)} KST · ${selected.minutes}분" else "", fontSize = 11.sp)
@@ -285,7 +306,7 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
             Text("첫 움직임을 %.0f%% 되돌린 뒤 같은 방향으로 전환했습니다. 연장 기준은 첫 파동 길이의 1.618배입니다."
                 .format(scenario.getDouble("retracement") * 100), fontSize = 12.sp)
         }
-        Text("종가가 극점에서 %.1f%% 반대로 움직이면 전환점을 확인합니다. 점선은 조건부 가격 경로입니다."
+        Text("종가가 극점에서 %.1f%% 반대로 움직이면 전환점을 확인합니다. 점선은 조건부 가격 경로이며, 가로 간격은 보기 쉽게 배치했습니다."
             .format(threshold * 100), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
