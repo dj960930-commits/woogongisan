@@ -4,10 +4,15 @@ from datetime import datetime, timezone
 import json
 import math
 from pathlib import Path
+import sys
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import httpx
 import pandas as pd
 import pandas_market_calendars as calendars
+from tools.wave_analysis import analyze
 
 ROOT = Path(__file__).resolve().parents[1]
 SYMBOLS = {"QQQ": "QQQ", "TQQQ": "TQQQ", "SOXX": "SOXX", "SOXL": "SOXL",
@@ -110,7 +115,7 @@ def pivots(prices, threshold):
     return points
 
 
-def series(bars, interval, volatility=1):
+def series(bars, interval, volatility=1, crypto=False):
     bars = bars[-LIMITS[interval]:]
     if len(bars) < 12:
         raise ValueError("Insufficient completed bars")
@@ -142,6 +147,7 @@ def series(bars, interval, volatility=1):
         "bars": [[str(day)[:10], end.isoformat(), *[round(x, 4) for x in row], minutes]
                  for day, end, row, minutes in bars],
         "pivots": points, "scenario": scenario,
+        "analysis": analyze(bars, interval, threshold, pivots, scenario, crypto),
     }
 
 
@@ -165,7 +171,7 @@ def main():
                     bars = periods(raw, schedule, now, crypto) if interval == "1d" else {
                         "4h": four_hours(raw, schedule, now, crypto)}
                     for key in group:
-                        current = series(bars[key], key, volatility)
+                        current = series(bars[key], key, volatility, crypto)
                         if current["as_of"] < previous.get(key, {}).get("as_of", ""):
                             raise ValueError(f"Quote regressed for {key}")
                         result[key] = current
@@ -180,7 +186,7 @@ def main():
         assets = dict(workers.map(build, SYMBOLS.items()))
     if not any(a["series"] for a in assets.values()):
         raise SystemExit("No verified wave data")
-    payload = dict(schema_version=1, engine="causal-pivot-v1", source="Yahoo Finance",
+    payload = dict(schema_version=1, engine="causal-pattern-v2", analysis_version="wave-explainer-v2", source="Yahoo Finance",
                    generated_at=now.isoformat(), symbols=assets)
     tmp = destination.with_suffix(".tmp")
     tmp.write_text(json.dumps(payload, separators=(",", ":"), allow_nan=False), encoding="utf-8")

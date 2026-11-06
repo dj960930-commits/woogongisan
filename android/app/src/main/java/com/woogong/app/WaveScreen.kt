@@ -168,22 +168,111 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
     val cutoff = if (months == 0) bars.first().end else last.end.atZone(korea).minusMonths(months.toLong()).toInstant()
     val first = bars.indexOfFirst { it.end >= cutoff }.coerceIn(0, bars.lastIndex - 1)
     val scenario = series.optJSONObject("scenario")
+    val analysis = series.optJSONObject("analysis")
     Panel {
         Text("$symbol · ${intervals.getValue(interval)}", fontWeight = FontWeight.Bold)
         val date = if (interval == "4h") timeLabel.format(last.end) + " KST" else last.date
         Text("완료 $date" + if (failed || series.optBoolean("cached")) " · 저장 자료" else "", fontSize = 12.sp)
-        WaveChart(bars, first, points, scenario)
+        WaveChart(bars, first, points, scenario, analysis)
         Text("실제 봉 ${bars[first].date} ~ ${last.date}", fontSize = 11.sp)
         Text("회색 · 이전 파동   골드 · 현재 움직임   점선 · 예상 경로", fontSize = 11.sp)
-        if (scenario != null) Text("점선은 가격 경로예요. 가로 간격은 보기 쉽게 배치했어요.", fontSize = 11.sp)
+        Text(if (analysis != null) "점선 · 시간 표본이 충분한 경로   가로 띠 · 과거 소요 시간 범위"
+            else "점선의 가로 간격은 보기 쉽게 배치했어요.", fontSize = 11.sp)
         if (interval == "4h" && symbol != "BTC/USD") {
             Text("정규장 마지막 봉은 짧을 수 있습니다. 봉을 눌러 길이를 확인하세요.", fontSize = 11.sp)
         }
     }
+    if (analysis != null) WaveResearchExplanation(analysis, bars)
     WaveExplanation(bars, points, scenario)
 }
 
-@Composable private fun WaveChart(bars:List<Bar>, first:Int, pivots:List<Pivot>, scenario:JSONObject?) {
+@Composable private fun WaveResearchExplanation(analysis:JSONObject, bars:List<Bar>) {
+    val patterns = analysis.getJSONArray("patterns")
+    val shock = analysis.getJSONObject("shock")
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    Panel {
+        Text("파형 해설", fontWeight = FontWeight.Bold)
+        if (patterns.length() > 0) {
+            val main = patterns.getJSONObject(0)
+            val end = main.getInt("end")
+            val direction = if (main.getInt("direction") > 0) "상승" else "하락"
+            Text(if (main.optBoolean("developing")) "현재는 $direction 방향의 ${main.getString("name")} 외형이 진행 중인 후보예요."
+                else "최근 확인된 구조는 $direction 방향의 ${main.getString("name")} 후보예요.")
+            Text("${bars[main.getInt("start")].date} ~ ${bars[end].date} 구간을 짚었습니다.", fontSize = 12.sp)
+            val move = Performance.percent(bars.last().close / bars[end].close - 1)
+            Text(if (main.optBoolean("developing")) "물음표는 현재 봉까지의 진행 지점이에요. 다음 전환점에서 파형을 다시 확인합니다."
+                else "그 끝점 이후 ${bars.lastIndex - end}개 봉, 종가는 $move 움직였어요.", fontSize = 12.sp)
+        } else {
+            Text("최근 전환점 배열에서 ABC·추진파·복합 조정에 맞는 외형 후보가 아직 잡히지 않았어요. 아래 가격 범위로 현재 흐름을 봅니다.")
+        }
+        val change = Performance.percent(shock.getDouble("change"))
+        Text(if (shock.getBoolean("rapid_drop")) {
+            "마지막 봉은 $change. 직전 ${shock.getInt("lookback")}개 봉의 움직임과 비교해 급락으로 분류했어요."
+        } else {
+            "마지막 봉 $change · 최근 변동 폭 기준 급락 조건은 채우지 않았어요."
+        }, fontSize = 12.sp)
+        TextButton(onClick = { expanded = !expanded }) { Text(if (expanded) "근거 접기" else "파형 근거·대안 보기") }
+        if (expanded) {
+            for (i in 0 until patterns.length()) {
+                val item = patterns.getJSONObject(i)
+                Text("${if (i == 0) "기본" else "대안"} · ${item.getString("name")}", fontWeight = FontWeight.SemiBold)
+                val labels = item.getJSONArray("labels")
+                val positions = (0 until labels.length()).map {
+                    val point = labels.getJSONObject(it)
+                    "${point.getString("label")} ${price(bars[point.getInt("index")].close)}"
+                }
+                Text(positions.joinToString(" → "), fontSize = 12.sp)
+                Text(item.getString("evidence"), fontSize = 12.sp)
+                val durations = item.getJSONArray("durations")
+                Text("각 구간 ${(0 until durations.length()).joinToString("·") { durations.getInt(it).toString() }}개 봉",
+                    fontSize = 11.sp)
+                Text(if (item.getBoolean("subdivision_verified")) "가격 외형과 한 단계 작은 파동의 구성 조건이 맞았어요."
+                    else "가격 외형이 맞는 후보예요. 내부 파동 구성은 추가 확인이 필요해요.", fontSize = 11.sp)
+            }
+            Text("ABC는 세 움직임의 조정, W–X–Y는 두 조정을 X파가 연결한 구조예요. 세 조정이 연결되면 W–X–Y–X–Z로 표기해요.",
+                fontSize = 11.sp)
+            Text("급락은 직전 최대 60개 봉의 로그수익률 평균보다 2표준편차 이상 낮은 음수 수익률로 분류해요.",
+                fontSize = 11.sp)
+        }
+    }
+    Panel {
+        Text("앞으로 볼 두 경로", fontWeight = FontWeight.Bold)
+        val paths = analysis.getJSONArray("paths")
+        for (i in 0 until paths.length()) {
+            val path = paths.getJSONObject(i)
+            val up = path.getString("direction") == "up"
+            val trigger = price(path.getDouble("trigger"))
+            val target = if (path.isNull("target")) null else price(path.getDouble("target"))
+            val invalidation = price(path.getDouble("invalidation"))
+            val direction = if (up) "상승" else "하락"
+            val side = if (up) "위" else "아래"
+            Text("${if (i == 0) "기본" else "반대"} · $direction", fontWeight = FontWeight.SemiBold)
+            Text(if (target != null) "종가가 $trigger ${side}에 있을 때 $target 쪽을 봐요. 반대 기준선은 ${invalidation}입니다."
+                else "종가가 $trigger ${side}에 머무는지 봐요. 가격 폭으로 계산한 추가 목표는 유효 범위를 벗어나 보류합니다.",
+                fontSize = 12.sp)
+            val method = if (path.getString("method") == "first_leg_1.618") "첫 파동의 1.618배 연장 가격" else "최근 전환점 가격 폭을 돌파 방향으로 더한 기준 가격"
+            Text(method, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            val clock = path.getJSONObject("timing")
+            if (clock.getString("status") == "estimated") {
+                val formatter = DateTimeFormatter.ofPattern("yy.MM.dd HH:mm").withZone(korea)
+                val from = formatter.format(Instant.parse(clock.getString("lower_at")))
+                val until = formatter.format(Instant.parse(clock.getString("upper_at")))
+                Text("남은 ${clock.getInt("lower")}~${clock.getInt("upper")}개 봉 · $from ~ $until KST", fontSize = 12.sp)
+                Text("같은 방향의 완료 파동 ${clock.getInt("samples")}개에서 현재까지의 경과 봉 수를 뺀 사분위 범위예요. 가격 도달과 시간 종료는 따로 확인해요.",
+                    fontSize = 11.sp)
+            } else if (clock.getString("status") == "waiting_turn") {
+                Text("반대 방향의 시작 전환점이 확인되면 시간 범위를 계산해요.", fontSize = 11.sp)
+            } else {
+                Text("시간 추정 보류 · 같은 방향·현재 경과 시간 조건의 표본 ${clock.getInt("samples")}개",
+                    fontSize = 11.sp)
+            }
+        }
+        if (paths.length() == 0) Text("상단·하단 가격 폭이 잡히면 두 방향의 경로를 비교합니다.", fontSize = 12.sp)
+        if (!analysis.isNull("rejection")) Text("기존 연장 후보 · ${analysis.getString("rejection")}", fontSize = 11.sp)
+    }
+}
+
+@Composable private fun WaveChart(bars:List<Bar>, first:Int, pivots:List<Pivot>, scenario:JSONObject?, analysis:JSONObject?) {
     val accent = MaterialTheme.colorScheme.primary
     val up = MaterialTheme.colorScheme.tertiary
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
@@ -192,25 +281,32 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
     val target = scenario?.getDouble("target")
     val invalid = scenario?.getDouble("invalidation")
     val trigger = scenario?.getDouble("trigger")
-    val minimum = minOf(show.minOf { it.low }, target ?: Double.MAX_VALUE, invalid ?: Double.MAX_VALUE, trigger ?: Double.MAX_VALUE)
-    val maximum = maxOf(show.maxOf { it.high }, target ?: 0.0, invalid ?: 0.0, trigger ?: 0.0)
+    val pathRows = analysis?.optJSONArray("paths")
+    val timedPaths = (0 until (pathRows?.length() ?: 0)).map { pathRows!!.getJSONObject(it) }
+        .filter { !it.isNull("target") && it.getJSONObject("timing").optString("status") == "estimated" }
+    val projectedPrices = timedPaths.flatMap { listOf(it.getDouble("target"), it.getDouble("invalidation"), it.getDouble("trigger")) }
+    val minimum = minOf(show.minOf { it.low }, projectedPrices.minOrNull() ?: target ?: Double.MAX_VALUE, invalid ?: Double.MAX_VALUE, trigger ?: Double.MAX_VALUE)
+    val maximum = maxOf(show.maxOf { it.high }, projectedPrices.maxOrNull() ?: target ?: 0.0, invalid ?: 0.0, trigger ?: 0.0)
     var inspected by remember(bars, first) { mutableIntStateOf(bars.lastIndex) }
     val selected = bars[inspected]
-    val hasProjection = target != null && invalid != null && trigger != null
-    val historyFraction = if (hasProjection) .60f else 1f
+    val legacyProjection = analysis == null && target != null && invalid != null && trigger != null
+    val hasProjection = timedPaths.isNotEmpty() || legacyProjection
+    val futureSlots = maxOf(timedPaths.maxOfOrNull { it.getJSONObject("timing").getInt("upper") } ?: 0,
+        if (hasProjection) ((bars.lastIndex - first) * 2 / 3).coerceAtLeast(1) else 0)
+    val historyFraction = (bars.lastIndex - first).toFloat() / (bars.lastIndex - first + futureSlots)
     Canvas(Modifier.fillMaxWidth().height(235.dp).pointerInput(bars, first, historyFraction) {
         detectTapGestures { offset ->
             val axis = 56.dp.toPx()
-            val historyWidth = (size.width - axis).coerceAtLeast(1f) * historyFraction
+            val historyWidth = (size.width - axis - 6.dp.toPx()).coerceAtLeast(1f) * historyFraction
             if (offset.x > axis + historyWidth) return@detectTapGestures
             val position = ((offset.x - axis) / historyWidth).coerceIn(0f, 1f)
             inspected = first + (position * (bars.lastIndex - first) + .5f).toInt()
         }
     }) {
         val left = 56.dp.toPx()
-        val right = left + (size.width - left) * historyFraction
+        val right = left + (size.width - left - 6.dp.toPx()) * historyFraction
         val top = if (hasProjection) 27.dp.toPx() else 10.dp.toPx()
-        val bottom = size.height - 10.dp.toPx()
+        val bottom = size.height - if (analysis != null) 24.dp.toPx() else 10.dp.toPx()
         val span = (maximum - minimum).coerceAtLeast(.001)
         fun y(p:Double) = top + (bottom - top) * (1 - (p - minimum) / span).toFloat()
         fun x(index:Int) = left + (right - left) * (index - first) / (bars.lastIndex - first)
@@ -222,7 +318,7 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
             drawRect(accent.copy(alpha = .07f), topLeft = Offset(right, 0f),
                 size = Size(size.width - right, size.height))
             drawLine(muted.copy(alpha = .30f), Offset(right, 0f), Offset(right, bottom))
-            val label = "예상 구간"
+            val label = if (analysis != null) "예상 시간 범위" else "예상 구간"
             val labelX = right + (size.width - right - paint.measureText(label)) / 2
             drawContext.canvas.nativeCanvas.drawText(label, labelX, 14.dp.toPx(), paint)
         }
@@ -252,7 +348,41 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
                 if (index >= first) drawContext.canvas.nativeCanvas.drawText("P$i", x(index), y(bars[index].close) - 4.dp.toPx(), paint)
             }
         }
-        if (target != null && invalid != null && trigger != null) {
+        analysis?.optJSONArray("patterns")?.optJSONObject(0)?.optJSONArray("labels")?.let { labels ->
+            for (i in 0 until labels.length()) {
+                val label = labels.getJSONObject(i)
+                val index = label.getInt("index")
+                if (index >= first) drawContext.canvas.nativeCanvas.drawText(
+                    label.getString("label"), x(index), y(bars[index].close) - 13.dp.toPx(), paint)
+            }
+        }
+        timedPaths.forEach { path ->
+            val clock = path.getJSONObject("timing")
+            val color = if (path == pathRows?.optJSONObject(0)) accent else up
+            val goalY = y(path.getDouble("target"))
+            val dash = PathEffect.dashPathEffect(floatArrayOf(9f, 6f))
+            val middleX = x(bars.lastIndex + clock.getInt("median"))
+            val lowX = x(bars.lastIndex + clock.getInt("lower"))
+            val highX = x(bars.lastIndex + clock.getInt("upper"))
+            drawLine(color.copy(alpha = .25f), Offset(lowX, goalY), Offset(highX, goalY), 9.dp.toPx())
+            drawLine(color, Offset(right, y(bars.last().close)), Offset(middleX, goalY), 2.dp.toPx(), pathEffect = dash)
+            drawCircle(color, 3.dp.toPx(), Offset(middleX, goalY))
+            drawLine(color.copy(alpha = .45f), Offset(right, y(path.getDouble("invalidation"))),
+                Offset(highX, y(path.getDouble("invalidation"))), pathEffect = dash)
+        }
+        if (analysis != null) {
+            val currentLabel = bars.last().date.substring(5)
+            drawContext.canvas.nativeCanvas.drawText(currentLabel, right - paint.measureText(currentLabel),
+                size.height - 2.dp.toPx(), paint)
+            val latestClock = timedPaths.maxByOrNull { it.getJSONObject("timing").getInt("upper") }?.getJSONObject("timing")
+            if (latestClock != null) {
+                val label = timeLabel.format(Instant.parse(latestClock.getString("upper_at"))).substring(0, 5)
+                val at = x(bars.lastIndex + latestClock.getInt("upper"))
+                drawContext.canvas.nativeCanvas.drawText(label, (at - paint.measureText(label)).coerceAtLeast(right),
+                    size.height - 2.dp.toPx(), paint)
+            }
+        }
+        if (legacyProjection && target != null && invalid != null && trigger != null) {
             val dash = PathEffect.dashPathEffect(floatArrayOf(9f, 6f))
             val end = size.width - 5.dp.toPx()
             val start = Offset(right, y(bars.last().close))
