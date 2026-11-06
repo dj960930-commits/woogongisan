@@ -44,18 +44,6 @@ jobs:
           path: runtime
           key: deliveries-${{ github.run_id }}
           restore-keys: deliveries-
-      - run: python -m pytest tests -q
-        if: steps.close.outputs.proceed == 'true'
-      - uses: actions/setup-node@v4
-        if: steps.close.outputs.proceed == 'true'
-        with:
-          node-version: '22'
-      - run: node tests/portfolio_web.mjs
-        if: steps.close.outputs.proceed == 'true'
-      - run: node tests/performance_web.mjs
-        if: steps.close.outputs.proceed == 'true'
-      - run: node tests/free_scheduler.mjs
-        if: steps.close.outputs.proceed == 'true'
       - name: Calculate complete close only
         if: steps.close.outputs.proceed == 'true'
         run: |

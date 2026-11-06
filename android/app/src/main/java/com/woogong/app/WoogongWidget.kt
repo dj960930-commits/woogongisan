@@ -75,7 +75,7 @@ open class WoogongWidget:AppWidgetProvider(){
     paint.color=grid;paint.strokeWidth=1.5f;canvas.drawLine(left,yy,right,yy,paint)
    }
    paint.color=muted;paint.alpha=100;canvas.drawLine(left,y(0.0),right,y(0.0),paint);paint.alpha=255
-   val colors=if(dark)listOf(Color.rgb(117,223,197),Color.rgb(154,173,255),Color.rgb(229,187,112)) else listOf(Color.rgb(20,126,104),Color.rgb(83,102,205),Color.rgb(149,105,38))
+   val colors=if(dark)listOf(Color.rgb(234,200,122),Color.rgb(174,185,234),Color.rgb(139,196,185)) else listOf(Color.rgb(118,85,22),Color.rgb(77,91,157),Color.rgb(50,109,100))
    listOf("model","tqqq","brkb").forEachIndexed{index,key->
     val path=Path();window.points.forEachIndexed{i,p->val xx=left+(right-left)*i/(window.points.size-1);if(i==0)path.moveTo(xx,y(p.value(key))) else path.lineTo(xx,y(p.value(key)))}
     val line=Paint(Paint.ANTI_ALIAS_FLAG).apply{color=colors[index];strokeWidth=if(index==0)5.5f else 3.5f;style=Paint.Style.STROKE;strokeJoin=Paint.Join.ROUND;strokeCap=Paint.Cap.ROUND}

@@ -2,6 +2,9 @@ name: Publish Woogongisan
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'site/*.json'
+      - 'site/history/**'
   workflow_dispatch:
 permissions:
   contents: read

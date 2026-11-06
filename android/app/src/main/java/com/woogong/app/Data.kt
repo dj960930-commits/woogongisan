@@ -7,6 +7,8 @@ import java.net.URL
 import java.time.Instant
 
 object Data {
+ private val syncLock=Any()
+ private val syncIssued=java.util.concurrent.atomic.AtomicLong()
  fun prefs(c:Context)=c.getSharedPreferences("woogong",Context.MODE_PRIVATE)
  fun load(c:Context,name:String):JSONObject {
   val cached=prefs(c).getString(name,null)
@@ -25,6 +27,9 @@ object Data {
   !sameModel(s,status) || s.optString("market_date")!=status.optString("market_date") || s.optString("mode")!="live" || status.optString("state")!="ready" || Instant.now().isAfter(Instant.parse(s.getString("valid_until")))
  } catch(e:Exception){true}
  fun sync(c:Context) {
+  val ticket=syncIssued.incrementAndGet()
+  synchronized(syncLock) {
+  if(ticket!=syncIssued.get())return
   val previous=try{load(c,"snapshot")}catch(_:Exception){null}
   val base=SignalEndpoint.normalize(url(c))
   val requestTime=System.currentTimeMillis()
@@ -49,6 +54,18 @@ object Data {
   weights.keys().forEach{val w=weights.getDouble(it);require(w.isFinite()&&w>=-1e-10);sum+=w}
   require(kotlin.math.abs(sum-1)<1e-8);JSONObject(state)
   if(health.optString("state")=="ready")require(obj.getString("market_date")==health.getString("market_date"))
+  val current=try{prefs(c).getString("snapshot",null)?.let{JSONObject(it)}}catch(_:Exception){null}
+  if(current!=null&&sameModel(obj,current)){
+   val incomingDate=obj.optString("market_date")
+   val currentDate=current.optString("market_date")
+   require(incomingDate>=currentDate){"이전 거래일 자료가 도착해 현재 자료를 유지했습니다"}
+   if(incomingDate==currentDate){
+    val incomingAt=runCatching{Instant.parse(obj.getString("generated_at"))}.getOrDefault(Instant.MIN)
+    val currentAt=runCatching{Instant.parse(current.getString("generated_at"))}.getOrDefault(Instant.MIN)
+    require(incomingAt>=currentAt){"이전 발행 자료가 도착해 현재 자료를 유지했습니다"}
+   }
+  }
+  if(ticket!=syncIssued.get())return
   val edit=prefs(c).edit().putString("snapshot",snap).putString("status",state).putString("sync_error","").putString("model_check_at",Instant.now().toString())
   // Persist each received live publication; model/date revisions remain separate.
   if(obj.optString("mode")=="live"&&health.optString("state")=="ready"){
@@ -68,6 +85,7 @@ object Data {
   try{PortfolioStore.recordDaily(c,obj,health);prefs(c).edit().remove("portfolio_error").apply()}
   catch(_:Exception){prefs(c).edit().putString("portfolio_error","자산 기록을 저장하지 못했습니다. 내 자산에서 잔고를 확인하세요.").apply()}
 
+  }
  }
  fun allocation(s:JSONObject):String {
   val w=s.getJSONObject("target")

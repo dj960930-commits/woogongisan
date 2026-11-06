@@ -35,6 +35,8 @@ private val ranges = linkedMapOf(1 to "1개월", 3 to "3개월", 6 to "6개월",
 private val korea = ZoneId.of("Asia/Seoul")
 private val timeLabel = DateTimeFormatter.ofPattern("MM-dd HH:mm").withZone(korea)
 private val waveCacheLock = Any()
+private fun feedStamp(feed:JSONObject,key:String)=runCatching{Instant.parse(feed.optString(key))}.getOrDefault(Instant.MIN)
+private val feedFreshness=compareBy<JSONObject>{feedStamp(it,"generated_at")}.thenBy{feedStamp(it,"analyzed_at")}
 private data class Bar(val date:String, val end:Instant, val open:Double, val high:Double, val low:Double,
                        val close:Double, val minutes:Int)
 private data class Pivot(val index:Int, val confirmation:Int, val kind:String)
@@ -65,7 +67,7 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
                 runCatching { readFeed(cache.readFully()) }.getOrNull()
             }
             val bundled = runCatching { context.assets.open("waves.json").use { readFeed(it.readBytes()) } }.getOrNull()
-            listOfNotNull(saved, bundled).maxByOrNull { Instant.parse(it.getString("generated_at")) }
+            listOfNotNull(saved, bundled).maxWithOrNull(feedFreshness)
         }
         feed = stored
         val online = withContext(Dispatchers.IO) {
@@ -88,12 +90,10 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
                         result.toByteArray()
                     }
                     val value = readFeed(bytes)
-                    require(stored == null || Instant.parse(value.getString("generated_at")) >=
-                        Instant.parse(stored.getString("generated_at")))
+                    require(stored == null || feedFreshness.compare(value, stored) >= 0)
                     synchronized(waveCacheLock) {
                         val existing = runCatching { readFeed(cache.readFully()) }.getOrNull()
-                        if (existing != null && Instant.parse(existing.getString("generated_at")) >
-                            Instant.parse(value.getString("generated_at"))) {
+                        if (existing != null && feedFreshness.compare(existing, value) > 0) {
                             existing
                         } else {
                             val output = cache.startWrite()
@@ -178,11 +178,19 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
     Panel {
         Text("$symbol · ${intervals.getValue(interval)}", fontWeight = FontWeight.Bold)
         val date = if (interval == "4h") timeLabel.format(last.end) + " KST" else last.date
-        Text("완료 $date" + if (failed || series.optBoolean("cached")) " · 저장 자료" else "", fontSize = 12.sp)
+        val freshness = series.optJSONObject("freshness")
+        val delayed = freshness?.optString("status") == "delayed"
+        val expectedAt = freshness?.optString("expected_as_of")?.takeIf { it.isNotBlank() }
+        val sourceLabel = when {
+            delayed && expectedAt != null -> " · 자료 지연 · 최신 기준 " + timeLabel.format(Instant.parse(expectedAt))
+            failed || series.optBoolean("cached") -> " · 저장 자료"
+            else -> ""
+        }
+        Text("완료 $date" + sourceLabel, fontSize = 12.sp)
         WaveChart(bars, first, chartPoints, scenario, analysis)
         Text("실제 봉 ${bars[first].date} ~ ${last.date}", fontSize = 11.sp)
-        Text("회색 · 이전 파동   골드 · 현재 움직임   점선 · 예상 경로", fontSize = 11.sp)
-        Text(if (analysis != null) "점선 · 시간 표본이 충분한 경로   가로 띠 · 과거 소요 시간 범위"
+        Text("회색 · 이전 파동   골드 · 현재 움직임   점선 · 예상 가격 기준", fontSize = 11.sp)
+        Text(if (analysis != null) "점선 · 가격 기준   세로 띠 · 다음 전환 예상 시간 참고 범위"
             else "점선의 가로 간격은 보기 쉽게 배치했어요.", fontSize = 11.sp)
         if (interval == "4h" && symbol != "BTC/USD") {
             Text("정규장 마지막 봉은 짧을 수 있습니다. 봉을 눌러 길이를 확인하세요.", fontSize = 11.sp)
@@ -270,8 +278,8 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
                 val formatter = DateTimeFormatter.ofPattern("yy.MM.dd HH:mm").withZone(korea)
                 val from = formatter.format(Instant.parse(clock.getString("lower_at")))
                 val until = formatter.format(Instant.parse(clock.getString("upper_at")))
-                Text("남은 ${clock.getInt("lower")}~${clock.getInt("upper")}개 봉 · $from ~ $until KST", fontSize = 12.sp)
-                Text("같은 방향의 완료 파동 ${clock.getInt("samples")}개에서 현재까지의 경과 봉 수를 뺀 사분위 범위예요. 가격 도달과 시간 종료는 따로 확인해요.",
+                Text("다음 전환 참고 범위 · ${clock.getInt("lower")}~${clock.getInt("upper")}개 봉 · $from ~ $until KST", fontSize = 12.sp)
+                Text("같은 방향의 완료 파동 ${clock.getInt("samples")}개를 바탕으로 한 시간 범위예요. 예상 가격에 도달하는 시각을 뜻하지는 않아요.",
                     fontSize = 11.sp)
             } else if (clock.getString("status") == "waiting_turn") {
                 Text("반대 방향의 시작 전환점이 확인되면 시간 범위를 계산해요.", fontSize = 11.sp)
@@ -378,11 +386,11 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
             val middleX = x(bars.lastIndex + clock.getInt("median"))
             val lowX = x(bars.lastIndex + clock.getInt("lower"))
             val highX = x(bars.lastIndex + clock.getInt("upper"))
-            drawLine(color.copy(alpha = .25f), Offset(lowX, goalY), Offset(highX, goalY), 9.dp.toPx())
-            drawLine(color, Offset(right, y(bars.last().close)), Offset(middleX, goalY), 2.dp.toPx(), pathEffect = dash)
-            drawCircle(color, 3.dp.toPx(), Offset(middleX, goalY))
-            drawLine(color.copy(alpha = .45f), Offset(right, y(path.getDouble("invalidation"))),
-                Offset(highX, y(path.getDouble("invalidation"))), pathEffect = dash)
+            drawRect(color.copy(alpha = .08f), Offset(lowX, top), Size((highX - lowX).coerceAtLeast(1f), bottom - top))
+            drawLine(color.copy(alpha = .45f), Offset(lowX, top), Offset(lowX, bottom), pathEffect = dash)
+            drawLine(color.copy(alpha = .45f), Offset(highX, top), Offset(highX, bottom), pathEffect = dash)
+            drawLine(color, Offset(right, goalY), Offset(highX, goalY), 2.dp.toPx(), pathEffect = dash)
+            drawCircle(color, 3.dp.toPx(), Offset(right, goalY))
         }
         if (analysis != null) {
             val currentLabel = bars.last().date.substring(5)

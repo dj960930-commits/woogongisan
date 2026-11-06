@@ -31,6 +31,17 @@ import org.json.JSONObject
    Text("약 1개월 뒤 중앙 경로",fontSize=12.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
    Text("%+.1f%%".format((middle.getDouble("median")/price-1)*100),fontWeight=FontWeight.Bold,color=primary)
   }
+  val evaluation=middle.optJSONObject("evaluation")
+  if(evaluation!=null&&!evaluation.isNull("mae_return")&&!evaluation.isNull("unchanged_mae_return")){
+   val error=evaluation.getDouble("mae_return")
+   val baseline=evaluation.getDouble("unchanged_mae_return")
+   Text("과거 중앙 경로 오차 %.1f%% · 가격 유지 기준 %.1f%%".format(error*100,baseline*100),
+    fontSize=11.sp,color=if(error>baseline)MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant)
+   if(!evaluation.isNull("historical_coverage")){
+    Text("과거 변동 범위 포함률 %.0f%% · 표본 %d회".format(evaluation.getDouble("historical_coverage")*100,evaluation.optInt("origins")),
+     fontSize=11.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
+   }
+  }else Text("과거 검증 자료 없음",fontSize=11.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
   val horizons=listOf(0)+(0 until windows.length()).map{windows.getJSONObject(it).getInt("sessions")}
   val lower=listOf(price)+(0 until windows.length()).map{windows.getJSONObject(it).getDouble("lower")}
   val upper=listOf(price)+(0 until windows.length()).map{windows.getJSONObject(it).getDouble("upper")}
@@ -46,6 +57,6 @@ import org.json.JSONObject
    drawPath(path,primary,style=Stroke(3.dp.toPx()))
   }
   Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.SpaceBetween){Text("현재 ${usd(price)}",fontSize=11.sp);Text("3개월",fontSize=11.sp)}
-  Text("선은 중앙 경로, 음영은 과거에 관측된 변동 범위예요.",fontSize=12.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
+  Text("과거 수익 분포를 현재 가격에 옮긴 참고선이에요. 아래 과거 오차를 가격 유지 기준과 비교해 보세요.",fontSize=12.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
  }
 }

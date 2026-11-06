@@ -29,6 +29,7 @@ internal object MeritzAccount {
  }
  private fun encrypt(value:String):String {val cipher=Cipher.getInstance("AES/GCM/NoPadding");cipher.init(Cipher.ENCRYPT_MODE,key());return Base64.encodeToString(cipher.iv+cipher.doFinal(value.toByteArray(Charsets.UTF_8)),Base64.NO_WRAP)}
  private fun decrypt(value:String):String {val b=Base64.decode(value,Base64.NO_WRAP);require(b.size>12);val cipher=Cipher.getInstance("AES/GCM/NoPadding");cipher.init(Cipher.DECRYPT_MODE,key(),GCMParameterSpec(128,b.copyOfRange(0,12)));return cipher.doFinal(b.copyOfRange(12,b.size)).toString(Charsets.UTF_8)}
+ private fun accountId(appKey:String)=MessageDigest.getInstance("SHA-256").digest(appKey.toByteArray()).take(8).joinToString(""){"%02x".format(it)}
  fun connected(c:Context)=Data.prefs(c).contains(KEY)
  fun failed(c:Context)=Data.prefs(c).getBoolean("meritz_sync_failed",false)
  fun cached(c:Context):JSONObject?=synchronized(lock){try{Data.prefs(c).getString(CACHE,null)?.let{JSONObject(decrypt(it))}}catch(_:Exception){null}}
@@ -36,7 +37,11 @@ internal object MeritzAccount {
   val k=MeritzRoutes.credential(appKey);val s=MeritzRoutes.credential(secret)
   synchronized(lock){
    val credentials=JSONObject().put("key",k).put("secret",s).put("mac",UUID.randomUUID().toString().replace("-","").take(12).uppercase())
-   check(Data.prefs(c).edit().putString(KEY,encrypt(credentials.toString())).remove(CACHE).putBoolean("meritz_sync_failed",true).commit())
+   val oldId=cached(c)?.optJSONObject("account")?.optString("account_id")
+   val keepHistory=oldId==accountId(k)
+   val edit=Data.prefs(c).edit().putString(KEY,encrypt(credentials.toString())).putBoolean("meritz_sync_failed",true)
+   if(!keepHistory)edit.remove(CACHE)
+   check(edit.commit())
   }
   WoogongWidget.updateAll(c)
  }
@@ -48,7 +53,7 @@ internal object MeritzAccount {
    val client=MeritzClient()
    if(auth.optLong("expires")<=Instant.now().epochSecond){val (token,expires)=client.authenticate(auth.getString("key"),auth.getString("secret"));auth.put("token",token).put("expires",expires)}
    val account=client.snapshot(auth.getString("token"),auth.getString("mac"))
-   account.put("account_id",MessageDigest.getInstance("SHA-256").digest(auth.getString("key").toByteArray()).take(8).joinToString(""){"%02x".format(it)})
+   account.put("account_id",accountId(auth.getString("key")))
    synchronized(lock){
     require(Data.prefs(c).getString(KEY,null)==captured){"연결 정보가 변경되었습니다. 다시 조회하세요."}
     val old=cached(c);val history=old?.optJSONArray("history")?:JSONArray();val day=PortfolioStore.today();val updated=JSONArray()

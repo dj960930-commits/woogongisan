@@ -96,6 +96,51 @@ def four_hours(frame, schedule, now, crypto):
     return bars
 
 
+def expected_as_of(interval, schedule, now, crypto):
+    """Latest calendar-complete bar endpoint, independent of provider availability."""
+    now = pd.Timestamp(now)
+    if crypto:
+        utc_now = now.tz_convert("UTC")
+        if interval == "1d":
+            return utc_now.floor("D")
+        if interval == "4h":
+            return utc_now.floor("4h")
+        period = "W-SUN" if interval == "1w" else "M"
+        dates = pd.date_range(utc_now.tz_localize(None).normalize() - pd.Timedelta(days=45),
+                              utc_now.tz_localize(None).normalize(), freq="D")
+        ends = pd.Series(dates + pd.Timedelta(days=1), index=dates)
+        current_period = utc_now.tz_localize(None).to_period(period)
+        complete = [days.iloc[-1] for key, days in ends.groupby(ends.index.to_period(period))
+                    if key < current_period]
+        return complete[-1].tz_localize("UTC") if complete else None
+    if interval == "1d":
+        closes = schedule.market_close[schedule.market_close <= now]
+        return closes.iloc[-1] if not closes.empty else None
+    if interval == "4h":
+        ends = []
+        for opening, closing in zip(schedule.market_open, schedule.market_close):
+            for start in pd.date_range(opening, closing, freq="4h", inclusive="left"):
+                end = min(start + pd.Timedelta(hours=4), closing)
+                if end <= now:
+                    ends.append(end)
+        return max(ends) if ends else None
+    period = "W-SUN" if interval == "1w" else "M"
+    complete = [days.iloc[-1] for _, days in schedule.market_close.groupby(schedule.index.to_period(period))
+                if days.iloc[-1] <= now]
+    return complete[-1] if complete else None
+
+
+def freshness(series_data, expected):
+    actual = pd.Timestamp(series_data["as_of"])
+    if expected is None:
+        return dict(status="unknown", actual_as_of=actual.isoformat(), expected_as_of=None, lag_minutes=None)
+    expected = pd.Timestamp(expected)
+    lag = max(0.0, (expected - actual).total_seconds() / 60)
+    return dict(status="delayed" if actual < expected else "current",
+                actual_as_of=actual.isoformat(), expected_as_of=expected.isoformat(),
+                lag_minutes=round(lag, 1))
+
+
 def pivots(prices, threshold):
     """Causal reversal detector adapted from analysis_app/models/causal_engine.py."""
     direction = 0
@@ -180,6 +225,10 @@ def main():
                     for key in group:
                         if key not in result and key in previous:
                             result[key] = {**previous[key], "cached": True}
+                for key in group:
+                    if key in result:
+                        result[key]["freshness"] = freshness(
+                            result[key], expected_as_of(key, schedule, now, crypto))
         return symbol, {"series": result}
 
     with ThreadPoolExecutor(max_workers=4) as workers:
