@@ -20,6 +20,15 @@ NAMES = {
 }
 
 
+def proportionate_abc(item, close):
+    """Operational ranking preference, not an Elliott validity boundary."""
+    ids = item["indices"]
+    if len(ids) != 4:
+        return True
+    first = abs(float(close[ids[1]] - close[ids[0]]))
+    return first > 0 and abs(float(close[ids[2]] - close[ids[1]])) <= first * 2
+
+
 def future_ends(last, interval, crypto, count):
     """Actual bar endings, including NYSE closures and shortened sessions."""
     import pandas_market_calendars as calendars
@@ -110,7 +119,7 @@ def analyze(bars, interval, threshold, pivot_fn, scenario, crypto=False):
     catalog.extend(item for item in complete_catalog(frame, active_points, degrees)
                    if item["end"] == len(bars) - 1)
     # One pattern per family at the latest known endpoint, retaining ambiguity.
-    catalog.sort(key=lambda item: (item["end"], item["subdivision_verified"],
+    catalog.sort(key=lambda item: (item["end"], proportionate_abc(item, close), item["subdivision_verified"],
                                   -len(item["children"]), item["degree"]), reverse=True)
     patterns, seen = [], set()
     for item in catalog:
@@ -140,6 +149,8 @@ def analyze(bars, interval, threshold, pivot_fn, scenario, crypto=False):
             retracement = abs(values[2] - values[1]) / a_length
             c_ratio = abs(values[3] - values[2]) / a_length
             evidence = f"B는 A의 {retracement:.1%}를 되돌렸고, C의 가격 폭은 A의 {c_ratio:.2f}배예요."
+            if not proportionate_abc(item, close):
+                evidence += " B가 A의 2배를 넘어 기본 해설 선정 순위를 낮췄어요."
         elif item["family"] in {"impulse", "truncated_impulse"}:
             evidence = "2파가 출발점을 지켰고, 4파와 1파의 가격 영역이 겹치지 않았어요. 3파는 1·3·5파 중 최단이 아니에요."
         else:
@@ -154,7 +165,11 @@ def analyze(bars, interval, threshold, pivot_fn, scenario, crypto=False):
                              evidence=evidence))
         if len(patterns) == 3:
             break
-    points = pivot_fn(close, threshold)
+    reference_points = pivot_fn(close, threshold)
+    degree = patterns[0]["degree"] if patterns else threshold
+    points = pivot_fn(close, degree)
+    # Price boundaries and timing must refer to the displayed wave scale.
+    path_scenario = scenario if degree == threshold else None
     last_index = len(bars) - 1
     # Comparison is based on prior bars so the current shock cannot dilute itself.
     returns = np.diff(np.log(close))
@@ -172,14 +187,14 @@ def analyze(bars, interval, threshold, pivot_fn, scenario, crypto=False):
     else:
         low, high = float(min(close[-21:-1])), float(max(close[-21:-1]))
     active_sign = (1 if points[-1][2] == "L" else -1) if points else (1 if current >= 0 else -1)
-    primary_sign = (1 if scenario["direction"] == "up" else -1) if scenario else active_sign
+    primary_sign = (1 if path_scenario["direction"] == "up" else -1) if path_scenario else active_sign
     paths = []
     for sign in (primary_sign, -primary_sign):
         clock = timing(points, last_index, sign)
         boundary = high if sign > 0 else low
-        if scenario and sign == primary_sign:
-            target, trigger = scenario["target"], scenario["trigger"]
-            invalidation = scenario["invalidation"]
+        if path_scenario and sign == primary_sign:
+            target, trigger = path_scenario["target"], path_scenario["trigger"]
+            invalidation = path_scenario["invalidation"]
             method = "first_leg_1.618"
         else:
             trigger = boundary
@@ -189,9 +204,15 @@ def analyze(bars, interval, threshold, pivot_fn, scenario, crypto=False):
             method = "range_width"
         if high <= low:
             continue
+        start = points[-1][0] if points else last_index
+        target_reached = target > 0 and any(
+            (row[2][1 if sign > 0 else 2] - target) * sign >= 0 for row in bars[start:])
+        status = "reached" if target_reached else "conditional"
+        if target_reached:
+            clock = dict(status="completed", samples=clock["samples"], elapsed=clock["elapsed"])
         paths.append(dict(direction="up" if sign > 0 else "down",
                           target=round(target, 4) if target > 0 else None, trigger=round(trigger, 4),
-                          invalidation=round(invalidation, 4), method=method,
+                          invalidation=round(invalidation, 4), method=method, status=status,
                           timing=clock))
     maximum = max((path["timing"].get("upper", 0) for path in paths), default=0)
     future = future_ends(bars[-1][1], interval, crypto, maximum) if maximum else []
@@ -204,7 +225,8 @@ def analyze(bars, interval, threshold, pivot_fn, scenario, crypto=False):
                 for key in ("lower", "median", "upper"):
                     clock[key + "_at"] = future[clock[key] - 1]
     return dict(version="wave-explainer-v2", patterns=patterns, paths=paths,
-                rejection=None if scenario else rejection(bars, points),
+                rejection=None if scenario else rejection(bars, reference_points),
+                degree=degree, pivots=points,
                 shock=shock, range_low=round(low, 4), range_high=round(high, 4),
                 future_ends=future,
                 timing_basis="같은 종목·시간봉·전환 폭·방향의 완료 파동 중 현재 경과 봉 수보다 긴 표본의 남은 봉 수 사분위 범위")

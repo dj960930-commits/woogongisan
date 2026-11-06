@@ -169,11 +169,17 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
     val first = bars.indexOfFirst { it.end >= cutoff }.coerceIn(0, bars.lastIndex - 1)
     val scenario = series.optJSONObject("scenario")
     val analysis = series.optJSONObject("analysis")
+    val chartPoints = analysis?.optJSONArray("pivots")?.let { rows ->
+        (0 until rows.length()).map {
+            val point = rows.getJSONArray(it)
+            Pivot(point.getInt(0), point.getInt(1), point.getString(2))
+        }
+    } ?: points
     Panel {
         Text("$symbol · ${intervals.getValue(interval)}", fontWeight = FontWeight.Bold)
         val date = if (interval == "4h") timeLabel.format(last.end) + " KST" else last.date
         Text("완료 $date" + if (failed || series.optBoolean("cached")) " · 저장 자료" else "", fontSize = 12.sp)
-        WaveChart(bars, first, points, scenario, analysis)
+        WaveChart(bars, first, chartPoints, scenario, analysis)
         Text("실제 봉 ${bars[first].date} ~ ${last.date}", fontSize = 11.sp)
         Text("회색 · 이전 파동   골드 · 현재 움직임   점선 · 예상 경로", fontSize = 11.sp)
         Text(if (analysis != null) "점선 · 시간 표본이 충분한 경로   가로 띠 · 과거 소요 시간 범위"
@@ -183,7 +189,7 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
         }
     }
     if (analysis != null) WaveResearchExplanation(analysis, bars)
-    WaveExplanation(bars, points, scenario)
+    else WaveExplanation(bars, points, scenario)
 }
 
 @Composable private fun WaveResearchExplanation(analysis:JSONObject, bars:List<Bar>) {
@@ -192,6 +198,7 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
     var expanded by rememberSaveable { mutableStateOf(false) }
     Panel {
         Text("파형 해설", fontWeight = FontWeight.Bold)
+        Text("종가 ${price(bars.last().close)}", fontWeight = FontWeight.SemiBold)
         if (patterns.length() > 0) {
             val main = patterns.getJSONObject(0)
             val end = main.getInt("end")
@@ -233,6 +240,8 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
                 fontSize = 11.sp)
             Text("급락은 직전 최대 60개 봉의 로그수익률 평균보다 2표준편차 이상 낮은 음수 수익률로 분류해요.",
                 fontSize = 11.sp)
+            if (analysis.has("degree")) Text("가격 범위와 시간 표본은 기본 파형과 같은 전환 폭 %.1f%%로 계산했어요."
+                .format(analysis.getDouble("degree") * 100), fontSize = 11.sp)
         }
     }
     Panel {
@@ -247,13 +256,17 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
             val direction = if (up) "상승" else "하락"
             val side = if (up) "위" else "아래"
             Text("${if (i == 0) "기본" else "반대"} · $direction", fontWeight = FontWeight.SemiBold)
-            Text(if (target != null) "종가가 $trigger ${side}에 있을 때 $target 쪽을 봐요. 반대 기준선은 ${invalidation}입니다."
+            val reached = path.optString("status") == "reached"
+            Text(if (reached) "$target 기준 가격은 이미 도달했어요. 현재 종가와 새 전환점을 기준으로 다음 구간을 봅니다."
+                else if (target != null) "종가가 $trigger ${side}에 있을 때 $target 쪽을 봐요. 반대 기준선은 ${invalidation}입니다."
                 else "종가가 $trigger ${side}에 머무는지 봐요. 가격 폭으로 계산한 추가 목표는 유효 범위를 벗어나 보류합니다.",
                 fontSize = 12.sp)
             val method = if (path.getString("method") == "first_leg_1.618") "첫 파동의 1.618배 연장 가격" else "최근 전환점 가격 폭을 돌파 방향으로 더한 기준 가격"
             Text(method, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             val clock = path.getJSONObject("timing")
-            if (clock.getString("status") == "estimated") {
+            if (reached) {
+                Text("도달 완료 · 이 가격을 향한 예상 시간 계산은 종료했어요.", fontSize = 11.sp)
+            } else if (clock.getString("status") == "estimated") {
                 val formatter = DateTimeFormatter.ofPattern("yy.MM.dd HH:mm").withZone(korea)
                 val from = formatter.format(Instant.parse(clock.getString("lower_at")))
                 val until = formatter.format(Instant.parse(clock.getString("upper_at")))
@@ -283,7 +296,8 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
     val trigger = scenario?.getDouble("trigger")
     val pathRows = analysis?.optJSONArray("paths")
     val timedPaths = (0 until (pathRows?.length() ?: 0)).map { pathRows!!.getJSONObject(it) }
-        .filter { !it.isNull("target") && it.getJSONObject("timing").optString("status") == "estimated" }
+        .filter { it.optString("status") != "reached" && !it.isNull("target") &&
+            it.getJSONObject("timing").optString("status") == "estimated" }
     val projectedPrices = timedPaths.flatMap { listOf(it.getDouble("target"), it.getDouble("invalidation"), it.getDouble("trigger")) }
     val minimum = minOf(show.minOf { it.low }, projectedPrices.minOrNull() ?: target ?: Double.MAX_VALUE, invalid ?: Double.MAX_VALUE, trigger ?: Double.MAX_VALUE)
     val maximum = maxOf(show.maxOf { it.high }, projectedPrices.maxOrNull() ?: target ?: 0.0, invalid ?: 0.0, trigger ?: 0.0)
@@ -342,7 +356,7 @@ private fun readFeed(bytes:ByteArray):JSONObject = JSONObject(bytes.toString(Cha
         pivots.lastOrNull()?.takeIf { it.index >= first }?.let { point ->
             drawLine(accent, Offset(x(point.index), y(bars[point.index].close)), Offset(right, y(bars.last().close)), 2.dp.toPx())
         }
-        scenario?.optJSONArray("anchors")?.let { anchors ->
+        (if (analysis == null) scenario?.optJSONArray("anchors") else null)?.let { anchors ->
             for (i in 0 until anchors.length()) {
                 val index = anchors.getInt(i)
                 if (index >= first) drawContext.canvas.nativeCanvas.drawText("P$i", x(index), y(bars[index].close) - 4.dp.toPx(), paint)

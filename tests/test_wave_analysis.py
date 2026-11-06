@@ -1,7 +1,7 @@
 import pandas as pd
 
 from tools.build_waves import series
-from tools.wave_analysis import future_ends, timing
+from tools.wave_analysis import future_ends, proportionate_abc, timing
 from tools.wave_grammar import complete_catalog, geometry
 
 
@@ -64,3 +64,20 @@ def test_combination_requires_connected_corrective_children():
     assert combinations
     assert [child["end"] for child in combinations[0]["children"]] == [3, 6, 9]
     assert not combinations[0]["subdivision_verified"]
+
+
+def test_passed_upside_target_is_completed_and_not_a_future_target():
+    prices = [90, 95, 100, 105, 110, 120, 114, 105, 111, 112, 113, 114, 140, 170]
+    dates = pd.date_range("2026-01-01", periods=len(prices), tz="UTC")
+    bars = [(date, date, [p, p, p, p], None) for date, p in zip(dates, prices)]
+    result = series(bars, "1d")["analysis"]
+    upside = next(path for path in result["paths"] if path["direction"] == "up")
+    assert upside["target"] < prices[-1]
+    assert upside["status"] == "reached"
+    assert upside["timing"]["status"] == "completed"
+    assert result["degree"] == result["patterns"][0]["degree"]
+
+
+def test_extreme_b_retracement_is_downranked_without_declaring_it_invalid():
+    assert not proportionate_abc({"indices": [0, 1, 2, 3]}, [549.205, 541.34, 579.665, 572.02])
+    assert proportionate_abc({"indices": [0, 1, 2, 3]}, [495.77, 520.68, 498.19, 572.02])
