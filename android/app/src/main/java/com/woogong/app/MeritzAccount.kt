@@ -20,6 +20,7 @@ internal object MeritzAccount {
  private const val ALIAS="woogong-meritz-device"
  private const val KEY="meritz_credentials_v1"
  private const val CACHE="meritz_account_v1"
+ private const val ARCHIVE="meritz_history_archive_v1_"
  private val lock=Any()
  private val networkLock=Any()
  private fun key():SecretKey {
@@ -33,19 +34,46 @@ internal object MeritzAccount {
  fun connected(c:Context)=Data.prefs(c).contains(KEY)
  fun failed(c:Context)=Data.prefs(c).getBoolean("meritz_sync_failed",false)
  fun cached(c:Context):JSONObject?=synchronized(lock){try{Data.prefs(c).getString(CACHE,null)?.let{JSONObject(decrypt(it))}}catch(_:Exception){null}}
- fun connect(c:Context,appKey:String,secret:String){
+ fun connect(c:Context,appKey:String,secret:String,continueHistory:Boolean=false){
   val k=MeritzRoutes.credential(appKey);val s=MeritzRoutes.credential(secret)
   synchronized(lock){
    val credentials=JSONObject().put("key",k).put("secret",s).put("mac",UUID.randomUUID().toString().replace("-","").take(12).uppercase())
    val oldId=cached(c)?.optJSONObject("account")?.optString("account_id")
-   val keepHistory=oldId==accountId(k)
+   val newId=accountId(k)
+   val keepHistory=oldId==newId||continueHistory
    val edit=Data.prefs(c).edit().putString(KEY,encrypt(credentials.toString())).putBoolean("meritz_sync_failed",true)
-   if(!keepHistory)edit.remove(CACHE)
+   if(!keepHistory){
+    val previous=Data.prefs(c).getString(CACHE,null)
+    if(previous!=null&&!oldId.isNullOrBlank()){
+     val prior=Data.prefs(c).getString(ARCHIVE+oldId,null)
+     if(prior==null)edit.putString(ARCHIVE+oldId,previous)
+     else try{
+      val older=JSONObject(decrypt(prior));val latest=JSONObject(decrypt(previous))
+      latest.put("history",MeritzHistory.merge(older.optJSONArray("history")?:JSONArray(),latest.optJSONArray("history")?:JSONArray()))
+      edit.putString(ARCHIVE+oldId,encrypt(latest.toString()))
+     }catch(_:Exception){/* Keep the existing archive if it cannot be safely merged. */}
+    }
+    val saved=Data.prefs(c).getString(ARCHIVE+newId,null)
+    if(saved!=null)edit.putString(CACHE,saved) else edit.remove(CACHE)
+   }
    check(edit.commit())
   }
   WoogongWidget.updateAll(c)
  }
- fun disconnect(c:Context){synchronized(lock){Data.prefs(c).edit().remove(KEY).remove(CACHE).remove("meritz_sync_failed").commit()};WoogongWidget.updateAll(c)}
+ fun disconnect(c:Context){synchronized(lock){val prefs=Data.prefs(c);val edit=prefs.edit().remove(KEY).remove(CACHE).remove("meritz_sync_failed");prefs.all.keys.filter{it.startsWith(ARCHIVE)}.forEach{edit.remove(it)};edit.commit()};WoogongWidget.updateAll(c)}
+ fun archives(c:Context):List<Pair<String,JSONObject>> = synchronized(lock){
+  Data.prefs(c).all.keys.filter{it.startsWith(ARCHIVE)}.sorted().mapNotNull{key->
+   try{Data.prefs(c).getString(key,null)?.let{key to JSONObject(decrypt(it))}}catch(_:Exception){null}
+  }
+ }
+ fun restoreHistory(c:Context,archiveKey:String)=synchronized(lock){
+  require(archiveKey.startsWith(ARCHIVE))
+  val previous=archives(c).firstOrNull{it.first==archiveKey}?.second?:error("이전 기록을 찾지 못했습니다")
+  val current=cached(c)?:error("현재 계좌를 먼저 조회하세요")
+  val merged=MeritzHistory.merge(previous.optJSONArray("history")?:JSONArray(),current.optJSONArray("history")?:JSONArray())
+  current.put("history",merged)
+  check(Data.prefs(c).edit().putString(CACHE,encrypt(current.toString())).commit())
+ }
  fun sync(c:Context):JSONObject=synchronized(networkLock){
   var captured:String?=null
   try{

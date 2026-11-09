@@ -1,10 +1,12 @@
 """Fixed-rule 2010 extension and explicit post-close official-close fills.
 Research outputs only. No production configuration or trading changes.
 """
-import json,hashlib
+import json,hashlib,os
 from pathlib import Path
 import numpy as np
 import pandas as pd
+LOCAL_ROOT=Path(__file__).resolve().parents[1]
+os.environ.setdefault('WOOGONG_AUDIT_DATA_DIR',str(LOCAL_ROOT/'data/validation/v2'))
 from research_bounded_intervention import ROOT,combine
 from research_defense_whipsaw import AUDIT,replay
 from portable_replay import factor
@@ -86,7 +88,7 @@ def stats(v,ix,tr):
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
-    p=pd.read_csv(ROOT/'release/october-replay/reconstructed_inputs.csv',index_col=0,parse_dates=True)
+    p=pd.read_csv(ROOT/'data/validation/long2010/reconstructed_inputs.csv.gz',index_col=0,parse_dates=True)
     frozen=pd.read_csv(ROOT/'data/equities.csv',index_col=0,parse_dates=True)
     pd.testing.assert_frame_equal(p.loc[frozen.index],frozen,check_freq=False)
     btc=pd.read_csv(ROOT/'data/btc.csv',parse_dates=['date_utc']).set_index('date_utc').close
@@ -144,7 +146,7 @@ def main():
                 if label=='actual_BITO' and mode=='next_open':
                     assert tr[:,len(ai):].sum()==0,'Would need genuine new opening prices'
                     if slip==0:
-                        expected=pd.read_csv(ROOT/'release/past-selection/nav_actual_BITO_next_open.csv',index_col=0,parse_dates=True)
+                        expected=pd.read_csv(ROOT/'data/validation/long2010/nav_actual_BITO_next_open.csv.gz',index_col=0,parse_dates=True)
                         np.testing.assert_allclose(nv[0,:len(ai)],expected.baseline,rtol=1e-10)
                         np.testing.assert_allclose(nv[2,:len(ai)],expected.monthly_pair_entrygate,rtol=1e-10)
                 if mode=='same_close' and slip==0:
@@ -170,7 +172,7 @@ def main():
         price_limitations='Long equity series is frozen signal-price basis, not verified all-asset dividend-reinvested execution ledger. Actual scope uses audited adjusted prices/distribution fee inputs throughOct20. Nov4 cached extension only BRK/GLD; prices not independently refreshed.',
         costs='12.5percentage-point rebalance band; fee0.1% each side; sensitivity extra0.3% each side; cash return where known; no taxes,FX,market impact,partial fills or borrowing.',
         selection='At least24 complete prior months, positive mean net log excess, approval frozen at intervention entry; closed3 variant requires3 prior completed intervals. Each execution convention trains its own approval. Rules chosen after seeing2026, no independent OOS.',
-        hashes={str(f):hashlib.sha256(f.read_bytes()).hexdigest() for f in [Path(__file__),ROOT/'data/equities.csv',ROOT/'data/btc.csv',ROOT/'release/october-replay/reconstructed_inputs.csv',AUDIT/'inputs_actual_BITO.npz']})
+        hashes={str(f.relative_to(ROOT)):hashlib.sha256(f.read_bytes()).hexdigest() for f in [Path(__file__),ROOT/'data/equities.csv',ROOT/'data/btc.csv',ROOT/'data/validation/long2010/reconstructed_inputs.csv.gz',ROOT/'data/validation/long2010/nav_actual_BITO_next_open.csv.gz',AUDIT/'inputs_actual_BITO.npz']})
     (OUT/'audit.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
     f=pd.DataFrame(rows);print(f[(f['mode']=='same_close')&(f.slippage==0)][['case','model','cagr','mdd','final_multiple','trade_days']].to_string(index=False))
     print('PASS independent same-close ledgers and causal/timing/canonical checks')

@@ -19,6 +19,7 @@ import java.time.Instant
  val c=LocalContext.current;val scope=rememberCoroutineScope()
  var data by remember{mutableStateOf(MeritzAccount.cached(c))};var settings by remember{mutableStateOf(!MeritzAccount.connected(c))}
  var appKey by remember{mutableStateOf("")};var secret by remember{mutableStateOf("")};var busy by remember{mutableStateOf(false)};var message by remember{mutableStateOf("")}
+ var continueHistory by remember{mutableStateOf(false)};var restoreKey by remember{mutableStateOf<String?>(null)}
  fun refresh(){if(busy)return;scope.launch{busy=true;message="";try{data=withContext(Dispatchers.IO){MeritzAccount.sync(c)}}catch(e:Exception){message=e.message?:"메리츠 조회 실패"}finally{busy=false}}}
  LaunchedEffect(Unit){if(MeritzAccount.connected(c))refresh()}
  DisposableEffect(Unit){
@@ -35,7 +36,11 @@ import java.time.Instant
   Text("발급받은 App Key와 App Secret을 입력하세요. 앱이 메리츠에 직접 인증하며, 키와 계좌 기록은 이 휴대폰에서 암호화해 보관합니다. 잔고·평가액만 조회합니다.",fontSize=12.sp)
   OutlinedTextField(appKey,{appKey=it},label={Text("메리츠 App Key")},visualTransformation=PasswordVisualTransformation(),singleLine=true,modifier=Modifier.fillMaxWidth())
   OutlinedTextField(secret,{secret=it},label={Text("메리츠 App Secret")},visualTransformation=PasswordVisualTransformation(),singleLine=true,modifier=Modifier.fillMaxWidth())
-  Button(enabled=!busy,onClick={try{MeritzAccount.connect(c,appKey,secret);appKey="";secret="";data=null;settings=false;refresh()}catch(e:Exception){message=e.message?:"키를 확인하세요"}},modifier=Modifier.fillMaxWidth()){Text("암호화 저장하고 메리츠 연결")}
+  if(data?.optJSONObject("account")!=null)Row(verticalAlignment=androidx.compose.ui.Alignment.CenterVertically){
+   Checkbox(checked=continueHistory,onCheckedChange={continueHistory=it})
+   Text("새 키도 같은 계좌라면 기존 일별 기록 이어쓰기",fontSize=12.sp)
+  }
+  Button(enabled=!busy,onClick={try{MeritzAccount.connect(c,appKey,secret,continueHistory);appKey="";secret="";continueHistory=false;data=null;settings=false;refresh()}catch(e:Exception){message=e.message?:"키를 확인하세요"}},modifier=Modifier.fillMaxWidth()){Text("암호화 저장하고 메리츠 연결")}
   Text("PC에서 입력했던 키는 저장하지 않아 휴대폰에서 한 번 입력해야 합니다. 계좌번호·잔고·주식 수량은 입력하지 않습니다.",fontSize=11.sp)
  }
  val a=data?.optJSONObject("account")
@@ -70,6 +75,19 @@ import java.time.Instant
    for(i in history.length()-1 downTo maxOf(0,history.length()-7)){val row=history.getJSONObject(i);Text("${row.getString("day")} · ${won(row.getDouble("total_krw"))}",fontSize=12.sp)}
   }
  }
+ val archives=MeritzAccount.archives(c)
+ if(a!=null&&archives.isNotEmpty())Panel{
+  Text("보관된 이전 기록",fontWeight=FontWeight.Bold)
+  Text("같은 계좌의 기록만 현재 기록에 이어 붙이세요.",fontSize=11.sp)
+  archives.forEach{(key,archive)->
+   val history=archive.optJSONArray("history");val last=if(history!=null&&history.length()>0)history.optJSONObject(history.length()-1) else null
+   TextButton(onClick={restoreKey=key}){Text("기록 "+key.takeLast(4)+" · "+(last?.optString("day")?:"날짜 없음")+" 이어쓰기")}
+  }
+ }
+ restoreKey?.let{key->AlertDialog(onDismissRequest={restoreKey=null},title={Text("같은 계좌의 기록인가요?")},
+  text={Text("확인하면 보관된 기록을 현재 계좌의 일별 기록과 합칩니다. 같은 날짜는 현재 기록을 사용합니다.")},
+  confirmButton={TextButton(onClick={try{MeritzAccount.restoreHistory(c,key);data=MeritzAccount.cached(c);message="이전 기록을 이어 붙였습니다."}catch(_:Exception){message="이전 기록을 불러오지 못했습니다."};restoreKey=null}){Text("같은 계좌 · 이어쓰기")}},
+  dismissButton={TextButton(onClick={restoreKey=null}){Text("취소")}})}
  if(MeritzAccount.connected(c))TextButton(enabled=!busy,onClick={settings=!settings}){Text(if(settings)"연결 설정 접기" else "메리츠 연결 관리")}
  if(settings&&MeritzAccount.connected(c))TextButton(enabled=!busy,onClick={MeritzAccount.disconnect(c);data=null;appKey="";secret="";message="이 휴대폰의 메리츠 키와 계좌 기록을 삭제했습니다."}){Text("연결 해제 · 기기 기록 삭제")}
 }

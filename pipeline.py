@@ -160,6 +160,19 @@ def main():
   # Preserve the last valid snapshot and visibly mark it unavailable/stale.
   write(SITE/'status.json',{**model.metadata(),'state':'error','expected_date':str(expected.date()),'message':'종가 자료 확인 중. 이전 목표를 새 신호로 사용하지 마세요.','error_type':type(exc).__name__,'updated_at':now.isoformat()})
   print('data unavailable:',type(exc).__name__);return
+ # Forward-only research archive. A failure here must never block the live signal.
+ if model.id!='woogong-1.3-d':
+  try:
+   from shadow_journal import append as append_shadow
+   archive=SITE/'shadow-journal.json'
+   journal=json.loads(archive.read_text(encoding='utf-8')) if archive.exists() else {}
+   baseline=load_model('woogong-1.3-d');base_targets,_=baseline.evaluate(p,btc)
+   journal=append_shadow(journal,data,p.iloc[-1],[(model,t.iloc[-1]),(baseline,base_targets.iloc[-1])])
+   write(archive,journal)
+   from tools.score_shadow_journal import summarize as summarize_shadow
+   write(SITE/'shadow-report.json',summarize_shadow(journal))
+  except Exception as shadow_error:
+   print('shadow journal unavailable:',type(shadow_error).__name__)
  # Deployment workflow sends only after publication succeeds.
  print('snapshot prepared',data['market_date'])
 if __name__=='__main__':main()

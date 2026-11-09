@@ -3,9 +3,13 @@ package com.woogong.app
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.*
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
+import android.content.Intent
+import android.net.Uri
 import org.json.JSONObject
 
 @Composable internal fun ModelDetails(s:JSONObject,onBack:()->Unit){
+ val context=LocalContext.current
  TextButton(onClick=onBack){Text("← 설정으로")}
  Text("모델 설명과 주의사항",style=MaterialTheme.typography.headlineSmall,fontWeight=FontWeight.Bold)
  val reasons=s.optJSONArray("reasons")
@@ -27,5 +31,6 @@ import org.json.JSONObject
   Text(loan.optString("entry_rule"));Text(loan.optString("exit_rule"));Text(loan.optString("risk"))
   Text("은행 부채·금리·상환 여력은 직접 확인해야 합니다. 이 신호가 자동 대출이나 주문 증액을 실행하지는 않습니다.")
  }
- Panel{Text("추가 성과 자료",fontWeight=FontWeight.Bold);Text("장기 대용 자료와 비용·체결 방식별 결과는 설치 안내의 v2 연구 결과에서 볼 수 있어요.")}
+ Panel{Text("추가 성과 자료",fontWeight=FontWeight.Bold);Text("새 방어 사례와 파동의 진행 기록, 가격 전망 비교 결과를 확인해요.")
+  TextButton(onClick={context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(BuildConfig.SIGNAL_BASE_URL.trimEnd('/')+"/research-validation.html")))}){Text("검증 기록 보기 ↗")}}
 }

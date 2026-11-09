@@ -38,7 +38,7 @@ import org.json.JSONObject
    Text("과거 중앙 경로 오차 %.1f%% · 가격 유지 기준 %.1f%%".format(error*100,baseline*100),
     fontSize=11.sp,color=if(error>baseline)MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant)
    if(!evaluation.isNull("historical_coverage")){
-    Text("과거 변동 범위 포함률 %.0f%% · 표본 %d회".format(evaluation.getDouble("historical_coverage")*100,evaluation.optInt("origins")),
+    Text(("과거 변동 범위 포함률 %.0f%% · 표본 %d회"+if(evaluation.optBoolean("overlap",true))"" else " · 비중첩").format(evaluation.getDouble("historical_coverage")*100,evaluation.optInt("origins")),
      fontSize=11.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
    }
   }else Text("과거 검증 자료 없음",fontSize=11.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)

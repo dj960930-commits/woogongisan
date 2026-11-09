@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>우공이산 · 검증 기록</title><link rel="stylesheet" href="style.css?v=200">
+<style>main{max-width:760px;margin:auto;padding:28px 18px}.card{margin:16px 0}p{line-height:1.7}table{width:100%;border-collapse:collapse;font-size:.88rem}th,td{padding:9px 5px;text-align:left;border-bottom:1px solid #8884}small{opacity:.8}</style></head>
+<body><main><a href="v2.html">← 모델 설명</a><h1>검증 기록</h1><p>새로운 사례가 쌓일 때마다 같은 기준으로 비교합니다.</p>
+<section class="card"><h2>현재 모델과 기존 규칙</h2><p id="shadow">새 관측을 기다리고 있어요.</p><small>기록 시작 이후만 비교합니다. 모델이 바뀌면 새 구간으로 다시 셉니다. 확정 종가를 확인한 뒤 같은 가격에 거래하는 가정이며 실제 계좌의 체결 내역이 아닙니다.</small></section>
+<section class="card"><h2>파동 가격 기준</h2><p id="waves">새 파동 기록을 기다리고 있어요.</p><small>조건선을 이미 넘은 후보만 기록합니다. 4시간봉 30개·일봉 21개·주봉 13개·월봉 12개를 확인합니다. 생성 후 30분 완충을 두며, 그 전후 순서가 불명확하거나 같은 봉에서 양쪽 기준에 닿은 경우는 따로 셉니다. 생성 시각과 실제 게시 시각 사이에 차이가 있을 수 있어 실거래 승률은 아닙니다.</small></section>
+<section class="card"><h2>가격 전망의 과거 비교</h2><p>2025년 이후 시작점을 고정해 기간이 겹치지 않게 비교했습니다. 숫자는 수익률 오차의 평균이며 낮을수록 좋습니다.</p>
+<div style="overflow:auto"><table><thead><tr><th>종목·기간</th><th>중앙 전망 오차</th><th>가격 유지 오차</th><th>범위 포함</th><th>표본</th></tr></thead><tbody id="outlook"></tbody></table></div>
+<p><small>3개월 표본은 적습니다. 이미 연구에 사용한 과거 자료이므로 새로운 미래 성과로 보지 않습니다.</small></p></section>
+<section class="card"><h2>2010년부터의 연구</h2><p>BTC 대용 가격과 혼합 가격 기준을 사용한 장기 자료 및 재현 방법을 보관했습니다.</p>
+<a href="https://github.com/dj960930-commits/woogongisan/blob/main/data/validation/long2010/README.md">계산 자료와 기준 보기 ↗</a></section>
+<script>
+const pct=x=>(x*100).toFixed(1)+'%';
+async function load(url){const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw Error('unavailable');return r.json()}
+load('shadow-report.json').then(x=>{const e=document.getElementById('shadow');if(!x.available){e.textContent='새 관측을 모으고 있어요 · '+(x.observations||0)+'일';return}
+e.textContent=x.first+' ~ '+x.last+' · '+x.observations+'일 · 비중이 달랐던 날 '+x.differing_days+'일 · 현재까지 시작한 차이 구간 '+x.events_started+'회. '+x.results.map(a=>a.model_id+' '+pct(a.final_multiple-1)).join(' / ')}).catch(()=>{});
+load('wave-forecast-ledger.json').then(x=>{const r=x.records||[],counts={};for(const a of r)counts[a.outcome]=(counts[a.outcome]||0)+1;
+document.getElementById('waves').textContent='진행 중 '+(counts.pending||0)+'건 · 목표 먼저 '+(counts.target_first||0)+'건 · 반대 기준 먼저 '+(counts.invalidation_first||0)+'건 · 같은 봉 양쪽 접촉 '+(counts.same_bar_ambiguous||0)+'건 · 기한 종료 '+(counts.expired||0)+'건 · 평가 제외 '+((counts.unscorable_before_entry||0)+(counts.missing_bars||0))+'건.'}).catch(()=>{});
+load('research/outlook-forward.json').then(x=>{const body=document.getElementById('outlook');for(const [symbol,hs] of Object.entries(x.results))for(const [h,m] of Object.entries(hs)){const tr=document.createElement('tr');for(const value of [symbol+' · '+h+'거래일',pct(m.scenario_mae),pct(m.unchanged_mae),pct(m.scenario_coverage),m.origins+'회']){const td=document.createElement('td');td.textContent=value;tr.appendChild(td)}body.appendChild(tr)}}).catch(()=>{document.getElementById('outlook').textContent='비교 자료를 불러오지 못했습니다.'});
+</script></main></body></html>

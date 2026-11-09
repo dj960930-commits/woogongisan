@@ -237,6 +237,17 @@ def main():
         raise SystemExit("No verified wave data")
     payload = dict(schema_version=1, engine="causal-pattern-v2", analysis_version="wave-explainer-v2", source="Yahoo Finance",
                    generated_at=now.isoformat(), symbols=assets)
+    # A separate forward-only audit; failure must not hide the current wave feed.
+    try:
+        from tools.wave_forecast_ledger import update as update_ledger
+        ledger_path=ROOT/"site"/"wave-forecast-ledger.json"
+        ledger=json.loads(ledger_path.read_text(encoding="utf-8")) if ledger_path.exists() else {}
+        ledger=update_ledger(ledger,payload,schedule)
+        temp_ledger=ledger_path.with_suffix(".tmp")
+        temp_ledger.write_text(json.dumps(ledger,separators=(",",":"),allow_nan=False),encoding="utf-8")
+        temp_ledger.replace(ledger_path)
+    except (ValueError,KeyError,TypeError,IndexError) as exc:
+        print("wave forecast ledger unavailable:",type(exc).__name__)
     tmp = destination.with_suffix(".tmp")
     tmp.write_text(json.dumps(payload, separators=(",", ":"), allow_nan=False), encoding="utf-8")
     tmp.replace(destination)

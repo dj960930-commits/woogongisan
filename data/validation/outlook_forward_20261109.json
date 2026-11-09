@@ -1,0 +1,2945 @@
+{
+  "protocol": "frozen retrospective 2025+ origins; non-overlapping within each horizon",
+  "caveat": "Exploratory: history has been inspected during development; not independent future validation.",
+  "source_sha256": "6aea2c8e98a1e79ff11e5d89f6ddec61a418dc2a04fc28c379ecad3f737645bb",
+  "data_end": "2026-10-20",
+  "results": {
+    "TQQQ": {
+      "5": {
+        "origins": 90,
+        "first": "2025-01-02",
+        "last": "2026-10-20",
+        "scenario_mae": 0.06901867826532113,
+        "unchanged_mae": 0.07070034393632052,
+        "scenario_coverage": 0.8,
+        "volatility_coverage": 0.8444444444444444,
+        "windows": [
+          {
+            "issued": "2025-01-02",
+            "resolved": "2025-01-10",
+            "actual": -0.022889114954221745,
+            "median": 0.015688347787724172,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-01-10",
+            "resolved": "2025-01-17",
+            "actual": 0.08198854763144192,
+            "median": 0.01406415514824035,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-01-17",
+            "resolved": "2025-01-27",
+            "actual": -0.04811161895597782,
+            "median": 0.012857010972323302,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-01-27",
+            "resolved": "2025-02-03",
+            "actual": 0.01996461966135965,
+            "median": 0.01351368783178739,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-02-03",
+            "resolved": "2025-02-10",
+            "actual": 0.06095143706640238,
+            "median": 0.01334666183213185,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-02-10",
+            "resolved": "2025-02-18",
+            "actual": 0.055581503970107526,
+            "median": 0.012431023118378575,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-02-18",
+            "resolved": "2025-02-25",
+            "actual": -0.14137168141592926,
+            "median": 0.012266053466512893,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-02-25",
+            "resolved": "2025-03-04",
+            "actual": -0.10693120329811923,
+            "median": 0.012857010972323302,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-03-04",
+            "resolved": "2025-03-11",
+            "actual": -0.14714368147720713,
+            "median": 0.012857010972323302,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-03-11",
+            "resolved": "2025-03-18",
+            "actual": 0.013531799729364025,
+            "median": 0.012431023118378575,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-03-18",
+            "resolved": "2025-03-25",
+            "actual": 0.12349799732977296,
+            "median": 0.01334666183213185,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-03-25",
+            "resolved": "2025-04-01",
+            "actual": -0.1292335115864527,
+            "median": 0.013641561664829766,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-04-01",
+            "resolved": "2025-04-08",
+            "actual": -0.33640395769361997,
+            "median": 0.01334666183213185,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-04-08",
+            "resolved": "2025-04-15",
+            "actual": 0.2802056555269923,
+            "median": 0.012266053466512893,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-04-15",
+            "resolved": "2025-04-23",
+            "actual": -0.034939759036144435,
+            "median": 0.011934859322873506,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-04-23",
+            "resolved": "2025-04-30",
+            "actual": 0.14190595089471492,
+            "median": 0.01162964093096598,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-04-30",
+            "resolved": "2025-05-07",
+            "actual": 0.04591836734693877,
+            "median": 0.0117016825226007,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-05-07",
+            "resolved": "2025-05-14",
+            "actual": 0.22578397212543555,
+            "median": 0.012266053466512893,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-05-14",
+            "resolved": "2025-05-21",
+            "actual": -0.03439454235361006,
+            "median": 0.012431023118378575,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-05-21",
+            "resolved": "2025-05-29",
+            "actual": 0.035914041801589525,
+            "median": 0.012857010972323302,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-05-29",
+            "resolved": "2025-06-05",
+            "actual": 0.02529127593066205,
+            "median": 0.012126815142616522,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-05",
+            "resolved": "2025-06-12",
+            "actual": 0.04905764966740578,
+            "median": 0.012126815142616522,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-12",
+            "resolved": "2025-06-20",
+            "actual": -0.042800528401585325,
+            "median": 0.012431023118378575,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-20",
+            "resolved": "2025-06-27",
+            "actual": 0.1236544300303617,
+            "median": 0.012266053466512893,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-27",
+            "resolved": "2025-07-07",
+            "actual": 0.018422991893883633,
+            "median": 0.012857010972323302,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-07",
+            "resolved": "2025-07-14",
+            "actual": 0.020501688374336746,
+            "median": 0.013498394825856953,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-14",
+            "resolved": "2025-07-21",
+            "actual": 0.04088867879933811,
+            "median": 0.01334666183213185,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-21",
+            "resolved": "2025-07-28",
+            "actual": 0.019300635785649334,
+            "median": 0.013547093239351887,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-28",
+            "resolved": "2025-08-04",
+            "actual": -0.025840944531075993,
+            "median": 0.014585084560229087,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-04",
+            "resolved": "2025-08-11",
+            "actual": 0.04459181340041174,
+            "median": 0.01406415514824035,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-11",
+            "resolved": "2025-08-18",
+            "actual": 0.019483362521891534,
+            "median": 0.013641561664829766,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-18",
+            "resolved": "2025-08-25",
+            "actual": -0.038007300837449076,
+            "median": 0.014834970271781059,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-25",
+            "resolved": "2025-09-02",
+            "actual": -0.028124999999999956,
+            "median": 0.013498394825856953,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-02",
+            "resolved": "2025-09-09",
+            "actual": 0.07831878732200281,
+            "median": 0.012857010972323302,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-09",
+            "resolved": "2025-09-16",
+            "actual": 0.053887113951011534,
+            "median": 0.012857010972323302,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-16",
+            "resolved": "2025-09-23",
+            "actual": 0.036984640258690415,
+            "median": 0.013641561664829766,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-23",
+            "resolved": "2025-09-30",
+            "actual": 0.0076008575326447225,
+            "median": 0.015214200623018226,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-30",
+            "resolved": "2025-10-07",
+            "actual": 0.01856866537717594,
+            "median": 0.014656828968993531,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-07",
+            "resolved": "2025-10-14",
+            "actual": -0.039688568173186445,
+            "median": 0.014834970271781059,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-14",
+            "resolved": "2025-10-21",
+            "actual": 0.0656515720783073,
+            "median": 0.014479415962422118,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-21",
+            "resolved": "2025-10-28",
+            "actual": 0.10502876229356084,
+            "median": 0.014479415962422118,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-28",
+            "resolved": "2025-11-04",
+            "actual": -0.0673383711167086,
+            "median": 0.01557123617214374,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-04",
+            "resolved": "2025-11-11",
+            "actual": 0.006301764494058393,
+            "median": 0.01623809395536186,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-11",
+            "resolved": "2025-11-18",
+            "actual": -0.12005725532295586,
+            "median": 0.015214200623018226,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-11-18",
+            "resolved": "2025-11-25",
+            "actual": 0.057543716958113,
+            "median": 0.014479415962422118,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-25",
+            "resolved": "2025-12-03",
+            "actual": 0.07075562391847723,
+            "median": 0.01406415514824035,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-12-03",
+            "resolved": "2025-12-10",
+            "actual": 0.01723828335428257,
+            "median": 0.01406415514824035,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-12-10",
+            "resolved": "2025-12-17",
+            "actual": -0.12797881729920568,
+            "median": 0.01406415514824035,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-12-17",
+            "resolved": "2025-12-24",
+            "actual": 0.12064777327935228,
+            "median": 0.013643314046572062,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-12-24",
+            "resolved": "2026-01-02",
+            "actual": -0.05437138728323698,
+            "median": 0.01356413922497372,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-02",
+            "resolved": "2026-01-09",
+            "actual": 0.06513849092645652,
+            "median": 0.013498394825856953,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-09",
+            "resolved": "2026-01-16",
+            "actual": -0.029053084648493543,
+            "median": 0.013547093239351887,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-16",
+            "resolved": "2026-01-26",
+            "actual": 0.017362393793867614,
+            "median": 0.013358767869974726,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-26",
+            "resolved": "2026-02-02",
+            "actual": 0.0003631082062454105,
+            "median": 0.012431023118378575,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-02-02",
+            "resolved": "2026-02-09",
+            "actual": -0.060980036297640594,
+            "median": 0.013033684366293964,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-02-09",
+            "resolved": "2026-02-17",
+            "actual": -0.06551990722844991,
+            "median": 0.012126815142616522,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-02-17",
+            "resolved": "2026-02-24",
+            "actual": 0.029576008273009213,
+            "median": 0.0117016825226007,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-02-24",
+            "resolved": "2026-03-03",
+            "actual": -0.033748493370831634,
+            "median": 0.012016753612727336,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-03",
+            "resolved": "2026-03-10",
+            "actual": 0.027027027027026973,
+            "median": 0.012431023118378575,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-10",
+            "resolved": "2026-03-17",
+            "actual": -0.025101214574898778,
+            "median": 0.012662420223139672,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-17",
+            "resolved": "2026-03-24",
+            "actual": -0.09426910299003322,
+            "median": 0.012016753612727336,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-24",
+            "resolved": "2026-03-31",
+            "actual": -0.044475011462631775,
+            "median": 0.01185387615287527,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-31",
+            "resolved": "2026-04-08",
+            "actual": 0.15163147792706333,
+            "median": 0.0117016825226007,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-04-08",
+            "resolved": "2026-04-15",
+            "actual": 0.15937500000000004,
+            "median": 0.011497496767260524,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-04-15",
+            "resolved": "2026-04-22",
+            "actual": 0.08194070080862548,
+            "median": 0.011497496767260524,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-22",
+            "resolved": "2026-04-29",
+            "actual": 0.027404085700049707,
+            "median": 0.0117016825226007,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-29",
+            "resolved": "2026-05-06",
+            "actual": 0.15696734561913983,
+            "median": 0.012126815142616522,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-05-06",
+            "resolved": "2026-05-13",
+            "actual": 0.07922313818639104,
+            "median": 0.012926662908510776,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-05-13",
+            "resolved": "2026-05-20",
+            "actual": -0.009451061626100321,
+            "median": 0.013547093239351887,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-05-20",
+            "resolved": "2026-05-28",
+            "actual": 0.09371324009933346,
+            "median": 0.013547093239351887,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-05-28",
+            "resolved": "2026-06-04",
+            "actual": 0.01840344168260022,
+            "median": 0.013547093239351887,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-06-04",
+            "resolved": "2026-06-11",
+            "actual": -0.1080732222482984,
+            "median": 0.01406415514824035,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-06-11",
+            "resolved": "2026-06-18",
+            "actual": 0.09025128272595717,
+            "median": 0.013358767869974726,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-06-18",
+            "resolved": "2026-06-26",
+            "actual": -0.13322070713165202,
+            "median": 0.013358767869974726,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-06-26",
+            "resolved": "2026-07-06",
+            "actual": 0.06390087707086178,
+            "median": 0.01312130443392653,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-06",
+            "resolved": "2026-07-13",
+            "actual": -0.04946349123266158,
+            "median": 0.012662420223139672,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-13",
+            "resolved": "2026-07-20",
+            "actual": -0.0686949339207048,
+            "median": 0.012016753612727336,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-20",
+            "resolved": "2026-07-27",
+            "actual": -0.06282335550628249,
+            "median": 0.0117016825226007,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-27",
+            "resolved": "2026-08-03",
+            "actual": 0.07192429022082014,
+            "median": 0.01126617726745353,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-08-03",
+            "resolved": "2026-08-10",
+            "actual": 0.08593290170688639,
+            "median": 0.010708055923656512,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-08-10",
+            "resolved": "2026-08-17",
+            "actual": 0.035230352303523116,
+            "median": 0.010767092105156703,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-08-17",
+            "resolved": "2026-08-24",
+            "actual": -0.09672774869109946,
+            "median": 0.011567795097270765,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-08-24",
+            "resolved": "2026-08-31",
+            "actual": 0.042167801767859725,
+            "median": 0.011567795097270765,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-08-31",
+            "resolved": "2026-09-08",
+            "actual": 0.0033370411568409697,
+            "median": 0.010767092105156703,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-08",
+            "resolved": "2026-09-15",
+            "actual": -0.05903547671840348,
+            "median": 0.009755671817837637,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-15",
+            "resolved": "2026-09-22",
+            "actual": 0.19042709867452112,
+            "median": 0.009755671817837637,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-09-22",
+            "resolved": "2026-09-29",
+            "actual": -0.04169244092539903,
+            "median": 0.010708055923656512,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-29",
+            "resolved": "2026-10-06",
+            "actual": 0.08765814613994327,
+            "median": 0.010988779403513754,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-10-06",
+            "resolved": "2026-10-13",
+            "actual": -0.06456973293768542,
+            "median": 0.01185387615287527,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-10-13",
+            "resolved": "2026-10-20",
+            "actual": -0.10658545869813485,
+            "median": 0.01185387615287527,
+            "covered": true,
+            "volatility_covered": true
+          }
+        ]
+      },
+      "21": {
+        "origins": 21,
+        "first": "2025-01-02",
+        "last": "2026-10-07",
+        "scenario_mae": 0.12581914765338656,
+        "unchanged_mae": 0.1305271693386451,
+        "scenario_coverage": 0.8095238095238095,
+        "volatility_coverage": 0.8571428571428571,
+        "windows": [
+          {
+            "issued": "2025-01-02",
+            "resolved": "2025-02-04",
+            "actual": 0.06383519837232954,
+            "median": 0.06539507094627504,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-02-04",
+            "resolved": "2025-03-06",
+            "actual": -0.21061439158498674,
+            "median": 0.061878468715371386,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-03-06",
+            "resolved": "2025-04-04",
+            "actual": -0.3776499091459722,
+            "median": 0.06378034286992189,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-04-04",
+            "resolved": "2025-05-06",
+            "actual": 0.38053527980535273,
+            "median": 0.06031400835716231,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-05-06",
+            "resolved": "2025-06-05",
+            "actual": 0.2717659499471272,
+            "median": 0.053483719082709956,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-05",
+            "resolved": "2025-07-08",
+            "actual": 0.1507760532150777,
+            "median": 0.053483719082709956,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-08",
+            "resolved": "2025-08-06",
+            "actual": 0.06984585741811178,
+            "median": 0.051924688993567496,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-06",
+            "resolved": "2025-09-05",
+            "actual": 0.03354344889689309,
+            "median": 0.05059191961516529,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-05",
+            "resolved": "2025-10-06",
+            "actual": 0.1657590938793292,
+            "median": 0.05120234423354728,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-06",
+            "resolved": "2025-11-04",
+            "actual": 0.03774289985052315,
+            "median": 0.051924688993567496,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-04",
+            "resolved": "2025-12-04",
+            "actual": -0.0005401512423478527,
+            "median": 0.0539865715431588,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-12-04",
+            "resolved": "2026-01-06",
+            "actual": -0.009007386056566369,
+            "median": 0.047882381118382646,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-06",
+            "resolved": "2026-02-05",
+            "actual": -0.13397564079258317,
+            "median": 0.043549188894734484,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-02-05",
+            "resolved": "2026-03-09",
+            "actual": 0.036733837111670775,
+            "median": 0.0378575863982326,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-09",
+            "resolved": "2026-04-08",
+            "actual": -0.02814334885604375,
+            "median": 0.0378575863982326,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-08",
+            "resolved": "2026-05-07",
+            "actual": 0.48625000000000007,
+            "median": 0.032028303945386714,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-05-07",
+            "resolved": "2026-06-08",
+            "actual": 0.06910569105691056,
+            "median": 0.0372112441403879,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-06-08",
+            "resolved": "2026-07-09",
+            "actual": 0.0009177920545431206,
+            "median": 0.037960085198593854,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-09",
+            "resolved": "2026-08-07",
+            "actual": -0.02449567723342949,
+            "median": 0.03334330645211547,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-08-07",
+            "resolved": "2026-09-08",
+            "actual": -0.03101920236336786,
+            "median": 0.029506376425579062,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-08",
+            "resolved": "2026-10-07",
+            "actual": 0.15881374722838149,
+            "median": 0.029187648552369397,
+            "covered": true,
+            "volatility_covered": true
+          }
+        ]
+      },
+      "63": {
+        "origins": 7,
+        "first": "2025-01-02",
+        "last": "2026-10-07",
+        "scenario_mae": 0.3591567855267829,
+        "unchanged_mae": 0.375410208395289,
+        "scenario_coverage": 0.5714285714285714,
+        "volatility_coverage": 0.5714285714285714,
+        "windows": [
+          {
+            "issued": "2025-01-02",
+            "resolved": "2025-04-04",
+            "actual": -0.47736520854526954,
+            "median": 0.13463592854293138,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-04-04",
+            "resolved": "2025-07-08",
+            "actual": 1.0204379562043795,
+            "median": 0.1335015305221909,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-07-08",
+            "resolved": "2025-10-06",
+            "actual": 0.2890173410404624,
+            "median": 0.11022828707800737,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-06",
+            "resolved": "2026-01-06",
+            "actual": 0.02784005979073223,
+            "median": 0.1244319235993973,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-06",
+            "resolved": "2026-04-08",
+            "actual": -0.12743137611343391,
+            "median": 0.122675265192467,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-08",
+            "resolved": "2026-07-09",
+            "actual": 0.5904166666666668,
+            "median": 0.10278177780340862,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-07-09",
+            "resolved": "2026-10-07",
+            "actual": 0.09536285040607817,
+            "median": 0.09740033838288972,
+            "covered": true,
+            "volatility_covered": true
+          }
+        ]
+      }
+    },
+    "BRK.B": {
+      "5": {
+        "origins": 90,
+        "first": "2025-01-02",
+        "last": "2026-10-20",
+        "scenario_mae": 0.017771186638969858,
+        "unchanged_mae": 0.017757938951924474,
+        "scenario_coverage": 0.8111111111111111,
+        "volatility_coverage": 0.8777777777777778,
+        "windows": [
+          {
+            "issued": "2025-01-02",
+            "resolved": "2025-01-10",
+            "actual": -0.018709820438927105,
+            "median": 0.0040082715672658895,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-01-10",
+            "resolved": "2025-01-17",
+            "actual": 0.05713188451633289,
+            "median": 0.003995400924974353,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-01-17",
+            "resolved": "2025-01-27",
+            "actual": 0.01442461801474515,
+            "median": 0.003979326615306782,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-01-27",
+            "resolved": "2025-02-03",
+            "actual": -0.021255529808299922,
+            "median": 0.003995400924974353,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-02-03",
+            "resolved": "2025-02-10",
+            "actual": 0.011967026107918555,
+            "median": 0.0040082715672658895,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-02-10",
+            "resolved": "2025-02-18",
+            "actual": 0.026905161962694324,
+            "median": 0.003995400924974353,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-02-18",
+            "resolved": "2025-02-25",
+            "actual": 0.035209809038565076,
+            "median": 0.004146286500098807,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-02-25",
+            "resolved": "2025-03-04",
+            "actual": -0.007922852226801558,
+            "median": 0.004338876519623607,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-03-04",
+            "resolved": "2025-03-11",
+            "actual": 0.0007865123220263115,
+            "median": 0.004493164790935377,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-03-11",
+            "resolved": "2025-03-18",
+            "actual": 0.05418639798488667,
+            "median": 0.004493164790935377,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-03-18",
+            "resolved": "2025-03-25",
+            "actual": 0.010953090950797106,
+            "median": 0.0046584232997383,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-03-25",
+            "resolved": "2025-04-01",
+            "actual": 0.007790194187607513,
+            "median": 0.004739559937683868,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-04-01",
+            "resolved": "2025-04-08",
+            "actual": -0.07570498508414791,
+            "median": 0.004771016042087114,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-04-08",
+            "resolved": "2025-04-15",
+            "actual": 0.07212163039948027,
+            "median": 0.004715236142251269,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-04-15",
+            "resolved": "2025-04-23",
+            "actual": -0.00257492852680008,
+            "median": 0.0046909067374882535,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-04-23",
+            "resolved": "2025-04-30",
+            "actual": 0.012224521174617031,
+            "median": 0.0046909067374882535,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-04-30",
+            "resolved": "2025-05-07",
+            "actual": -0.028185654008438754,
+            "median": 0.004739559937683868,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-05-07",
+            "resolved": "2025-05-14",
+            "actual": -0.028597892786847434,
+            "median": 0.004771016042087114,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-05-14",
+            "resolved": "2025-05-21",
+            "actual": 0.0072109654350416275,
+            "median": 0.004771016042087114,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-05-21",
+            "resolved": "2025-05-29",
+            "actual": -0.0016764294025993776,
+            "median": 0.004739559937683868,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-05-29",
+            "resolved": "2025-06-05",
+            "actual": -0.03445414674621672,
+            "median": 0.004602530557557276,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-06-05",
+            "resolved": "2025-06-12",
+            "actual": 0.003273724270573153,
+            "median": 0.004364831704382941,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-12",
+            "resolved": "2025-06-20",
+            "actual": -0.011196312762572824,
+            "median": 0.004325657205872393,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-20",
+            "resolved": "2025-06-27",
+            "actual": 0.0017118696504072606,
+            "median": 0.004293494471895898,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-27",
+            "resolved": "2025-07-07",
+            "actual": -0.015751111843189003,
+            "median": 0.004338876519623607,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-07",
+            "resolved": "2025-07-14",
+            "actual": -0.0035981005376231057,
+            "median": 0.004325657205872393,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-14",
+            "resolved": "2025-07-21",
+            "actual": -0.003988998761310869,
+            "median": 0.0040082715672658895,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-21",
+            "resolved": "2025-07-28",
+            "actual": 0.015366455175902516,
+            "median": 0.003875503575231058,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-28",
+            "resolved": "2025-08-04",
+            "actual": -0.046896408553041224,
+            "median": 0.003875503575231058,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-08-04",
+            "resolved": "2025-08-11",
+            "actual": 0.012241075123608836,
+            "median": 0.0036684519079044522,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-11",
+            "resolved": "2025-08-18",
+            "actual": 0.02967314354571471,
+            "median": 0.0035832696472375258,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-18",
+            "resolved": "2025-08-25",
+            "actual": 0.01600769037866767,
+            "median": 0.0035891598360698602,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-25",
+            "resolved": "2025-09-02",
+            "actual": 0.030770496523921054,
+            "median": 0.003712610600110406,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-02",
+            "resolved": "2025-09-09",
+            "actual": -0.016801692141916402,
+            "median": 0.003712610600110406,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-09",
+            "resolved": "2025-09-16",
+            "actual": -0.003511121935379169,
+            "median": 0.0036684519079044522,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-16",
+            "resolved": "2025-09-23",
+            "actual": 0.006334141224872303,
+            "median": 0.0035891598360698602,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-23",
+            "resolved": "2025-09-30",
+            "actual": 0.017486338797814138,
+            "median": 0.0036684519079044522,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-30",
+            "resolved": "2025-10-07",
+            "actual": -0.0008752038827226638,
+            "median": 0.003875503575231058,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-07",
+            "resolved": "2025-10-14",
+            "actual": -0.0126020306589687,
+            "median": 0.0038082551347769604,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-14",
+            "resolved": "2025-10-21",
+            "actual": -0.009436054600076682,
+            "median": 0.0036361885011146943,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-21",
+            "resolved": "2025-10-28",
+            "actual": -0.020049258075678367,
+            "median": 0.003712610600110406,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-28",
+            "resolved": "2025-11-04",
+            "actual": 0.01291957460950477,
+            "median": 0.0036684519079044522,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-04",
+            "resolved": "2025-11-11",
+            "actual": 0.01929623098060107,
+            "median": 0.003712610600110406,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-11",
+            "resolved": "2025-11-18",
+            "actual": 0.014686060313436666,
+            "median": 0.003712610600110406,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-18",
+            "resolved": "2025-11-25",
+            "actual": 0.00832722009635778,
+            "median": 0.003712610600110406,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-25",
+            "resolved": "2025-12-03",
+            "actual": -0.009772499360953257,
+            "median": 0.003712610600110406,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-12-03",
+            "resolved": "2025-12-10",
+            "actual": -0.02615170770452746,
+            "median": 0.003712610600110406,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-12-10",
+            "resolved": "2025-12-17",
+            "actual": 0.028220133352364174,
+            "median": 0.003712610600110406,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-12-17",
+            "resolved": "2025-12-24",
+            "actual": -0.005810379360263407,
+            "median": 0.003875503575231058,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-12-24",
+            "resolved": "2026-01-02",
+            "actual": -0.008955997925559456,
+            "median": 0.003875503575231058,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-02",
+            "resolved": "2026-01-09",
+            "actual": 0.004528529737345188,
+            "median": 0.0037846385049410893,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-09",
+            "resolved": "2026-01-16",
+            "actual": -0.01164095371669005,
+            "median": 0.0036684519079044522,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-16",
+            "resolved": "2026-01-26",
+            "actual": -0.0199071540067709,
+            "median": 0.0035832696472375258,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-26",
+            "resolved": "2026-02-02",
+            "actual": 0.007901214139450108,
+            "median": 0.003506975516706332,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-02-02",
+            "resolved": "2026-02-09",
+            "actual": 0.022142871801186015,
+            "median": 0.003563037914636178,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-02-09",
+            "resolved": "2026-02-17",
+            "actual": 0.010701092194025152,
+            "median": 0.0035832696472375258,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-02-17",
+            "resolved": "2026-02-24",
+            "actual": -0.017679426312548485,
+            "median": 0.0034316534313476384,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-02-24",
+            "resolved": "2026-03-03",
+            "actual": -0.026591979939738275,
+            "median": 0.0032781528085688958,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-03",
+            "resolved": "2026-03-10",
+            "actual": 0.026549775635698714,
+            "median": 0.0032700541502569892,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-10",
+            "resolved": "2026-03-17",
+            "actual": -0.003157000040474367,
+            "median": 0.003223585946203877,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-17",
+            "resolved": "2026-03-24",
+            "actual": -0.026899183888911438,
+            "median": 0.003156575201268646,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-24",
+            "resolved": "2026-03-31",
+            "actual": -0.00027121189994361306,
+            "median": 0.003156575201268646,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-31",
+            "resolved": "2026-04-08",
+            "actual": 0.0011477462437397001,
+            "median": 0.003009533391673674,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-08",
+            "resolved": "2026-04-15",
+            "actual": -0.011797811360083399,
+            "median": 0.0029838769442211716,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-15",
+            "resolved": "2026-04-22",
+            "actual": -0.01832985298150136,
+            "median": 0.002949958098807398,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-22",
+            "resolved": "2026-04-29",
+            "actual": 0.021443919209282347,
+            "median": 0.0027401491128238847,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-29",
+            "resolved": "2026-05-06",
+            "actual": -0.011674870629811984,
+            "median": 0.0027976538523854645,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-05-06",
+            "resolved": "2026-05-13",
+            "actual": 0.03339505778685914,
+            "median": 0.0026208934704790906,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-05-13",
+            "resolved": "2026-05-20",
+            "actual": -0.009515570934256035,
+            "median": 0.002675184259762693,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-05-20",
+            "resolved": "2026-05-28",
+            "actual": -0.007236431690580081,
+            "median": 0.002726969972592537,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-05-28",
+            "resolved": "2026-06-04",
+            "actual": 0.0025344560345188505,
+            "median": 0.002726969972592537,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-06-04",
+            "resolved": "2026-06-11",
+            "actual": 0.01495936318241653,
+            "median": 0.0025658980342865042,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-06-11",
+            "resolved": "2026-06-18",
+            "actual": 0.007554704707795512,
+            "median": 0.002726969972592537,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-06-18",
+            "resolved": "2026-06-26",
+            "actual": 0.018796224410575046,
+            "median": 0.002934368982542996,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-06-26",
+            "resolved": "2026-07-06",
+            "actual": 0.01588256527493681,
+            "median": 0.002961081035838301,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-06",
+            "resolved": "2026-07-13",
+            "actual": -0.019207232816139563,
+            "median": 0.003009533391673674,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-13",
+            "resolved": "2026-07-20",
+            "actual": -0.011271007346281614,
+            "median": 0.003009533391673674,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-20",
+            "resolved": "2026-07-27",
+            "actual": 0.012071246819338466,
+            "median": 0.002934368982542996,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-27",
+            "resolved": "2026-08-03",
+            "actual": 0.03210104992155749,
+            "median": 0.002961081035838301,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-08-03",
+            "resolved": "2026-08-10",
+            "actual": 0.031726234555871535,
+            "median": 0.003009533391673674,
+            "covered": true,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-08-10",
+            "resolved": "2026-08-17",
+            "actual": -0.0589135280117864,
+            "median": 0.003149242698490531,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-08-17",
+            "resolved": "2026-08-24",
+            "actual": 0.012223270377134998,
+            "median": 0.002961081035838301,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-08-24",
+            "resolved": "2026-08-31",
+            "actual": -0.000575031725888353,
+            "median": 0.002961081035838301,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-08-31",
+            "resolved": "2026-09-08",
+            "actual": 0.00357121599904775,
+            "median": 0.0029838769442211716,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-08",
+            "resolved": "2026-09-15",
+            "actual": 0.021608050135420998,
+            "median": 0.0030781255380331316,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-15",
+            "resolved": "2026-09-22",
+            "actual": -0.025679232138710373,
+            "median": 0.003223585946203877,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-22",
+            "resolved": "2026-09-29",
+            "actual": -0.0022641959125304645,
+            "median": 0.003262195201625777,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-29",
+            "resolved": "2026-10-06",
+            "actual": 0.0063501542749080375,
+            "median": 0.003223585946203877,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-10-06",
+            "resolved": "2026-10-13",
+            "actual": 0.029770146773747008,
+            "median": 0.003173816541908466,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-10-13",
+            "resolved": "2026-10-20",
+            "actual": 0.036938857834380334,
+            "median": 0.003173816541908466,
+            "covered": false,
+            "volatility_covered": false
+          }
+        ]
+      },
+      "21": {
+        "origins": 21,
+        "first": "2025-01-02",
+        "last": "2026-10-07",
+        "scenario_mae": 0.029733739776594166,
+        "unchanged_mae": 0.026720412246131583,
+        "scenario_coverage": 0.9523809523809523,
+        "volatility_coverage": 1.0,
+        "windows": [
+          {
+            "issued": "2025-01-02",
+            "resolved": "2025-02-04",
+            "actual": 0.03633340722677891,
+            "median": 0.017234320006929506,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-02-04",
+            "resolved": "2025-03-06",
+            "actual": 0.06492117478448733,
+            "median": 0.0181883616392663,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-03-06",
+            "resolved": "2025-04-04",
+            "actual": -0.008637313192993656,
+            "median": 0.019647863753424,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-04-04",
+            "resolved": "2025-05-06",
+            "actual": 0.038071888803339116,
+            "median": 0.02062740638372907,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-05-06",
+            "resolved": "2025-06-05",
+            "actual": -0.046044541604044364,
+            "median": 0.020879844919488254,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-05",
+            "resolved": "2025-07-08",
+            "actual": -0.023059295330850715,
+            "median": 0.019647863753424,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-08",
+            "resolved": "2025-08-06",
+            "actual": -0.017927827926361828,
+            "median": 0.018907604887408336,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-06",
+            "resolved": "2025-09-05",
+            "actual": 0.06581220276812161,
+            "median": 0.016849898297368517,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-05",
+            "resolved": "2025-10-06",
+            "actual": 0.0005002301058487646,
+            "median": 0.016451297282215182,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-06",
+            "resolved": "2025-11-04",
+            "actual": -0.024719011239550337,
+            "median": 0.017094847927890497,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-04",
+            "resolved": "2025-12-04",
+            "actual": 0.031927982610835404,
+            "median": 0.016301475483089328,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-12-04",
+            "resolved": "2026-01-06",
+            "actual": -0.008306341036901643,
+            "median": 0.016603213562187916,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-06",
+            "resolved": "2026-02-05",
+            "actual": 0.009698427011321398,
+            "median": 0.015807493077294902,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-02-05",
+            "resolved": "2026-03-09",
+            "actual": -0.01327670721784513,
+            "median": 0.013952291164094695,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-09",
+            "resolved": "2026-04-08",
+            "actual": -0.035096540627514106,
+            "median": 0.01302731599622137,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-08",
+            "resolved": "2026-05-07",
+            "actual": -0.009734236581552924,
+            "median": 0.011906439685932116,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-05-07",
+            "resolved": "2026-06-08",
+            "actual": 0.025090511071819588,
+            "median": 0.010414694625856171,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-06-08",
+            "resolved": "2026-07-09",
+            "actual": 0.017351129363449624,
+            "median": 0.010855092244916082,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-09",
+            "resolved": "2026-08-07",
+            "actual": 0.053183974164900505,
+            "median": 0.012002069557202859,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-08-07",
+            "resolved": "2026-09-08",
+            "actual": -0.03060559601379831,
+            "median": 0.011715802624191411,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-08",
+            "resolved": "2026-10-07",
+            "actual": 0.0008303184864479896,
+            "median": 0.012169268951535797,
+            "covered": true,
+            "volatility_covered": true
+          }
+        ]
+      },
+      "63": {
+        "origins": 7,
+        "first": "2025-01-02",
+        "last": "2026-10-07",
+        "scenario_mae": 0.039652562180259684,
+        "unchanged_mae": 0.038429580297059486,
+        "scenario_coverage": 0.7142857142857143,
+        "volatility_coverage": 1.0,
+        "windows": [
+          {
+            "issued": "2025-01-02",
+            "resolved": "2025-04-04",
+            "actual": 0.09408113500332527,
+            "median": 0.052918739881555876,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-04-04",
+            "resolved": "2025-07-08",
+            "actual": -0.032560684037767906,
+            "median": 0.05930923107153403,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-08",
+            "resolved": "2025-10-06",
+            "actual": 0.04722809810040407,
+            "median": 0.055876105940422936,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-06",
+            "resolved": "2026-01-06",
+            "actual": -0.001939922403103811,
+            "median": 0.04784085018043682,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-06",
+            "resolved": "2026-04-08",
+            "actual": -0.03867347961126144,
+            "median": 0.037216407704418315,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-08",
+            "resolved": "2026-07-09",
+            "actual": 0.03272537780093798,
+            "median": 0.027046935857949362,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-09",
+            "resolved": "2026-10-07",
+            "actual": 0.021798365122615904,
+            "median": 0.02633688047113449,
+            "covered": true,
+            "volatility_covered": true
+          }
+        ]
+      }
+    },
+    "GLD": {
+      "5": {
+        "origins": 90,
+        "first": "2025-01-02",
+        "last": "2026-10-20",
+        "scenario_mae": 0.02640238317589965,
+        "unchanged_mae": 0.026609066900670067,
+        "scenario_coverage": 0.6111111111111112,
+        "volatility_coverage": 0.6444444444444445,
+        "windows": [
+          {
+            "issued": "2025-01-02",
+            "resolved": "2025-01-10",
+            "actual": 0.011368266644935288,
+            "median": 0.0027487552860835174,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-01-10",
+            "resolved": "2025-01-17",
+            "actual": 0.00427057733370928,
+            "median": 0.0027487552860835174,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-01-17",
+            "resolved": "2025-01-27",
+            "actual": 0.014923576844385611,
+            "median": 0.0028225168638388275,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-01-27",
+            "resolved": "2025-02-03",
+            "actual": 0.027471441558954757,
+            "median": 0.0028225168638388275,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-02-03",
+            "resolved": "2025-02-10",
+            "actual": 0.032430560898669025,
+            "median": 0.0028284131458467692,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-02-10",
+            "resolved": "2025-02-18",
+            "actual": 0.008682043447479248,
+            "median": 0.0029992096202022416,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-02-18",
+            "resolved": "2025-02-25",
+            "actual": -0.007683782785371185,
+            "median": 0.0029992096202022416,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-02-25",
+            "resolved": "2025-03-04",
+            "actual": 0.0016380016380015405,
+            "median": 0.002861953302937063,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-03-04",
+            "resolved": "2025-03-11",
+            "actual": 0.0003716643127926744,
+            "median": 0.0028284131458467692,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-03-11",
+            "resolved": "2025-03-18",
+            "actual": 0.040124832813196454,
+            "median": 0.0028132295124987986,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-03-18",
+            "resolved": "2025-03-25",
+            "actual": -0.005322188884126167,
+            "median": 0.002861953302937063,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-03-25",
+            "resolved": "2025-04-01",
+            "actual": 0.03267856501597999,
+            "median": 0.002861953302937063,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-04-01",
+            "resolved": "2025-04-08",
+            "actual": -0.043015613589734714,
+            "median": 0.0029240742222696823,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-04-08",
+            "resolved": "2025-04-15",
+            "actual": 0.0820494186046512,
+            "median": 0.002861953302937063,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-04-15",
+            "resolved": "2025-04-23",
+            "actual": 0.019712539458660805,
+            "median": 0.0028452680628437642,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-04-23",
+            "resolved": "2025-04-30",
+            "actual": 0.0003951918327020909,
+            "median": 0.003047995220020283,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-04-30",
+            "resolved": "2025-05-07",
+            "actual": 0.022977910919445677,
+            "median": 0.002861953302937063,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-05-07",
+            "resolved": "2025-05-14",
+            "actual": -0.056604987932421524,
+            "median": 0.0029240742222696823,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-05-14",
+            "resolved": "2025-05-21",
+            "actual": 0.043184609087187686,
+            "median": 0.002861953302937063,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-05-21",
+            "resolved": "2025-05-29",
+            "actual": -0.0006866784382969504,
+            "median": 0.0028284131458467692,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-05-29",
+            "resolved": "2025-06-05",
+            "actual": 0.012172376558358566,
+            "median": 0.002861953302937063,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-05",
+            "resolved": "2025-06-12",
+            "actual": 0.009278117221090731,
+            "median": 0.003047995220020283,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-12",
+            "resolved": "2025-06-20",
+            "actual": -0.006630365150544493,
+            "median": 0.0029992096202022416,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-20",
+            "resolved": "2025-06-27",
+            "actual": -0.028729887466546145,
+            "median": 0.003047995220020283,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-06-27",
+            "resolved": "2025-07-07",
+            "actual": 0.02041697098466222,
+            "median": 0.0028284131458467692,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-07",
+            "resolved": "2025-07-14",
+            "actual": 0.0020821810846862743,
+            "median": 0.0028132295124987986,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-14",
+            "resolved": "2025-07-21",
+            "actual": 0.01662283692087918,
+            "median": 0.0027057080596305802,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-21",
+            "resolved": "2025-07-28",
+            "actual": -0.024654296937374198,
+            "median": 0.002730141068017759,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-28",
+            "resolved": "2025-08-04",
+            "actual": 0.01800857863200278,
+            "median": 0.0026818685947868496,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-04",
+            "resolved": "2025-08-11",
+            "actual": -0.007590621080055371,
+            "median": 0.0026303243353685093,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-11",
+            "resolved": "2025-08-18",
+            "actual": -0.005185545292497262,
+            "median": 0.002608154635755473,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-18",
+            "resolved": "2025-08-25",
+            "actual": 0.009382635608405243,
+            "median": 0.002608154635755473,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-25",
+            "resolved": "2025-09-02",
+            "actual": 0.050866604266855964,
+            "median": 0.002608154635755473,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-09-02",
+            "resolved": "2025-09-09",
+            "actual": 0.026014312478884527,
+            "median": 0.002652091289068951,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-09",
+            "resolved": "2025-09-16",
+            "actual": 0.016553912470813614,
+            "median": 0.002730141068017759,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-16",
+            "resolved": "2025-09-23",
+            "actual": 0.020230277687800058,
+            "median": 0.0027981863281933495,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-23",
+            "resolved": "2025-09-30",
+            "actual": 0.026005888125613552,
+            "median": 0.0028225168638388275,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-09-30",
+            "resolved": "2025-10-07",
+            "actual": 0.030354178974315582,
+            "median": 0.0029992096202022416,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-10-07",
+            "resolved": "2025-10-14",
+            "actual": 0.03967127177414964,
+            "median": 0.003047995220020283,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-10-14",
+            "resolved": "2025-10-21",
+            "actual": -0.009322723811024503,
+            "median": 0.0031372824513397203,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-10-21",
+            "resolved": "2025-10-28",
+            "actual": -0.03408970416710855,
+            "median": 0.0031512822037731343,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-10-28",
+            "resolved": "2025-11-04",
+            "actual": -0.00565343871782209,
+            "median": 0.0031372824513397203,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-04",
+            "resolved": "2025-11-11",
+            "actual": 0.04843784499889603,
+            "median": 0.0031512822037731343,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-11-11",
+            "resolved": "2025-11-18",
+            "actual": -0.014531287019243333,
+            "median": 0.0031512822037731343,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-18",
+            "resolved": "2025-11-25",
+            "actual": 0.015306531320956163,
+            "median": 0.0031777069058457567,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-25",
+            "resolved": "2025-12-03",
+            "actual": 0.01789097032203757,
+            "median": 0.0031990254375578214,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-12-03",
+            "resolved": "2025-12-10",
+            "actual": 0.00560897435897445,
+            "median": 0.0034915887550153613,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-12-10",
+            "resolved": "2025-12-17",
+            "actual": 0.026320524354196184,
+            "median": 0.003216287076832286,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-12-17",
+            "resolved": "2025-12-24",
+            "actual": 0.03165618973678286,
+            "median": 0.0035937456083603033,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-12-24",
+            "resolved": "2026-01-02",
+            "actual": -0.03313669798266705,
+            "median": 0.0036419879866723356,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-01-02",
+            "resolved": "2026-01-09",
+            "actual": 0.04064979411469327,
+            "median": 0.0035937456083603033,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-01-09",
+            "resolved": "2026-01-16",
+            "actual": 0.01645474943904257,
+            "median": 0.0035937456083603033,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-01-16",
+            "resolved": "2026-01-26",
+            "actual": 0.10304066082745833,
+            "median": 0.003868011176613094,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-01-26",
+            "resolved": "2026-02-02",
+            "actual": -0.08084785883365608,
+            "median": 0.004005728452121094,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-02-02",
+            "resolved": "2026-02-09",
+            "actual": 0.09341418303560967,
+            "median": 0.0041265844623384245,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-02-09",
+            "resolved": "2026-02-17",
+            "actual": -0.04031860908292828,
+            "median": 0.004183060258893271,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-02-17",
+            "resolved": "2026-02-24",
+            "actual": 0.05892458723784033,
+            "median": 0.004223983245581643,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-02-24",
+            "resolved": "2026-03-03",
+            "actual": -0.013632245422557476,
+            "median": 0.004306409059981043,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-03",
+            "resolved": "2026-03-10",
+            "actual": 0.02076301960951854,
+            "median": 0.004447612628682686,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-03-10",
+            "resolved": "2026-03-17",
+            "actual": -0.03890260745825147,
+            "median": 0.0044965267869136365,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-03-17",
+            "resolved": "2026-03-24",
+            "actual": -0.1200600953687373,
+            "median": 0.004306409059981043,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-03-24",
+            "resolved": "2026-03-31",
+            "actual": 0.0647316457575533,
+            "median": 0.0041490067358683136,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-03-31",
+            "resolved": "2026-04-08",
+            "actual": 0.009853819517069873,
+            "median": 0.004223983245581643,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-08",
+            "resolved": "2026-04-15",
+            "actual": 0.013646928865670871,
+            "median": 0.0043438725893552525,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-15",
+            "resolved": "2026-04-22",
+            "actual": -0.011805839349770642,
+            "median": 0.004447612628682686,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-22",
+            "resolved": "2026-04-29",
+            "actual": -0.041009971051785055,
+            "median": 0.0043438725893552525,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-04-29",
+            "resolved": "2026-05-06",
+            "actual": 0.03246208763565783,
+            "median": 0.004258305634986562,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-05-06",
+            "resolved": "2026-05-13",
+            "actual": -0.0010673844440318714,
+            "median": 0.004258305634986562,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-05-13",
+            "resolved": "2026-05-20",
+            "actual": -0.030429732868757275,
+            "median": 0.004223983245581643,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-05-20",
+            "resolved": "2026-05-28",
+            "actual": -0.011092477240057463,
+            "median": 0.004005728452121094,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-05-28",
+            "resolved": "2026-06-04",
+            "actual": -0.0036339850279817343,
+            "median": 0.003680233022290002,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-06-04",
+            "resolved": "2026-06-11",
+            "actual": -0.06066574269944314,
+            "median": 0.003305255080531684,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-06-11",
+            "resolved": "2026-06-18",
+            "actual": 0.002070822116380322,
+            "median": 0.003216287076832286,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-06-18",
+            "resolved": "2026-06-26",
+            "actual": -0.034847075842116215,
+            "median": 0.003393874695262269,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-06-26",
+            "resolved": "2026-07-06",
+            "actual": 0.022749779193319553,
+            "median": 0.003393874695262269,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-06",
+            "resolved": "2026-07-13",
+            "actual": -0.039253657132389486,
+            "median": 0.0036419879866723356,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-07-13",
+            "resolved": "2026-07-20",
+            "actual": 0.0012802004739467243,
+            "median": 0.003393874695262269,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-20",
+            "resolved": "2026-07-27",
+            "actual": 0.01912404787812827,
+            "median": 0.0031932960173592364,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-27",
+            "resolved": "2026-08-03",
+            "actual": -0.007794357099004445,
+            "median": 0.003393874695262269,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-08-03",
+            "resolved": "2026-08-10",
+            "actual": 0.08294100239433977,
+            "median": 0.003305255080531684,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-08-10",
+            "resolved": "2026-08-17",
+            "actual": 0.007328464251999733,
+            "median": 0.003680233022290002,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-08-17",
+            "resolved": "2026-08-24",
+            "actual": 0.05228242373424741,
+            "median": 0.003936919220059755,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-08-24",
+            "resolved": "2026-08-31",
+            "actual": -0.04281797089221684,
+            "median": 0.003936919220059755,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-08-31",
+            "resolved": "2026-09-08",
+            "actual": -0.021301601292786798,
+            "median": 0.003868011176613094,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-08",
+            "resolved": "2026-09-15",
+            "actual": -0.013934754328029708,
+            "median": 0.003393874695262269,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-15",
+            "resolved": "2026-09-22",
+            "actual": 0.015019662565013414,
+            "median": 0.003545548905439321,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-22",
+            "resolved": "2026-09-29",
+            "actual": -0.04294248506511367,
+            "median": 0.003868011176613094,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-09-29",
+            "resolved": "2026-10-06",
+            "actual": -0.0016192640183865237,
+            "median": 0.003868011176613094,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-10-06",
+            "resolved": "2026-10-13",
+            "actual": -0.0015695712454546484,
+            "median": 0.0036974793259063397,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-10-13",
+            "resolved": "2026-10-20",
+            "actual": -0.010532659103414055,
+            "median": 0.0036974793259063397,
+            "covered": true,
+            "volatility_covered": true
+          }
+        ]
+      },
+      "21": {
+        "origins": 21,
+        "first": "2025-01-02",
+        "last": "2026-10-07",
+        "scenario_mae": 0.051891115456678426,
+        "unchanged_mae": 0.05225860621115669,
+        "scenario_coverage": 0.6666666666666666,
+        "volatility_coverage": 0.5238095238095238,
+        "windows": [
+          {
+            "issued": "2025-01-02",
+            "resolved": "2025-02-04",
+            "actual": 0.06959498003422704,
+            "median": 0.006273259030566673,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-02-04",
+            "resolved": "2025-03-06",
+            "actual": 0.02190476190476187,
+            "median": 0.006356572605917127,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-03-06",
+            "resolved": "2025-04-04",
+            "actual": 0.0427586206896553,
+            "median": 0.007271912556539317,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-04-04",
+            "resolved": "2025-05-06",
+            "actual": 0.12784212784212778,
+            "median": 0.008051885744529077,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-05-06",
+            "resolved": "2025-06-05",
+            "actual": -0.01949410422213782,
+            "median": 0.009155805229722666,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-06-05",
+            "resolved": "2025-07-08",
+            "actual": -0.016713542171790552,
+            "median": 0.008699988269754716,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-08",
+            "resolved": "2025-08-06",
+            "actual": 0.0208442924776433,
+            "median": 0.007629704812844323,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-08-06",
+            "resolved": "2025-09-05",
+            "actual": 0.06618357487922699,
+            "median": 0.006903887679378391,
+            "covered": true,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-09-05",
+            "resolved": "2025-10-06",
+            "actual": 0.10067965564114179,
+            "median": 0.007629704812844323,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-10-06",
+            "resolved": "2025-11-04",
+            "actual": -0.00565343871782209,
+            "median": 0.009073434332023452,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-11-04",
+            "resolved": "2025-12-04",
+            "actual": 0.06847538087878124,
+            "median": 0.01058263205451028,
+            "covered": true,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-12-04",
+            "resolved": "2026-01-06",
+            "actual": 0.06729005760338902,
+            "median": 0.01108918096599752,
+            "covered": true,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-01-06",
+            "resolved": "2026-02-05",
+            "actual": 0.0694612517546831,
+            "median": 0.01209392124366807,
+            "covered": true,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-02-05",
+            "resolved": "2026-03-09",
+            "actual": 0.0693627229111975,
+            "median": 0.01369757162387421,
+            "covered": true,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-03-09",
+            "resolved": "2026-04-08",
+            "actual": -0.08041817450743871,
+            "median": 0.01581469697458921,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-04-08",
+            "resolved": "2026-05-07",
+            "actual": -0.00655881066899866,
+            "median": 0.0145851356670756,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-05-07",
+            "resolved": "2026-06-08",
+            "actual": -0.0797118235730171,
+            "median": 0.01309304071014153,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-06-08",
+            "resolved": "2026-07-09",
+            "actual": -0.048052961461977906,
+            "median": 0.012307576115502688,
+            "covered": false,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-07-09",
+            "resolved": "2026-08-07",
+            "actual": 0.05365170024855903,
+            "median": 0.011716166509885691,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-08-07",
+            "resolved": "2026-09-08",
+            "actual": 0.0031369990212564147,
+            "median": 0.011943821654967062,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-09-08",
+            "resolved": "2026-10-07",
+            "actual": -0.0596417492244572,
+            "median": 0.013179592885247475,
+            "covered": false,
+            "volatility_covered": true
+          }
+        ]
+      },
+      "63": {
+        "origins": 7,
+        "first": "2025-01-02",
+        "last": "2026-10-07",
+        "scenario_mae": 0.09773086204566384,
+        "unchanged_mae": 0.10664028845301605,
+        "scenario_coverage": 0.5714285714285714,
+        "volatility_coverage": 0.42857142857142855,
+        "windows": [
+          {
+            "issued": "2025-01-02",
+            "resolved": "2025-04-04",
+            "actual": 0.13976041072447254,
+            "median": 0.0291630895722796,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-04-04",
+            "resolved": "2025-07-08",
+            "actual": 0.08737308737308735,
+            "median": 0.026987952675698174,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2025-07-08",
+            "resolved": "2025-10-06",
+            "actual": 0.19798790110468167,
+            "median": 0.026987952675698174,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2025-10-06",
+            "resolved": "2026-01-06",
+            "actual": 0.13392612108238655,
+            "median": 0.030489079151482554,
+            "covered": true,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-01-06",
+            "resolved": "2026-04-08",
+            "actual": 0.051672394597995996,
+            "median": 0.038898216111329084,
+            "covered": true,
+            "volatility_covered": true
+          },
+          {
+            "issued": "2026-04-08",
+            "resolved": "2026-07-09",
+            "actual": -0.12968034428002662,
+            "median": 0.04487164088362373,
+            "covered": false,
+            "volatility_covered": false
+          },
+          {
+            "issued": "2026-07-09",
+            "resolved": "2026-10-07",
+            "actual": -0.006081760008461612,
+            "median": 0.04528866445139848,
+            "covered": true,
+            "volatility_covered": true
+          }
+        ]
+      }
+    }
+  }
+}

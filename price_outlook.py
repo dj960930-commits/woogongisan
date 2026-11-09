@@ -30,9 +30,9 @@ def build(prices,raw):
         windows=[]
         for h in HORIZONS:
             q=distribution(series,h)
-            # Fixed rolling origins, each fitted solely on then-available history.
+            # Non-overlapping forward windows, each fitted solely on past history.
             errors=[];baseline=[];covered=[]
-            for i in range(max(400,len(series)-504),len(series)-h,21):
+            for i in range(max(400,len(series)-504),len(series)-h,h):
                 past=series.iloc[:i+1];actual=float(series.iloc[i+h]/series.iloc[i]-1)
                 try:old=distribution(past,h)
                 except ValueError:continue
@@ -41,7 +41,7 @@ def build(prices,raw):
                 covered.append(bool(estimates[0]<=actual<=estimates[2]))
             windows.append(dict(sessions=h,target_date=str(future[h-1].date()),
                 lower=float(anchor*np.exp(q[0])),median=float(anchor*np.exp(q[1])),upper=float(anchor*np.exp(q[2])),
-                evaluation=dict(origins=len(errors),mae_return=float(np.mean(errors)) if errors else None,
+                evaluation=dict(origins=len(errors),spacing_sessions=h,overlap=False,mae_return=float(np.mean(errors)) if errors else None,
                     unchanged_mae_return=float(np.mean(baseline)) if baseline else None,
                     historical_coverage=float(np.mean(covered)) if covered else None)))
         assets.append(dict(symbol=symbol,close=anchor,windows=windows))

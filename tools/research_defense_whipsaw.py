@@ -1,10 +1,10 @@
 """Offline candidate comparison. Never imports/modifies live model profiles."""
 from pathlib import Path
-import sys,json,hashlib
+import sys,json,hashlib,os
 import numpy as np
 import pandas as pd
 ROOT=Path(__file__).resolve().parents[1]
-AUDIT=ROOT.parent/'all_versions_validation_20261026'
+AUDIT=Path(os.environ.get('WOOGONG_AUDIT_DATA_DIR',str(ROOT.parent/'all_versions_validation_20261026')))
 sys.path[:0]=[str(ROOT),str(AUDIT)]
 from models.core_v1 import evaluate as core
 from models.registry import load_model
