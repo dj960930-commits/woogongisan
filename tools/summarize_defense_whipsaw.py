@@ -10,7 +10,7 @@ from research_defense_whipsaw import targets, CANDIDATES
 
 
 def main():
-    out = ROOT / 'release/whipsaw-research'
+    out = ROOT / 'release/model-research/studies/whipsaw-research'
     nav = pd.read_csv(out / 'nav_actual_BITO_next_open.csv', index_col=0, parse_dates=True)
     p = pd.read_csv(ROOT / 'data/equities.csv', index_col=0, parse_dates=True)
     btc = pd.read_csv(ROOT / 'data/btc.csv', parse_dates=['date_utc']).set_index('date_utc').close

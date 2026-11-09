@@ -5,7 +5,7 @@ import pandas as pd
 from research_defense_redesign import ROOT,AUDIT,replay,metrics,allocations
 from models.registry import load_model
 
-OUT=ROOT/'release/conditional-defense'
+OUT=ROOT/'release/model-research/studies/conditional-defense'
 SHORTS=['ema21_63','ema42_126','dual63']
 
 def wilson(w,n):

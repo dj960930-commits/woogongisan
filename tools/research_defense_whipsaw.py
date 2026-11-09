@@ -4,7 +4,7 @@ import sys,json,hashlib,os
 import numpy as np
 import pandas as pd
 ROOT=Path(__file__).resolve().parents[1]
-AUDIT=Path(os.environ.get('WOOGONG_AUDIT_DATA_DIR',str(ROOT.parent/'all_versions_validation_20261026')))
+AUDIT=Path(os.environ.get('WOOGONG_AUDIT_DATA_DIR',str(ROOT/'release/model-research/early-research/all_versions_validation_20261026')))
 sys.path[:0]=[str(ROOT),str(AUDIT)]
 from models.core_v1 import evaluate as core
 from models.registry import load_model
@@ -119,7 +119,7 @@ def metrics(v,dates,trade,turn,fee):
 
 
 def main(candidates=CANDIDATES,output=None):
-    out=output or ROOT/'release/whipsaw-research';out.mkdir(parents=True,exist_ok=True)
+    out=output or ROOT/'release/model-research/studies/whipsaw-research';out.mkdir(parents=True,exist_ok=True)
     p=pd.read_csv(ROOT/'data/equities.csv',index_col=0,parse_dates=True)
     btc=pd.read_csv(ROOT/'data/btc.csv',parse_dates=['date_utc']).set_index('date_utc').close
     baseline=load_model('woogong-1.3-d').evaluate(p,btc)[0]

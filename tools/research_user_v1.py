@@ -8,7 +8,7 @@ import pandas as pd
 from research_defense_redesign import ROOT,AUDIT,replay,metrics
 from models.registry import load_model
 
-OUT=ROOT/'release/user-v1'
+OUT=ROOT/'release/model-research/studies/user-v1'
 RAW=ROOT.parent/'bito_bitx_cases_20261023/inputs'
 CONFIGS=[('v1_daily','daily',None),('v1_sticky','sticky',None),('v1_armed','armed',None),
  ('v1_symmetric','symmetric',None),('v1_clp','clp',None),('v1_confirm2','confirm2',None),

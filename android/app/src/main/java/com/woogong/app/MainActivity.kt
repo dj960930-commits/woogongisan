@@ -70,7 +70,9 @@ class MainActivity:ComponentActivity(){
     if(error.isNotEmpty() && tab in setOf(0,4))Text(error,color=MaterialTheme.colorScheme.error)
     when(tab){
      0->{
+      TodayOperation(snap,stale){reviewRequest++}
       ReturnsHome(snap,stale){reviewRequest++}
+      TextButton(onClick={tab=2}){Text("전략 가이드 · 규칙과 백테스트 →")}
      }
      1->{
       var assetView by remember{mutableIntStateOf(0)}

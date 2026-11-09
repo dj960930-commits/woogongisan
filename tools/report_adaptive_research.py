@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from research_defense_redesign import ROOT
 
-OUT=ROOT/'release/adaptive-research'
+OUT=ROOT/'release/model-research/studies/adaptive-research'
 
 def table(frame,fields):
     lines=['| '+' | '.join(t for k,t,fn in fields)+' |','|'+'|'.join(['---']*len(fields))+'|']
@@ -13,12 +13,12 @@ def table(frame,fields):
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
-    a=pd.read_csv(ROOT/'release/adaptive-defense/metrics.csv');b=pd.read_csv(ROOT/'release/adaptive-context/metrics.csv');c=pd.read_csv(ROOT/'release/bounded-intervention/metrics.csv')
+    a=pd.read_csv(ROOT/'release/model-research/studies/adaptive-defense/metrics.csv');b=pd.read_csv(ROOT/'release/model-research/studies/adaptive-context/metrics.csv');c=pd.read_csv(ROOT/'release/model-research/studies/bounded-intervention/metrics.csv')
     q=c[(c.scope=='portfolio')&(c.window=='full')&c.model.isin(['baseline','entry_only'])]
     ids=['period','mode','slippage','delay','cash_zero'];wide=q.pivot(index=ids,columns='model',values='cagr').reset_index();wide['delta_pp']=(wide.entry_only-wide.baseline)*100
     wide.to_csv(OUT/'candidate_robustness.csv',index=False)
-    audit=pd.read_csv(ROOT/'release/adaptive-audit/leave_one_out_metrics.csv');intervals=pd.read_csv(ROOT/'release/adaptive-audit/intervention_intervals.csv')
-    latest=pd.read_csv(ROOT/'release/execution-refresh/metrics.csv')
+    audit=pd.read_csv(ROOT/'release/model-research/studies/adaptive-audit/leave_one_out_metrics.csv');intervals=pd.read_csv(ROOT/'release/model-research/studies/adaptive-audit/intervention_intervals.csv')
+    latest=pd.read_csv(ROOT/'release/model-research/studies/execution-refresh/metrics.csv')
     fields=[('period','자료',str),('mode','체결',str),('slippage','추가 슬리피지',lambda x:f'{x:.2%}'),('delay','거래일 지연',lambda x:str(int(x))),('cash_zero','현금금리0 가정',str),('baseline','기존 연복리',lambda x:f'{x:.2%}'),('entry_only','후보 연복리',lambda x:f'{x:.2%}'),('delta_pp','차이',lambda x:f'{x:+.3f}%p')]
     text='''# 방어 로직 보완 연구 — 현재 증거와 남은 검증
 

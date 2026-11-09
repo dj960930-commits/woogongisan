@@ -3,7 +3,7 @@ R=Path(__file__).resolve().parents[1]
 s=(R/'tools/research_allocation_combinations.py').read_text(encoding='utf-8-sig').split('metrics=[]')[0]
 s=s.replace("p=pd.read_csv(R/'data/equities.csv',index_col=0,parse_dates=True)","p=pd.read_csv(R/'data/validation/long2010/reconstructed_inputs.csv.gz',index_col=0,parse_dates=True).loc[:'2026-10-20']")
 exec(s)
-OUT=R/'release/allocation-long2010';OUT.mkdir(exist_ok=True);ix=base.index
+OUT=R/'release/model-research/studies/allocation-long2010';OUT.mkdir(exist_ok=True);ix=base.index
 records=[];annual=[]
 for drag in [0.,-.05338828097800662,-.10]:
  cl=p.reindex(ix)[['TQQQ','BRK.B','GLD','cash_return','SOXL','BITO','QQQ']].copy();cl.columns=['TQQQ','BRK.B','GLD','CASH','SOXL','BITO','QQQ'];cl.CASH=1.

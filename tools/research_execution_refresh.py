@@ -6,7 +6,7 @@ from research_bounded_intervention import combine,ROOT
 from research_defense_redesign import AUDIT,replay,metrics
 from portable_replay import factor
 
-OUT=ROOT/'release/execution-refresh'
+OUT=ROOT/'release/model-research/studies/execution-refresh'
 
 def latest(t,op,cl,rf,div,mode,slip,delay):
     m,n,_=t.shape;held=np.zeros((m,6));held[:,3]=1;value=np.ones(m);nav=np.ones((m,n));goal=t[:,0].copy()

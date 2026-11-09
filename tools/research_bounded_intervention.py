@@ -5,7 +5,7 @@ from research_defense_redesign import ROOT,main as run_research
 from models.registry import load_model
 from research_policy_router import experts
 
-OUT=ROOT/'release/bounded-intervention'
+OUT=ROOT/'release/model-research/studies/bounded-intervention'
 CONFIGS=[('fast_reference',None,None,0,False,False),('loss_stop1',1.,False,0,False,False),
  ('loss_stop2',2.,False,0,False,False),('trailing_stop2',2.,True,0,False,False),
  ('dwell3',None,None,3,False,False),('dwell5',None,None,5,False,False),

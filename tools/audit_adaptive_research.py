@@ -7,7 +7,7 @@ from research_defense_redesign import AUDIT,replay,metrics
 from portable_replay import run
 from models.registry import load_model
 
-OUT=ROOT/'release/adaptive-audit'
+OUT=ROOT/'release/model-research/studies/adaptive-audit'
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True)

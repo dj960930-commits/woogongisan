@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "model_id": "woogong-v2.2",
+  "version": "우공 V2.2",
+  "strategy_id": "woogong-v2.2-cap50-cash-defense",
+  "adapter": "allocation_v22",
+  "parent": "frozen_3661",
+  "rebalance_band": 0.125,
+  "cross": {
+    "look": 5,
+    "loss": -0.05,
+    "riskmin": 2,
+    "gold": 21,
+    "minhold": 3,
+    "maxhold": 10,
+    "cooldown": 10,
+    "emergency_loss": -0.08
+  },
+  "defense": {
+    "qqq_sma": 200,
+    "cash_fraction": 0.25,
+    "applies_to_forced_BRK": true
+  },
+  "defense_entry": {
+    "fast": 5,
+    "slow": 21,
+    "long_weakening_sessions": 21,
+    "readiness_sessions": 63,
+    "entry": "attack_to_normal_defense_only",
+    "direction": "gold_to_brkb",
+    "monthly_approval": false,
+    "cash_priority": "select_then_evaluate_cash"
+  },
+  "performance_execution": "same_close_reference",
+  "approval": "V2.2 모델 신호 및 연구 성과 제공",
+  "research_note": "SOXL 40%, TQQQ+SOXL 70%, BITO 50% 목표 상한. 축소분은 현금. 최종 방어자산 기준 현금 판단과 심각한 위험의 재대피 예외 적용.",
+  "live_approved": false,
+  "orders_enabled": false,
+  "allocation": {
+    "lever_cap": 0.7,
+    "soxl_cap": 0.4,
+    "spill": "all_caps_to_cash",
+    "btc_floor": 0.0,
+    "btc_cap": 0.5
+  }
+}

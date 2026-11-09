@@ -11,7 +11,7 @@ from research_bounded_intervention import ROOT,combine
 from research_defense_whipsaw import AUDIT,replay
 from portable_replay import factor
 
-OUT=ROOT/'release/long-close-2010'
+OUT=ROOT/'release/model-research/studies/long-close-2010'
 ASSETS=['TQQQ','BRK.B','GLD','CASH','SOXL','BITO']
 PRIMARY='bounded::entry_only'
 

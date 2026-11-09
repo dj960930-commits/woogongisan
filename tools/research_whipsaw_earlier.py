@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from research_defense_whipsaw import ROOT, AUDIT, targets, replay, metrics
 
-OUT=ROOT/'release/whipsaw-earlier'
+OUT=ROOT/'release/model-research/studies/whipsaw-earlier'
 CONFIGS=[dict(name='baseline'),dict(name='confirm3',confirm=3),dict(name='confirm5',confirm=5),
          dict(name='forced_selector',forced='selector'),dict(name='forced_mix50',forced='mix'),dict(name='forced_cash',forced='cash')]
 
@@ -37,7 +37,7 @@ def main():
         for slip in (0.,.003):
             nav,tr,turn,fee=replay(arr,op,cl,rf,div,'next_close',slip,1)
             if source=='audited_2015_proxy' and slip==0:
-                old=pd.read_csv(ROOT/'release/whipsaw-research/nav_long_synthetic_next_close.csv',index_col=0,parse_dates=True)
+                old=pd.read_csv(ROOT/'release/model-research/studies/whipsaw-research/nav_long_synthetic_next_close.csv',index_col=0,parse_dates=True)
                 np.testing.assert_allclose(nav.T,old[list(ts)].to_numpy(),atol=1e-9,rtol=1e-10)
             windows=[('full',dates[0],dates[-1]),('before_BITO',dates[0],pd.Timestamp('2021-10-19')),
                      ('2015_2019',pd.Timestamp('2015-07-01'),pd.Timestamp('2019-12-31')),

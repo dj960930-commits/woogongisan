@@ -1,0 +1,11 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>내 투자 조건 비교</title><link rel="stylesheet" href="style.css">
+<main style="max-width:760px"><a href="index.html">← 대시보드</a><h1>내 투자 조건 비교</h1>
+<p>저장된 일별 성과에 초기 투자금과 월 적립금을 적용합니다. 추가 수수료는 최초 투자와 매월 입금분에 적용합니다. 모델 내부 거래비용은 저장 성과의 기존 가정을 따릅니다.</p>
+<form class="card" id="inputs">
+<label>시작일<input required type="date" name="start"></label>
+<label>초기 투자금 (USD)<input required type="number" name="initial" min="1" value="10000"></label>
+<label>월 적립금 (USD)<input required type="number" name="monthly" min="0" value="0"></label>
+<label>납입 시 추가 수수료 (%)<input required type="number" name="fee" min="0" max="10" step="0.01" value="0"></label>
+<button class="button primary">비교하기</button>
+</form><p id="basis"></p><div id="results" aria-live="polite"></div></main><script type="module" src="investment-lab.mjs"></script></html>

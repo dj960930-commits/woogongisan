@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from research_defense_redesign import ROOT
 
-OUT=ROOT/'release/adaptive-validation'
+OUT=ROOT/'release/model-research/studies/adaptive-validation'
 
 def table(frame,fields):
     lines=['| '+' | '.join(t for k,t,fn in fields)+' |','|'+'|'.join(['---']*len(fields))+'|']
@@ -14,9 +14,9 @@ def table(frame,fields):
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
-    r=pd.read_csv(ROOT/'release/past-selection/metrics.csv');boundary=pd.read_csv(ROOT/'release/entry-boundaries/boundary_metrics.csv')
-    init=pd.read_csv(ROOT/'release/entry-boundaries/initialization_metrics.csv');u=pd.read_csv(ROOT/'release/selection-uncertainty/block_diagnostics.csv')
-    logs=pd.read_csv(ROOT/'release/past-selection/selection_log.csv')
+    r=pd.read_csv(ROOT/'release/model-research/studies/past-selection/metrics.csv');boundary=pd.read_csv(ROOT/'release/model-research/studies/entry-boundaries/boundary_metrics.csv')
+    init=pd.read_csv(ROOT/'release/model-research/studies/entry-boundaries/initialization_metrics.csv');u=pd.read_csv(ROOT/'release/model-research/studies/selection-uncertainty/block_diagnostics.csv')
+    logs=pd.read_csv(ROOT/'release/model-research/studies/past-selection/selection_log.csv')
     names={'baseline':'기존','fixed_candidate':'초기 진입 후보 고정','annual_all':'모든 후보 연별 선택','monthly_all':'모든 후보 월별 선택',
         'quarterly36_all':'모든 후보 최근36개월 분기 선택','monthly_pair':'두 로직 월별 선택',
         'monthly_pair_closed3':'두 로직 월별·완료3회 요구','monthly_pair_entrygate':'두 로직 월별·진입 승인 고정',

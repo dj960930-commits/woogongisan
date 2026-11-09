@@ -6,7 +6,7 @@ import pandas as pd
 ROOT=Path(__file__).resolve().parents[1]
 
 def main():
-    src=ROOT/'release/long-close-2010';out=ROOT/'site/research';out.mkdir(exist_ok=True)
+    src=ROOT/'release/model-research/studies/long-close-2010';out=ROOT/'site/research';out.mkdir(exist_ok=True)
     for name in ['metrics.csv','annual.csv']:shutil.copy2(src/name,out/('v2-'+name))
     f=pd.read_csv(src/'metrics.csv');annual=pd.read_csv(src/'annual.csv')
     names={'baseline':'기존 V1.3-D','user_v1_latch':'제시한 5·20일 조건·유지형','fixed_entry_only':'우공이산 v2 · EMA5/21 진입 개입','monthly_entrygate':'월별 승인안'}

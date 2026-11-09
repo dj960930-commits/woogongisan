@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import pandas as pd
 
-ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'release/long-close-2010'
+ROOT=Path(__file__).resolve().parents[1];OUT=ROOT/'release/model-research/studies/long-close-2010'
 LONG='conditional_2010_btc_drag-0.053388'
 LABELS={'baseline':'기존 V1.3-D','user_v1_latch':'사용자 5·20일 조건 + 전환 후 유지',
     'monthly_entrygate':'EMA5/21 + 월별 승인','monthly_entrygate_closed3':'월별 승인 + 종료 사례 3건 필요',

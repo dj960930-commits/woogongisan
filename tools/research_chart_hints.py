@@ -6,7 +6,7 @@ import pandas as pd
 from research_defense_redesign import ROOT,AUDIT,replay,metrics
 from models.registry import load_model
 
-OUT=ROOT/'release/chart-hints'
+OUT=ROOT/'release/model-research/studies/chart-hints'
 RAW=ROOT.parent/'bito_bitx_cases_20261023/inputs'
 CONFIGS=[('relative','R',1,False),('relative_weak','RG',1,False),('relative_shock','RS',1,False),('shock_base','RSB',1,False),('relative_base','RB',1,False),
  ('relative_flow','RF',1,False),('weak_base','RGB',1,False),('weak_flow','RGF',1,False),
@@ -110,7 +110,7 @@ def main():
     timeline=f.join(ind[['state']]);timeline['baseline_asset']=np.where(ts['baseline'][:,2]>0,'GLD',np.where(ts['baseline'][:,1]>0,'BRK','CASH/ATTACK'))
     for name,t in ts.items():timeline[name+'_brk']=t[:,1];timeline[name+'_cash']=t[:,3]
     timeline.loc['2026-09-15':].to_csv(OUT/'october_timeline.csv')
-    old=pd.read_csv(ROOT/'release/failure-overlay/original_choice_windows.csv',parse_dates=['start'])
+    old=pd.read_csv(ROOT/'release/model-research/studies/failure-overlay/original_choice_windows.csv',parse_dates=['start'])
     ef=old.merge(f.reset_index().rename(columns={f.index.name or 'index':'start'}),on='start',how='left');ef.to_csv(OUT/'failure_features.csv',index=False)
     groups=[]
     for asset in ['GLD','BRK.B']:

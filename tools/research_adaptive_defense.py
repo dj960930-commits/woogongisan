@@ -9,7 +9,7 @@ from research_defense_redesign import ROOT,main as run_research
 from models.registry import load_model
 from models.core_v1 import evaluate as core
 
-OUT=ROOT/'release/adaptive-defense'
+OUT=ROOT/'release/model-research/studies/adaptive-defense'
 NAMES=['baseline','log_selector','clipped_log_selector','efficiency_gold','efficiency_both','efficiency_blend25',
        'regression_gold','regression_both','cusum5_gold','cusum5_both','cusum3_gold',
        'channel21_gold','channel21_both','channel63_gold','trailing_vol_gold','confluence2_gold','confluence3_gold']

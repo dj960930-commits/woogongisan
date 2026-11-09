@@ -24,7 +24,7 @@ open class WoogongWidget:AppWidgetProvider(){
  }
  companion object {
   private const val PERIOD_ACTION="com.woogong.app.WIDGET_PERIOD"
-  fun updateAll(c:Context){val m=AppWidgetManager.getInstance(c);listOf(WoogongWidget::class.java,WoogongCompactWidget::class.java,WoogongDetailWidget::class.java).forEach{type->m.getAppWidgetIds(ComponentName(c,type)).forEach{update(c,m,it)}}}
+  fun updateAll(c:Context){val m=AppWidgetManager.getInstance(c);listOf(WoogongWidget::class.java,WoogongCompactWidget::class.java,WoogongDetailWidget::class.java,WoogongSignalWidget::class.java).forEach{type->m.getAppWidgetIds(ComponentName(c,type)).forEach{update(c,m,it)}}}
   fun update(c:Context,m:AppWidgetManager,id:Int){
    val info=m.getAppWidgetInfo(id)?:return
    val options=m.getAppWidgetOptions(id)
@@ -37,6 +37,15 @@ open class WoogongWidget:AppWidgetProvider(){
    val layout=WidgetPresentation.layout(width,height,c.resources.configuration.fontScale,preferred)
    val s=Data.load(c,"snapshot");val status=Data.load(c,"status");val prefs=Data.prefs(c)
    val stale=Data.stale(s,status)||!prefs.getString("sync_error","").isNullOrEmpty()
+   if(info.provider.className==WoogongSignalWidget::class.java.name){
+    val view=RemoteViews(c.packageName,R.layout.widget_signal)
+    view.setTextViewText(R.id.signal_state,signalLabel(s,stale,AllocationChange.pending(c)!=null))
+    view.setTextViewText(R.id.signal_date,"기준 거래일 "+s.optString("market_date","—"))
+    val open=PendingIntent.getActivity(c,id,Intent(c,MainActivity::class.java),PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+    view.setOnClickPendingIntent(R.id.widget_root,open)
+    m.updateAppWidget(id,view)
+    return
+   }
    val period=prefs.getString("widget_period_$id",prefs.getString("performance_period","1m"))?:"1m"
    val window=Performance.read(s,period)
    val resource=when(layout){WidgetPresentation.Layout.COMPACT->R.layout.widget_compact;WidgetPresentation.Layout.DETAIL->R.layout.widget_detail;else->R.layout.widget}
@@ -87,3 +96,5 @@ open class WoogongWidget:AppWidgetProvider(){
 }
 class WoogongCompactWidget:WoogongWidget()
 class WoogongDetailWidget:WoogongWidget()
+
+class WoogongSignalWidget:WoogongWidget()

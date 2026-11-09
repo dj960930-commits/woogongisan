@@ -12,7 +12,7 @@ from research_defense_whipsaw import ROOT,AUDIT,replay,metrics as ledger_metrics
 from models.core_v1 import evaluate as core,ASSETS
 from models.registry import load_model
 
-OUT=ROOT/'release/defense-redesign'
+OUT=ROOT/'release/model-research/studies/defense-redesign'
 NAMES=['baseline','cash','static50','dual63','dual126','dual_ensemble',
        'momentum_blend','breadth','breadth_slow','sma_breadth','invvol_trend','breadth_entry3']
 PROTOCOL=dict(names=NAMES,scope='all defensive states 1/2/3/4; attack unchanged; no legacy overlay stacking',
@@ -110,7 +110,7 @@ def main(names=NAMES,builder=combine,out=OUT,protocol=PROTOCOL):
                     old=np.load(AUDIT/'nav_next_open_s0_d1_f1_cash00.npz')
                     np.testing.assert_allclose(nav[0],old['nav'][list(old['names']).index('V1.3-D')],atol=1e-10,rtol=1e-10)
                 if scope=='portfolio' and period=='long_synthetic' and slip==0:
-                    old=pd.read_csv(ROOT/'release/whipsaw-research/nav_long_synthetic_next_close.csv',index_col=0,parse_dates=True)
+                    old=pd.read_csv(ROOT/'release/model-research/studies/whipsaw-research/nav_long_synthetic_next_close.csv',index_col=0,parse_dates=True)
                     np.testing.assert_allclose(nav[0],old.baseline.to_numpy(),atol=1e-9,rtol=1e-10)
                 for k,name in enumerate(NAMES):
                     for window,start,end in windows(ix):

@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 from market_data import fetch
 
 def main():
-    out=ROOT/'release/october-replay';stage=out/'feed-root';(stage/'data').mkdir(parents=True,exist_ok=True)
+    out=ROOT/'release/model-research/studies/october-replay';stage=out/'feed-root';(stage/'data').mkdir(parents=True,exist_ok=True)
     for name in ['equities.csv','btc.csv']:shutil.copy2(ROOT/'data'/name,stage/'data'/name)
     p,btc,raw=fetch('2026-11-04',root=stage)
     p.to_csv(out/'equities_verified.csv');btc.to_csv(out/'btc_verified.csv',header=['close'])

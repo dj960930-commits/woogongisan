@@ -9,7 +9,7 @@ import pandas as pd
 from research_defense_redesign import ROOT,AUDIT,replay,metrics
 from models.registry import load_model
 
-OUT=ROOT/'release/failure-overlay'
+OUT=ROOT/'release/model-research/studies/failure-overlay'
 PAIRS=[(f,s) for f in [5,10,21,42] for s in [21,42,63,84,126,189] if f<s]
 GATES=['disagree','own_weak','long_weakening']
 

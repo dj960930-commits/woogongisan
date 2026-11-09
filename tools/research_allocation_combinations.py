@@ -25,7 +25,7 @@ for v,a in zip(lag,sma):
 gate=pd.Series(eligible,index=p.index).reindex(base.index)
 
 from tools.portable_replay import factor
-OUT=R/'release/allocation-combination-study';OUT.mkdir(exist_ok=True)
+OUT=R/'release/model-research/studies/allocation-combination-study';OUT.mkdir(exist_ok=True)
 CAPS=[0,.2,.4,.5,.6,.7,.8,1.];DEST=['BTC','CASH','QQQ','GLD','QQQ_GLD50','mom63','mom126','mom63_126'];FILTERS=['off','trend','trend_cap40']
 attack=ind.state.eq(0);xx=pd.DataFrame({'BITO':lag,'QQQ':p.QQQ,'GLD':p.GLD});selector={}
 for label,looks in [('mom63',[63]),('mom126',[126]),('mom63_126',[63,126])]:

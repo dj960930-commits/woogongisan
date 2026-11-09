@@ -100,6 +100,12 @@ def snapshot(p,btc,mode,raw=None,model=None):
    'threshold':allocation['lever_cap'],
    'description':f"TQQQ+SOXL 목표 비중은 최대 {allocation['lever_cap']:.0%}, SOXL은 최대 {allocation['soxl_cap']:.0%}. 제한으로 남는 비중은 달러 현금으로 보유합니다. BTC에는 원래 모멘텀 비중만 배분하며 최소 비중은 없습니다. 재조정 기준과 가격 변동 때문에 실제 보유 비중은 목표 상한을 넘을 수 있습니다.",
    'active':state==0})
+  if 'emergency_loss' in model.profile['cross']:
+   reasons[-1]['description']+=f" BITO 목표 상한은 {allocation['btc_cap']:.0%}이며, 모든 상한 축소분은 현금으로 보냅니다."
+   emergency=model.profile['cross']['emergency_loss']
+   reasons.append({'title':'긴급 재대피','value':int(last.cross_cooldown_bypassed),'threshold':emergency,
+    'description':f"최종 방어자산을 기준으로 현금 대피를 판단합니다. 버크셔와 GLD가 함께 하락하고 선택 자산의 5거래일 수익률이 {emergency:.0%} 이하이면 재대피 대기기간을 건너뜁니다.",
+    'active':bool(last.cross_cooldown_bypassed)})
  data={**model.metadata(),'market_date':str(day.date()),'generated_at':datetime.now(timezone.utc).isoformat(),'mode':mode,'state':state,'state_label':state_label,
   'target':{k:float(v) for k,v in target.items()},'account_connected':False,'reasons':reasons,
  'indicators':{k:float(last[k]) for k in ['beta','hedge','gap','qqq_drawdown','defense_fast','defense_slow']},'charts':{'relative':series(['relative','relative_fast','relative_slow']),'defense':series(['defense_ratio','defense_fast','defense_slow']),'drawdown':series(['qqq_drawdown'])},'raw_close':raw or {},'data_fingerprint':input_fingerprint(p,btc,model)}

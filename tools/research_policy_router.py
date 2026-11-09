@@ -5,7 +5,7 @@ import pandas as pd
 from research_defense_redesign import ROOT,AUDIT,replay,metrics
 from models.registry import load_model
 
-OUT=ROOT/'release/policy-router'
+OUT=ROOT/'release/model-research/studies/policy-router'
 PROTOCOL=dict(signals=[[5,21],[21,63]],fractions=[.5,1.],directions=[1,2],
     actions='existing / other defensive asset / cash',
     entry='short disagrees and original EMA advantage weakening over21 sessions',

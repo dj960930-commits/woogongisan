@@ -13,4 +13,4 @@ CANDIDATES = [
 ]
 
 if __name__ == '__main__':
-    main(CANDIDATES, ROOT / 'release/whipsaw-research-stage2')
+    main(CANDIDATES, ROOT / 'release/model-research/studies/whipsaw-research-stage2')

@@ -61,4 +61,4 @@ def combine(p,btc):
     return {name:out[name] for name in NAMES},ind
 
 if __name__=='__main__':
-    main(NAMES,combine,ROOT/'release/defense-growth-stage2',PROTOCOL)
+    main(NAMES,combine,ROOT/'release/model-research/studies/defense-growth-stage2',PROTOCOL)

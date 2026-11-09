@@ -25,7 +25,8 @@ import org.json.JSONObject
     Text(AllocationChange.display(p.getJSONObject("before")))
     Text("현재 목표",color=MaterialTheme.colorScheme.primary,fontWeight=FontWeight.Bold)
     Text(AllocationChange.display(s.getJSONObject("target")),fontWeight=FontWeight.Bold)
-    Text("내 자산에서 현재 보유와 필요한 수량을 확인하세요.")
+    Text(operationReason(s))
+    Text("주문 참고 수량은 내 자산에서 계좌 잔고 기준으로 확인하세요.")
    }},confirmButton={TextButton(onClick={AllocationChange.acknowledge(c,s);pending=null}){Text("확인했어요")}},
    dismissButton={TextButton(onClick={dismissed=key}){Text("나중에")}})
  }

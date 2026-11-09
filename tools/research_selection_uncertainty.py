@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from adaptive_family import ROOT,saved_nav
 
-OUT=ROOT/'release/selection-uncertainty'
+OUT=ROOT/'release/model-research/studies/selection-uncertainty'
 PRIMARY='bounded::entry_only';B=2000;SEED=20261105
 
 def block_means(d,L,B,rng):

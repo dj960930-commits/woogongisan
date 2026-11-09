@@ -17,7 +17,7 @@ def md(df,fields):
     return '\n'.join(rows)+'\n'
 
 def main():
-    a=pd.read_csv(OUT/'metrics.csv');bdir=ROOT/'release/defense-growth-stage2';b=pd.read_csv(bdir/'metrics.csv')
+    a=pd.read_csv(OUT/'metrics.csv');bdir=ROOT/'release/model-research/studies/defense-growth-stage2';b=pd.read_csv(bdir/'metrics.csv')
     # Update metadata after adding explicit builder-source hashing; no score edits.
     for directory,source in [(OUT,'research_defense_redesign.py'),(bdir,'research_defense_growth_stage2.py')]:
         path=directory/'manifest.json';m=json.loads(path.read_text(encoding='utf-8'))

@@ -8,7 +8,7 @@ from research_defense_redesign import AUDIT,replay,metrics
 from portable_replay import factor
 from models.registry import load_model
 
-OUT=ROOT/'release/entry-boundaries'
+OUT=ROOT/'release/model-research/studies/entry-boundaries'
 WINDOWS=[('day1',1,1),('days1_2',1,2),('days1_3',1,3),('days1_5',1,5),('day2',2,2),('day3',3,3)]
 
 def initial_replay(t,op,cl,rf,div,held_initial,mode='next_open',slip=0,delay=1):

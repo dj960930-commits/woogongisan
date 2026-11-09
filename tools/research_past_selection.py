@@ -7,7 +7,7 @@ from adaptive_family import ROOT,build_family,saved_nav
 from research_defense_redesign import AUDIT,replay,metrics
 from research_execution_refresh import latest
 
-OUT=ROOT/'release/past-selection'
+OUT=ROOT/'release/model-research/studies/past-selection'
 PRIMARY='bounded::entry_only'
 SELECTORS=[('annual_all','YS','all',None,0),('monthly_all','MS','all',None,0),
  ('quarterly36_all','QS','all',36,0),('monthly_pair','MS','pair',None,0),('monthly_pair_closed3','MS','pair',None,3)]
@@ -59,7 +59,7 @@ def routes(nav,targets,di,intervals):
 def main():
     OUT.mkdir(parents=True,exist_ok=True);(OUT/'protocol.json').write_text(json.dumps(PROTOCOL,indent=2),encoding='utf-8')
     p=pd.read_csv(ROOT/'data/equities.csv',index_col=0,parse_dates=True);btc=pd.read_csv(ROOT/'data/btc.csv',parse_dates=['date_utc']).set_index('date_utc').close
-    ts,ind=build_family(p,btc);intervals=pd.read_csv(ROOT/'release/adaptive-audit/intervention_intervals.csv',parse_dates=['start','end'])
+    ts,ind=build_family(p,btc);intervals=pd.read_csv(ROOT/'release/model-research/studies/adaptive-audit/intervention_intervals.csv',parse_dates=['start','end'])
     allrows=[];alllogs=[]
     for period,mode in [('actual_BITO','next_open'),('long_synthetic','next_close')]:
         a=np.load(AUDIT/f'inputs_{period}.npz');di=pd.DatetimeIndex(a['dates']);nav=saved_nav(period,mode)

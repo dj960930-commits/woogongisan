@@ -9,7 +9,7 @@ sys.path.insert(0, str(ROOT))
 from models.registry import load_model
 
 def main():
-    audit = ROOT.parent / 'all_versions_validation_20261026'
+    audit = ROOT / 'release/model-research/early-research/all_versions_validation_20261026'
     z = np.load(audit / 'targets.npz')
     model = load_model('woogong-1.3-d')
     ref = pd.DataFrame(z['targets'][list(z['names']).index('V1.3-D')],

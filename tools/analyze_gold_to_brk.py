@@ -41,7 +41,7 @@ def main():
         result[name]=dict(count=len(a),wins=int((a.brk_return>0).sum()),win_rate=float((a.brk_return>0).mean()),
             beat_gold=int((a.excess>0).sum()),beat_gold_rate=float((a.excess>0).mean()),mean=float(a.brk_return.mean()),median=float(a.brk_return.median()),
             best=float(a.brk_return.max()),worst=float(a.brk_return.min()),mean_sessions=float(a.sessions.mean()),rows=a.to_dict('records'))
-    directory=ROOT/'release/gold-to-brk-study';directory.mkdir(parents=True,exist_ok=True)
+    directory=ROOT/'release/model-research/studies/gold-to-brk-study';directory.mkdir(parents=True,exist_ok=True)
     frame.to_csv(directory/'events.csv',index=False)
     result['unfinished']=unfinished;result['data_end']=str(p.index[-1].date())
     (directory/'summary.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')

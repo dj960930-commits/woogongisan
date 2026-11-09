@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'release/whipsaw-research'
+OUT = ROOT / 'release/model-research/studies/whipsaw-research'
 NAMES = {
     'baseline': '기존 V1.3-D', 'confirm2': '선택 전환 2일 확인',
     'confirm3': '선택 전환 3일 확인', 'confirm5': '선택 전환 5일 확인',
@@ -31,7 +31,7 @@ def table(frame, fields):
 
 def main():
     data = pd.read_csv(OUT / 'metrics.csv')
-    stage2 = pd.read_csv(ROOT / 'release/whipsaw-research-stage2/metrics.csv')
+    stage2 = pd.read_csv(ROOT / 'release/model-research/studies/whipsaw-research-stage2/metrics.csv')
     primary = data[(data.period=='actual_BITO') & (data['mode']=='next_open') &
                    (data.slippage==0) & (data.delay==1) & (data.window=='full')]
     f = [('model','후보',lambda x:NAMES[x]),('cagr','연복리 수익률',lambda x:f'{x:.2%}'),

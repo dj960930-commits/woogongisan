@@ -12,7 +12,7 @@ from research_defense_redesign import AUDIT
 from research_defense_whipsaw import replay
 from models.registry import load_model
 
-OUT=ROOT/'release/october-replay'
+OUT=ROOT/'release/model-research/studies/october-replay'
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
@@ -56,10 +56,10 @@ def main():
     assert max(abs(x['difference']) for x in differences)<4e-6
     # The October approval is frozen at intervention entry. The conservative
     # three-closed-event mode was not approved and follows baseline throughout.
-    approval=pd.read_csv(ROOT/'release/past-selection/selection_log.csv')
+    approval=pd.read_csv(ROOT/'release/model-research/studies/past-selection/selection_log.csv')
     log=approval[(approval.period=='actual_BITO')&(approval.selector=='monthly_pair')&(approval.decision=='2026-10-01')].iloc[0]
     assert log.pick=='bounded::entry_only' and log.last_training_month=='2026-09-30'
-    cache=pd.read_csv(ROOT/'release/past-selection/nav_actual_BITO_next_open.csv',index_col=0,parse_dates=True)
+    cache=pd.read_csv(ROOT/'release/model-research/studies/past-selection/nav_actual_BITO_next_open.csv',index_col=0,parse_dates=True)
     nv=cache[['baseline','monthly_pair_entrygate']].rename(columns={'monthly_pair_entrygate':'proposed'}).copy()
     canonical_end=nv.index[-1];assert canonical_end==frozen.index[-1]
     # At the anchor both books are purely defensive and no later trade is due
@@ -125,7 +125,7 @@ def main():
             'rules designed after seeing October, not independent prediction proof'])
     (OUT/'summary.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
     p.to_csv(OUT/'reconstructed_inputs.csv');nv.loc[start:].to_csv(OUT/'october_nav.csv')
-    files=[Path(__file__),ROOT/'runtime/outlook-input.csv',ROOT/'data/btc.csv',ROOT/'release/past-selection/selection_log.csv',*paths]
+    files=[Path(__file__),ROOT/'runtime/outlook-input.csv',ROOT/'data/btc.csv',ROOT/'release/model-research/studies/past-selection/selection_log.csv',*paths]
     (OUT/'audit.json').write_text(json.dumps(dict(checks=['immutable frozen prefix','cached live targets agree exactly; indicator differences recorded','no new risk exposure','Cross precondition false regardless missing risk data','no post-anchor opening fill required','October approval trained through September only'],
         indicator_differences=differences,factors=factors,source_hashes={str(f):hashlib.sha256(f.read_bytes()).hexdigest() for f in files}),indent=2),encoding='utf-8')
     print(json.dumps(result,ensure_ascii=False,indent=2))

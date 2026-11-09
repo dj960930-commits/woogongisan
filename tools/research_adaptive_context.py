@@ -4,7 +4,7 @@ import pandas as pd
 from research_adaptive_defense import ROOT,combine as phase1,features
 from research_defense_redesign import main as run_research
 
-OUT=ROOT/'release/adaptive-context'
+OUT=ROOT/'release/model-research/studies/adaptive-context'
 CONFIGS=[('roc_full','full','any',False),('er_mix','er','any',False),('er_qqq','er','qqq',False),
  ('er_calm','er','calm',False),('er_state4','er','state4',False),('er_forecast63','er','forecast',False),
  ('er_armed_qqq','er','qqq',True),('roc_full_qqq','full','qqq',False),('roc_forecast63','full','forecast',False)]
