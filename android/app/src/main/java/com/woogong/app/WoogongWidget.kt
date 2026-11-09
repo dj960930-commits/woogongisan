@@ -37,8 +37,23 @@ open class WoogongWidget:AppWidgetProvider(){
    val layout=WidgetPresentation.layout(width,height,c.resources.configuration.fontScale,preferred)
    val s=Data.load(c,"snapshot");val status=Data.load(c,"status");val prefs=Data.prefs(c)
    val stale=Data.stale(s,status)||!prefs.getString("sync_error","").isNullOrEmpty()
+   val background=prefs.getString("widget_background_choice","system")
+   val systemDark=c.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK==Configuration.UI_MODE_NIGHT_YES
+   val dark=when(background){"black"->true;"white"->false;else->systemDark}
+   val ink=if(dark)Color.WHITE else Color.rgb(24,29,40)
+   val muted=if(dark)Color.rgb(185,194,211) else Color.rgb(85,94,113)
+   val colors=seriesColors(dark)
+   fun applyBackground(view:RemoteViews){
+    val fill=when(background){"white"->Color.WHITE;"black"->Color.BLACK;"transparent"->Color.TRANSPARENT;else->if(dark)Color.rgb(32,38,57) else Color.WHITE}
+    view.setInt(R.id.widget_root,"setBackgroundColor",fill)
+   }
    if(info.provider.className==WoogongSignalWidget::class.java.name){
     val view=RemoteViews(c.packageName,R.layout.widget_signal)
+    applyBackground(view)
+    if(background=="system")view.setInt(R.id.widget_root,"setBackgroundColor",if(dark)Color.rgb(32,38,57) else Color.WHITE)
+    view.setTextColor(R.id.signal_title,colors[0])
+    view.setTextColor(R.id.signal_state,ink)
+    view.setTextColor(R.id.signal_date,muted)
     view.setTextViewText(R.id.signal_state,signalLabel(s,stale,AllocationChange.pending(c)!=null))
     view.setTextViewText(R.id.signal_date,"기준 거래일 "+s.optString("market_date","—"))
     val open=PendingIntent.getActivity(c,id,Intent(c,MainActivity::class.java),PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
@@ -50,6 +65,16 @@ open class WoogongWidget:AppWidgetProvider(){
    val window=Performance.read(s,period)
    val resource=when(layout){WidgetPresentation.Layout.COMPACT->R.layout.widget_compact;WidgetPresentation.Layout.DETAIL->R.layout.widget_detail;else->R.layout.widget}
    val v=RemoteViews(c.packageName,resource)
+   applyBackground(v)
+   v.setTextColor(R.id.title,ink)
+   v.setTextColor(R.id.state,muted)
+   v.setTextColor(R.id.period,ink)
+   v.setInt(R.id.period,"setBackgroundColor",Color.TRANSPARENT)
+   listOf(R.id.legend_model to R.id.account,R.id.legend_tqqq to R.id.weights,R.id.legend_brkb to R.id.loan).forEachIndexed{index,(label,value)->
+    v.setTextColor(label,colors[index])
+    v.setTextColor(value,colors[index])
+   }
+   if(layout==WidgetPresentation.Layout.DETAIL)v.setTextColor(R.id.detail,ink)
    v.setTextViewText(R.id.title,"우공이산")
    v.setTextViewText(R.id.period,(Performance.periods[period]?:"1개월")+" ↻")
    v.setTextViewText(R.id.account,window?.let{Performance.percent(it.last.model)}?:"—")
@@ -60,7 +85,7 @@ open class WoogongWidget:AppWidgetProvider(){
     val gap=window?.let{"TQQQ 대비 %+.2f%%p".format((it.last.model-it.last.tqqq)*100)}?:"비교 자료 갱신 대기"
     v.setTextViewText(R.id.detail,"모델 목표  ${Data.allocation(s)}\n$gap")
    }
-   val dark=c.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK==Configuration.UI_MODE_NIGHT_YES
+
    v.setImageViewBitmap(R.id.chart,chart(window,dark,layout==WidgetPresentation.Layout.COMPACT,WidgetPresentation.chartPixels(width,height,layout)))
    val open=PendingIntent.getActivity(c,id,Intent(c,MainActivity::class.java),PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
    v.setOnClickPendingIntent(R.id.widget_root,open)
@@ -68,6 +93,7 @@ open class WoogongWidget:AppWidgetProvider(){
    v.setOnClickPendingIntent(R.id.period,PendingIntent.getBroadcast(c,id,cycle,PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT))
    m.updateAppWidget(id,v)
   }
+  private fun seriesColors(dark:Boolean)=if(dark)listOf(Color.rgb(234,200,122),Color.rgb(174,185,234),Color.rgb(139,196,185)) else listOf(Color.rgb(118,85,22),Color.rgb(77,91,157),Color.rgb(50,109,100))
   internal fun chart(window:PerformanceWindow?,dark:Boolean=true,compact:Boolean=false,pixelHeight:Int=240):Bitmap {
    val bitmap=Bitmap.createBitmap(800,pixelHeight,Bitmap.Config.ARGB_8888);val canvas=Canvas(bitmap)
    val muted=if(dark)Color.rgb(165,174,194) else Color.rgb(104,112,134)
@@ -84,7 +110,7 @@ open class WoogongWidget:AppWidgetProvider(){
     paint.color=grid;paint.strokeWidth=1.5f;canvas.drawLine(left,yy,right,yy,paint)
    }
    paint.color=muted;paint.alpha=100;canvas.drawLine(left,y(0.0),right,y(0.0),paint);paint.alpha=255
-   val colors=if(dark)listOf(Color.rgb(234,200,122),Color.rgb(174,185,234),Color.rgb(139,196,185)) else listOf(Color.rgb(118,85,22),Color.rgb(77,91,157),Color.rgb(50,109,100))
+   val colors=seriesColors(dark)
    listOf("model","tqqq","brkb").forEachIndexed{index,key->
     val path=Path();window.points.forEachIndexed{i,p->val xx=left+(right-left)*i/(window.points.size-1);if(i==0)path.moveTo(xx,y(p.value(key))) else path.lineTo(xx,y(p.value(key)))}
     val line=Paint(Paint.ANTI_ALIAS_FLAG).apply{color=colors[index];strokeWidth=if(index==0)5.5f else 3.5f;style=Paint.Style.STROKE;strokeJoin=Paint.Join.ROUND;strokeCap=Paint.Cap.ROUND}

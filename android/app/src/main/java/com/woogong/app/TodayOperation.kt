@@ -1,7 +1,7 @@
 package com.woogong.app
 
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import org.json.JSONObject
@@ -38,5 +38,24 @@ internal fun signalLabel(snapshot: JSONObject, stale: Boolean, changed: Boolean)
         snapshot.optJSONObject("target")?.let { Text(AllocationChange.display(it), fontWeight = FontWeight.Bold) }
         Text(operationReason(snapshot), style = MaterialTheme.typography.bodySmall)
         if (changed && !stale) TextButton(onClick = onReview) { Text("변경 전·후 보기 →") }
+    }
+}
+
+@Composable internal fun WidgetBackgroundSettings() {
+    val context = LocalContext.current
+    val prefs = Data.prefs(context)
+    var selected by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf(prefs.getString("widget_background_choice", "system"))
+    }
+    Panel {
+        Text("위젯 배경", fontWeight = FontWeight.Bold)
+        Text("선택하면 홈 화면의 우공이산 위젯에 바로 적용됩니다. 투명은 시스템 테마에 맞춰 글자색을 고릅니다.")
+        listOf("system" to "시스템", "white" to "화이트", "black" to "블랙", "transparent" to "투명").forEach { (key, label) ->
+            FilterChip(selected = selected == key, onClick = {
+                selected = key
+                prefs.edit().putString("widget_background_choice", key).apply()
+                WoogongWidget.updateAll(context)
+            }, label = { Text(label) })
+        }
     }
 }

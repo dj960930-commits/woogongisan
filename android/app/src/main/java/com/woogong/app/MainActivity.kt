@@ -93,6 +93,7 @@ class MainActivity:ComponentActivity(){
       var base by remember{mutableStateOf(Data.url(this@MainActivity))}
       if(connectionExpanded)Panel{Text("모델 결과 연결",fontWeight=FontWeight.Bold);Text("메리츠 계좌는 내 자산 → 메리츠 계좌에서 연결합니다. 이 주소는 우공 모델의 계산 결과를 받는 곳입니다.",fontSize=12.sp);OutlinedTextField(base,{base=it},label={Text("모델 결과 HTTPS 주소")},modifier=Modifier.fillMaxWidth(),singleLine=true);Button(onClick={try{base=SignalEndpoint.normalize(base);Data.prefs(this@MainActivity).edit().putString("url",base).apply();refresh()}catch(e:Exception){error=e.message?:"주소를 확인하세요"}}){Text("저장하고 결과 확인")};TextButton(onClick={base=BuildConfig.SIGNAL_BASE_URL;Data.prefs(this@MainActivity).edit().putString("url",base).apply();refresh()}){Text("우공이산 기본 주소로 복구")};Text(if(Data.prefs(this@MainActivity).getString("sync_error","").isNullOrEmpty())"표시 자료: ${status.optString("market_date")} · ${if(status.optString("state")=="ready")"계산 완료" else "과거 미리보기 / 자동 계산 미연결"}" else "결과 서버 연결을 다시 확인하세요",fontSize=11.sp)}
       CloseAlertSettings(resumeTick)
+      WidgetBackgroundSettings()
       Panel{Text("위젯 컬렉션",fontWeight=FontWeight.Bold);Text("홈 화면을 길게 누르고 위젯 → 우공이산에서 선택하세요.\n요약 3×2 · 그래프 5×2 · 상세 5×3\n위젯의 기간 버튼으로 기간을 바꿀 수 있습니다. 크기가 작아지면 요약형으로 자동 전환되며 시스템 화면 모드도 따라갑니다.");Text("화면 테마 · 시스템 설정 사용",color=MaterialTheme.colorScheme.onSurfaceVariant,fontSize=12.sp)}
      }
     };Spacer(Modifier.height(10.dp))

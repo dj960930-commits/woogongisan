@@ -1,5 +1,6 @@
 """Register V2.2 evidence and prepare dated, local display assets."""
 from pathlib import Path
+from datetime import datetime, timezone
 import json
 import sys
 
@@ -12,10 +13,32 @@ from comparison import build as comparison
 from model import activate
 from models.performance import replay
 from models.registry import load_model
-from pipeline import latest_backtest, snapshot, write
+from pipeline import latest_backtest, snapshot, write, session
+from market_data import fetch, CONTRACT_ID, BASIS
 from price_outlook import build as outlook
 from tools.build_signal_bundle import build as bundle
 from tools.research_dual_sleeve import metrics
+
+
+def live_documents(model):
+    completed = session(datetime.now(timezone.utc))
+    if completed is None:
+        raise ValueError('No completed session available for online publication')
+    expected = completed[0]
+    prices, btc, raw = fetch(expected, ROOT)
+    data, targets = snapshot(prices, btc, 'live', raw, model)
+    if data['market_date'] != str(expected.date()):
+        raise ValueError('Online publication is behind the completed session')
+    extension = latest_backtest(prices, targets, model, return_daily=True)
+    benchmark = json.loads((ROOT/'runtime/benchmark-prices.json').read_text(encoding='utf-8'))
+    data['performance'] = comparison(extension.pop('_daily_nav'), benchmark)
+    data['price_outlook'] = outlook(prices, raw)
+    data.update(data_contract_id=CONTRACT_ID, price_basis=BASIS,
+                data_sources={'equities': 'Yahoo Finance', 'btc': 'Bitstamp'})
+    status = dict(**model.metadata(), state='ready', market_date=data['market_date'],
+                  data_contract_id=CONTRACT_ID, data_sources=data['data_sources'],
+                  message='확정 종가 계산 완료', updated_at=datetime.now(timezone.utc).isoformat())
+    return {'snapshot': data, 'extended_backtest': extension, 'status': status}
 
 
 def main():
@@ -68,11 +91,13 @@ def main():
     offline['price_outlook'] = outlook(p,raw)
     status = dict(**model.metadata(),state='demo',market_date=day,
                   message=f'{day} 기준 {model.version} 오프라인 미리보기')
+    # Obtain current online data before activation changes any displayed model.
+    online = live_documents(model)
     for name,value in [('snapshot',offline),('extended_backtest',extension),('status',status)]:
         write(seed/f'{name}.json',value)
     activate(model.id)
     site = ROOT/'site'
-    for name,value in [('snapshot',offline),('extended_backtest',extension),('status',status)]:
+    for name,value in online.items():
         write(site/f'{name}.json',value)
     write(site/'bundle.json',bundle(site))
     print(model.version, model.fingerprint, day, primary['cagr'], primary['mdd'])
