@@ -86,4 +86,3 @@ actual=f.query('period=="actual_BITO" and mode=="same_close_reference" and extra
 score=.5*np.log(pre)/years+.5*np.log1p(actual.cagr.to_numpy())
 ranks=pd.DataFrame({'name':names,'balanced_log_score':score,'pre_BITO_multiple':pre,'actual_multiple':actual.final.to_numpy()}).sort_values('balanced_log_score',ascending=False);ranks.to_csv(OUT/'ranking.csv',index=False)
 print('CANDIDATES',len(names),'PARITY PASSED');print('RECENT TOP');print(actual.sort_values('final',ascending=False).head(10)[['final','cagr','mdd']].to_string());print('BALANCED TOP');print(ranks.head(12).to_string(index=False));print('NO LEVER TOP');print(actual.loc[[n for n in names if n.startswith('L0_')]].sort_values('final',ascending=False).head(5)[['final','cagr','mdd']].to_string())
-

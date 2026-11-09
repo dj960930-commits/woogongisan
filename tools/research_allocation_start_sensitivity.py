@@ -11,4 +11,3 @@ for start in ['2010-02-11','2012-01-01','2015-01-01','2018-01-01','2020-01-01','
 f=pd.DataFrame(out);f.to_csv(OUT/'start_sensitivity.csv',index=False);print(f.pivot(index='start',columns='name',values='cagr').round(4).to_string())
 # Detailed cross-scenario selected results.
 f=pd.read_csv(OUT/'metrics.csv');print(f[f.name.isin(names0)&f.extra.eq(0)&f['mode'].eq('same_close_reference')].to_string(index=False))
-
