@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.work.*
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
 import java.util.concurrent.TimeUnit
 
@@ -19,6 +20,7 @@ class WoogongApp:Application(){
   getSystemService(NotificationManager::class.java).createNotificationChannel(NotificationChannel("close","장 마감 결과",NotificationManager.IMPORTANCE_DEFAULT))
   getSystemService(NotificationManager::class.java).createNotificationChannel(NotificationChannel("allocation_changes_v1","목표 배분 변경",NotificationManager.IMPORTANCE_HIGH).apply{enableVibration(true);description="자산 배분이 크게 바뀐 날 소리와 상단 알림으로 안내합니다."})
   MorningAlerts.schedule(this)
+  PushRegistration.register(this)
   WorkManager.getInstance(this).enqueueUniquePeriodicWork("fallback-sync",ExistingPeriodicWorkPolicy.UPDATE,PeriodicWorkRequestBuilder<SyncWorker>(15,TimeUnit.MINUTES).setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build())
  }
 }
@@ -40,10 +42,19 @@ class SyncWorker(c:Context,p:WorkerParameters):Worker(c,p){
  }
 }
 class PushService:FirebaseMessagingService(){
- override fun onNewToken(token:String){Data.prefs(this).edit().putString("fcm_token",token).apply()}
+ override fun onNewToken(token:String){Data.prefs(this).edit().putString("fcm_token",token).apply();PushRegistration.register(this)}
  override fun onMessageReceived(message:RemoteMessage){
   // FCM is an optional wake-up. Worker and manual refresh use the same validated,
   // persistent model/date deduplication path, so push + polling cannot alert twice.
   MorningAlerts.enqueueModel(this)
+ }
+}
+internal object PushRegistration {
+ private const val TOPIC="woogong-close-v1"
+ fun register(c:Context){
+  if(FirebaseApp.getApps(c).isEmpty())return
+  FirebaseMessaging.getInstance().subscribeToTopic(TOPIC).addOnCompleteListener{
+   Data.prefs(c).edit().putBoolean("fcm_topic_subscribed",it.isSuccessful).apply()
+  }
  }
 }

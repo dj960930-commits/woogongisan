@@ -88,3 +88,22 @@ def test_device_outbox_only_retries_failed(tmp_path,monkeypatch):
  with pytest.raises(SystemExit):notify.main()
  fail['active']=False;notify.main();notify.main()
  assert calls==['phone1','phone2','phone2']
+
+def test_topic_wakeup_contains_no_account_data_and_final_follows_error(tmp_path,monkeypatch):
+ import notify,types
+ meta=load_model().metadata()
+ status=tmp_path/'status.json'
+ status.write_text(json.dumps({**meta,'state':'error','expected_date':'2026-10-20'}))
+ (tmp_path/'snapshot.json').write_text(json.dumps({**meta,'market_date':'2026-10-20','state_label':'방어'}))
+ monkeypatch.setattr(notify,'SITE',tmp_path);monkeypatch.setattr(notify,'ROOT',tmp_path)
+ monkeypatch.setenv('FCM_TOKENS','[]');monkeypatch.setenv('FCM_TOPIC','woogong-close-v1')
+ monkeypatch.setenv('FIREBASE_SERVICE_ACCOUNT_JSON','{}')
+ sent=[]
+ messaging=types.SimpleNamespace(send=sent.append,Message=lambda **kw:kw,AndroidConfig=lambda **kw:kw)
+ fake=types.SimpleNamespace(initialize_app=lambda x:None,credentials=types.SimpleNamespace(Certificate=lambda x:x),messaging=messaging)
+ monkeypatch.setitem(sys.modules,'firebase_admin',fake)
+ notify.main();notify.main()
+ status.write_text(json.dumps({**meta,'state':'ready','market_date':'2026-10-20'}))
+ notify.main();notify.main()
+ assert len(sent)==2
+ assert all(item['data']=={'refresh':'1'} and item['topic']=='woogong-close-v1' for item in sent)

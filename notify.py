@@ -10,14 +10,24 @@ def main():
  if failure:data={'version':status.get('version','우공')+' 오류','market_date':status.get('expected_date','확인 필요'),'state_label':'종가 자료 확인 중 · 새 신호를 사용하지 마세요','model_fingerprint':status.get('model_fingerprint','')}
  if not failure and (data.get('model_fingerprint')!=status.get('model_fingerprint') or data.get('market_date')!=status.get('market_date')):raise ValueError('게시 결과 모델 불일치')
  tokens=json.loads(os.environ.get('FCM_TOKENS') or '[]');raw=os.environ.get('FIREBASE_SERVICE_ACCOUNT_JSON','')
- if not tokens or not raw:print('push: not configured');return
+ topic=os.environ.get('FCM_TOPIC','').strip()
+ if not raw or (not tokens and not topic):print('push: not configured');return
  import firebase_admin
  from firebase_admin import credentials,messaging
  firebase_admin.initialize_app(credentials.Certificate(json.loads(raw)))
  out=Path(os.environ.get('WOOGONG_OUTBOX_DIR',str(ROOT/'runtime')));out.mkdir(parents=True,exist_ok=True);file=out/'delivery.json'
  done=json.loads(file.read_text(encoding='utf-8')) if file.exists() else {};failures=0
+ if topic:
+  key=data.get('model_fingerprint',data['version'])+':'+data['market_date']+':'+('error' if failure else 'ready')+':topic:'+topic
+  if key not in done:
+   try:
+    # The topic carries only a refresh instruction. The app fetches the public,
+    # validated publication; account data and device tokens are never sent.
+    messaging.send(messaging.Message(data={'refresh':'1'},android=messaging.AndroidConfig(priority='high'),topic=topic))
+    done[key]=True;write(file,done);print('push topic: accepted')
+   except Exception:failures+=1
  for token in tokens:
-  key=data.get('model_fingerprint',data['version'])+':'+data['market_date']+':'+hashlib.sha256(token.encode()).hexdigest()
+  key=data.get('model_fingerprint',data['version'])+':'+data['market_date']+':'+('error' if failure else 'ready')+':'+hashlib.sha256(token.encode()).hexdigest()
   if key in done:continue
   try:
    messaging.send(messaging.Message(data={'title':'우공이산 · '+data['version'].removeprefix('우공 ')+' · '+data['market_date'],'body':data['state_label']+' · 목표 비중을 확인하세요','refresh':'1'},android=messaging.AndroidConfig(priority='high'),token=token))
