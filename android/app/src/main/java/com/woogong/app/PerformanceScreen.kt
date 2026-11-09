@@ -35,6 +35,16 @@ import org.json.JSONObject
   Text("매년 일정하게 올랐다는 뜻은 아니에요. 복리로 환산한 평균입니다.",fontSize=12.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
   HistoryChart(b.getJSONArray("curve"),"nav")
  }
+ basic.optJSONObject("execution_review")?.takeIf{Data.sameModel(s,basic)}?.let{review->
+  val selected=review.getJSONObject("selected")
+  Panel{
+   Text("체결을 다음 시가로 늦추면",fontWeight=FontWeight.Bold)
+   Text("${review.getString("start")} ~ ${review.getString("end")}",fontSize=11.sp)
+   Text("연복리 %.2f%% · 최대낙폭 %.2f%%".format(selected.getDouble("cagr")*100,selected.getDouble("mdd")*100),fontSize=14.sp,fontWeight=FontWeight.SemiBold)
+   Text("수익 대비 낙폭 지표(Calmar) %.2f".format(selected.getDouble("calmar")),fontSize=12.sp)
+   Text("다음 거래일 시가 체결 · 편도 비용 0.1% · USD·세전",fontSize=11.sp,color=MaterialTheme.colorScheme.onSurfaceVariant)
+  }
+ }
  Panel{
   Text("최고점에서 얼마나 내려갔나요?",fontWeight=FontWeight.Bold)
   Text("최대 ${"%.1f".format(-b.getDouble("mdd")*100)}% 하락",fontSize=24.sp,fontWeight=FontWeight.Bold)

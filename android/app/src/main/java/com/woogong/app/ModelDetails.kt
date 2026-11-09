@@ -26,7 +26,7 @@ import org.json.JSONObject
  val forecast=s.optJSONObject("price_outlook")
  if(forecast!=null)Panel{Text("가격 흐름 그래프 읽기",fontWeight=FontWeight.Bold);Text(forecast.optString("method"));Text(forecast.optString("limitation"))}
  val loan=s.optJSONObject("loan_timing")
- if(loan!=null)Panel{
+ if(loan!=null&&loan.optBoolean("supported"))Panel{
   Text("신규 차입 신호 조건",fontWeight=FontWeight.Bold)
   Text(loan.optString("entry_rule"));Text(loan.optString("exit_rule"));Text(loan.optString("risk"))
   Text("은행 부채·금리·상환 여력은 직접 확인해야 합니다. 이 신호가 자동 대출이나 주문 증액을 실행하지는 않습니다.")

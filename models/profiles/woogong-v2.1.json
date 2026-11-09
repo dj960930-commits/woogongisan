@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "model_id": "woogong-v2.1",
+  "version": "우공 V2.1",
+  "strategy_id": "woogong-v2.1-lever70-cash",
+  "adapter": "allocation_v21",
+  "parent": "frozen_3661",
+  "rebalance_band": 0.125,
+  "cross": {
+    "look": 5,
+    "loss": -0.05,
+    "riskmin": 2,
+    "gold": 21,
+    "minhold": 3,
+    "maxhold": 10,
+    "cooldown": 10
+  },
+  "defense": {
+    "qqq_sma": 200,
+    "cash_fraction": 0.25,
+    "applies_to_forced_BRK": true
+  },
+  "defense_entry": {
+    "fast": 5,
+    "slow": 21,
+    "long_weakening_sessions": 21,
+    "readiness_sessions": 63,
+    "entry": "attack_to_normal_defense_only",
+    "direction": "gold_to_brkb",
+    "monthly_approval": false,
+    "cash_priority": "preserve_original_cross_and_d25"
+  },
+  "performance_execution": "same_close_reference",
+  "approval": "V2.1 규칙 고정 · 모델 신호 제공 · 실주문 비활성",
+  "research_note": "공격 구간 TQQQ+SOXL 목표 합계 상한70%, SOXL 상한40%. BTC 원래 모멘텀 배분을 유지하고 레버리지 축소분은 현금으로 보유합니다. 기존 v2 방어를 유지합니다. 과거 후보 비교 후 채택한 연구 규칙이며 2010년 BTC 대용 전체 누적수익은 현행 v2보다 낮았습니다. 독립 미래 검증과 실제 체결 검증은 미완료입니다.",
+  "live_approved": false,
+  "orders_enabled": false,
+  "allocation": {
+    "lever_cap": 0.7,
+    "soxl_cap": 0.4,
+    "spill": "cash",
+    "btc_floor": 0.0,
+    "btc_cap": 1.0
+  }
+}

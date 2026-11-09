@@ -5,9 +5,10 @@ import json
 from . import core_v1
 from .overlays import cross_defense
 from .defense_v2 import evaluate as defense_v2
+from .allocation_v21 import evaluate as allocation_v21
 
 ROOT = Path(__file__).resolve().parents[1]
-ADAPTERS = {"frozen_core_v1": core_v1.evaluate, "cross_defense_v1": cross_defense, "defense_entry_v2": defense_v2}
+ADAPTERS = {"frozen_core_v1": core_v1.evaluate, "cross_defense_v1": cross_defense, "defense_entry_v2": defense_v2, "allocation_v21": allocation_v21}
 
 class Model:
     def __init__(self, profile):
@@ -21,7 +22,9 @@ class Model:
         # V2 binds its new dispatcher and adapter rather than borrowing evidence.
         paths = ['strategy_parameters.json', 'models/core_v1.py', 'models/overlays.py']
         if profile['adapter'] == 'defense_entry_v2':
-            paths += ['models/registry.py', 'models/defense_v2.py', 'models/performance.py']
+            paths += ['models/frozen/registry_v2.py.txt', 'models/defense_v2.py', 'models/performance.py']
+        elif profile['adapter'] == 'allocation_v21':
+            paths += ['models/registry.py', 'models/defense_v2.py', 'models/performance.py', 'models/allocation_v21.py']
         else:
             paths += ['models/frozen/registry_v1.py.txt']
         implementation = b''.join((ROOT / p).read_text(encoding='utf-8-sig').encode('utf-8') for p in paths)

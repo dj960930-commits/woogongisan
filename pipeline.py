@@ -94,6 +94,12 @@ def snapshot(p,btc,mode,raw=None,model=None):
   reasons.extend([
    {'title':'Cross5 · GLD21','value':int(last.cross_cash),'threshold':None,'description':f"방어 상태에서 위험자산 {c['riskmin']}종 이상과 BRK.B·GLD 동반 하락, 선택 방어자산 {c['look']}일 수익률 {c['loss']:.0%} 이하를 확인합니다. GLD 선택 시 {c['gold']}일 수익률도 음수여야 합니다. 최소 {c['minhold']}일·최대 {c['maxhold']}일 대피, 재진입 대기 {c['cooldown']}일. 현재 "+('현금 대피 중.' if last.cross_cash else '대피 미적용.'),'active':bool(last.cross_cash)},
    {'title':'D25 방어 현금','value':float(last.cash_fraction),'threshold':d['cash_fraction'],'description':f"QQQ 종가 {p.QQQ.iloc[-1]:.2f} / SMA{d['qqq_sma']} {last.qqq_sma:.2f}. 약세 시 BRK.B·GLD 방어 몫의 {d['cash_fraction']:.0%}를 달러 현금으로 이동합니다. 강제 BRK.B 상태에도 적용. 현재 "+('적용.' if last.defensive_cash else '미적용.'),'active':bool(last.defensive_cash)}])
+ if 'allocation' in model.profile:
+  allocation=model.profile['allocation']
+  reasons.append({'title':'공격 비중과 현금','value':float(target['TQQQ']+target['SOXL']),
+   'threshold':allocation['lever_cap'],
+   'description':f"TQQQ+SOXL 목표 비중은 최대 {allocation['lever_cap']:.0%}, SOXL은 최대 {allocation['soxl_cap']:.0%}. 제한으로 남는 비중은 달러 현금으로 보유합니다. BTC에는 원래 모멘텀 비중만 배분하며 최소 비중은 없습니다. 재조정 기준과 가격 변동 때문에 실제 보유 비중은 목표 상한을 넘을 수 있습니다.",
+   'active':state==0})
  data={**model.metadata(),'market_date':str(day.date()),'generated_at':datetime.now(timezone.utc).isoformat(),'mode':mode,'state':state,'state_label':state_label,
   'target':{k:float(v) for k,v in target.items()},'account_connected':False,'reasons':reasons,
  'indicators':{k:float(last[k]) for k in ['beta','hedge','gap','qqq_drawdown','defense_fast','defense_slow']},'charts':{'relative':series(['relative','relative_fast','relative_slow']),'defense':series(['defense_ratio','defense_fast','defense_slow']),'drawdown':series(['qqq_drawdown'])},'raw_close':raw or {},'data_fingerprint':input_fingerprint(p,btc,model)}
