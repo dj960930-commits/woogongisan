@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment_retry.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -40,3 +40,10 @@ jobs:
           path: site
       - uses: actions/deploy-pages@v4
         id: deployment
+        continue-on-error: true
+      - name: Wait for the Pages artifact to become visible, then retry
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 30
+      - uses: actions/deploy-pages@v4
+        if: steps.deployment.outcome == 'failure'
+        id: deployment_retry
